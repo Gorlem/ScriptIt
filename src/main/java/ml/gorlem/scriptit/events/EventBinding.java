@@ -15,14 +15,15 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.LiteralText;
+import org.apache.commons.lang3.StringUtils;
 
 public class EventBinding {
     Event event;
     String scriptContent;
 
-    public EventBinding(Event event, String scriptContent) {
+    public EventBinding(Event event) {
         this.event = event;
-        this.scriptContent = scriptContent;
+        this.scriptContent = StringUtils.EMPTY;
 
         ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
     }

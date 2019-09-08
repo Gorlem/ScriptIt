@@ -18,10 +18,10 @@ public class EventManager {
     Map<String, EventBinding> events = new HashMap<>();
 
     public void setContent(Event event, String content) {
-        EventBinding eventBinding = new EventBinding(event, content);
-        events.put(eventBinding.getId(), eventBinding);
+        EventBinding eventBinding = events.getOrDefault(event.getName(), new EventBinding(event));
+        eventBinding.setScriptContent(content);
 
-        ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
+        events.put(event.getName(), eventBinding);
     }
 
     public void dispatch(Event event, NamespaceRegistry registry) {

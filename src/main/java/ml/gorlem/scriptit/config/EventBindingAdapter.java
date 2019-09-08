@@ -19,7 +19,9 @@ public class EventBindingAdapter implements JsonSerializer<EventBinding>, JsonDe
         EventLoader eventLoader = Resolver.getInstance().resolve(EventLoader.class);
         Event event = eventLoader.findByName(id);
 
-        return new EventBinding(event, script);
+        EventBinding eventBinding = new EventBinding(event);
+        eventBinding.setScriptContent(script);
+        return eventBinding;
     }
 
     @Override
