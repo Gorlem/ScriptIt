@@ -4,6 +4,7 @@ import ml.gorlem.scriptit.api.libraries.LibraryInitializer;
 import ml.gorlem.scriptit.api.libraries.LibraryRegistry;
 import ml.gorlem.scriptit.api.libraries.NamespaceRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.options.ServerEntry;
 
 import java.util.stream.Collectors;
 
@@ -12,11 +13,50 @@ public class ServerLibrary implements LibraryInitializer {
     public void onInitialize(LibraryRegistry registry) {
         NamespaceRegistry namespace = registry.registerLibrary("server");
 
-//        namespace.registerVariable("name", (name, minecraft) -> minecraft.getCurrentServerEntry().name);
-//        namespace.registerVariable("address", (name, minecraft) -> minecraft.getCurrentServerEntry().address);
-//        namespace.registerVariable("label", (name, minecraft) -> minecraft.getCurrentServerEntry().label);
+        namespace.registerVariable("name", this::name);
+        namespace.registerVariable("address", this::address);
+        namespace.registerVariable("label", this::label);
 
         namespace.registerFunction("players", this::players);
+    }
+
+    private Object name(String name, MinecraftClient minecraft) {
+        ServerEntry currentServerEntry = minecraft.getCurrentServerEntry();
+        if (currentServerEntry != null) {
+            return currentServerEntry.name;
+        }
+
+        if (minecraft.isInSingleplayer() && minecraft.isIntegratedServerRunning()) {
+            return minecraft.getServer().getLevelName();
+        }
+
+        return null;
+    }
+
+    private Object address(String name, MinecraftClient minecraft) {
+        ServerEntry currentServerEntry = minecraft.getCurrentServerEntry();
+        if (currentServerEntry != null) {
+            return currentServerEntry.address;
+        }
+
+        if (minecraft.isInSingleplayer() && minecraft.isIntegratedServerRunning()) {
+            return "local";
+        }
+
+        return null;
+    }
+
+    private Object label(String name, MinecraftClient minecraft) {
+        ServerEntry currentServerEntry = minecraft.getCurrentServerEntry();
+        if (currentServerEntry != null) {
+            return currentServerEntry.label;
+        }
+
+        if (minecraft.isInSingleplayer() && minecraft.isIntegratedServerRunning()) {
+            return minecraft.getServer().getServerMotd();
+        }
+
+        return null;
     }
 
     private Object players(String name, MinecraftClient minecraft, Object... arguments) {
