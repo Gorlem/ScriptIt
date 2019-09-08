@@ -1,0 +1,10 @@
+{
+  "scriptit:bindings.add": "Add Binding",
+  "scriptit:bindings.remove": "Remove",
+  "scriptit:hud.add": "Add Hud Element",
+  "scriptit:hud.add.IconHudElement": "Icon Hud Element",
+  "scriptit:hud.add.TextHudElement": "Text Hud Element",
+  "key.scripitit.open": "Open ScriptIt Settings",
+  "scriptit:event.chat": "Chat Message Event",
+  "scriptit:event.gameJoin": "Game Join Event"
+}

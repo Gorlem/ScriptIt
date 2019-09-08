@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "scriptit",
+  "version": "${version}",
+
+  "name": "ScriptIt",
+  "description": "Script your Minecraft game with Lua!",
+  "authors": [
+    "Gorlem"
+  ],
+  "contact": {
+    "homepage": "https://gorlem.ml/"
+  },
+
+  "icon": "assets/scriptit/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ml.gorlem.scriptit.ScriptItMod"
+    ],
+    "scriptit:library": [
+      "ml.gorlem.scriptit.scripts.libraries.ServerLibrary",
+      "ml.gorlem.scriptit.scripts.libraries.ScriptsLibrary",
+      "ml.gorlem.scriptit.scripts.libraries.ChatLibrary",
+      "ml.gorlem.scriptit.scripts.libraries.GameLibrary",
+      "ml.gorlem.scriptit.scripts.libraries.PlayerLibrary",
+      "ml.gorlem.scriptit.scripts.libraries.KeyboardLibrary",
+      "ml.gorlem.scriptit.scripts.libraries.JsonLibrary"
+    ],
+    "scriptit:language": [
+      "ml.gorlem.scriptit.scripts.languages.lua.LuaLanguage"
+    ],
+    "scriptit:hud": [
+      "ml.gorlem.scriptit.elements.BuiltInHudElements"
+    ],
+    "scriptit:event": [
+      "ml.gorlem.scriptit.events.ChatEventDispatcher",
+      "ml.gorlem.scriptit.events.GameJoinEventDispatcher"
+    ]
+  },
+
+  "mixins": [
+    "scriptit.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*"
+  }
+}

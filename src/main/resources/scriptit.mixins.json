@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "ml.gorlem.scriptit.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "KeyBindingAccessor",
+    "PacketTextAccessor",
+    "MixinInGameHud",
+    "MixinEntryListWidget",
+    "MixinClientPlayerNetworkHandler"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
