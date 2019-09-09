@@ -36,6 +36,7 @@
     ],
     "scriptit:event": [
       "ml.gorlem.scriptit.events.ChatEventDispatcher",
+      "ml.gorlem.scriptit.events.SendChatEventDispatcher",
       "ml.gorlem.scriptit.events.GameJoinEventDispatcher"
     ]
   },

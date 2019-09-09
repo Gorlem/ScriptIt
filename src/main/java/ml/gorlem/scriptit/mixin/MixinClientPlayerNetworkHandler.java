@@ -17,8 +17,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.security.auth.callback.Callback;
-
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class MixinClientPlayerNetworkHandler implements ClientPlayPacketListener {
 
@@ -57,7 +55,7 @@ public abstract class MixinClientPlayerNetworkHandler implements ClientPlayPacke
                 return;
             }
 
-            ((SendPacketTextAccessor)packet).setMessage(result.getValue());
+            ((SendPacketTextAccessor)packet).setChatMessage(result.getValue());
         }
     }
 }
