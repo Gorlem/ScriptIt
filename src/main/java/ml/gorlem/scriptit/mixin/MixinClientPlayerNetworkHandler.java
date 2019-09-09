@@ -2,9 +2,11 @@ package ml.gorlem.scriptit.mixin;
 
 import ml.gorlem.scriptit.callbacks.ChatMessageCallback;
 import ml.gorlem.scriptit.callbacks.GameJoinCallback;
+import ml.gorlem.scriptit.callbacks.SendChatMessageCallback;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.packet.ChatMessageS2CPacket;
 import net.minecraft.client.network.packet.GameJoinS2CPacket;
+import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -13,6 +15,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.security.auth.callback.Callback;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class MixinClientPlayerNetworkHandler implements ClientPlayPacketListener {
@@ -38,5 +42,21 @@ public abstract class MixinClientPlayerNetworkHandler implements ClientPlayPacke
     @Inject(method = "onGameJoin", at = @At("RETURN"))
     private void onGameJoinMixin(GameJoinS2CPacket packet, CallbackInfo info) {
         GameJoinCallback.EVENT.invoker().onGameJoin();
+    }
+
+    @Inject(method = "sendPacket", at = @At("HEAD"), cancellable = true)
+    private void onSendPacket(Packet<?> packet, CallbackInfo info) {
+        if (packet.getClass().equals(ChatMessageS2CPacket.class)) {
+            ChatMessageS2CPacket chatPacket = (ChatMessageS2CPacket)packet;
+
+            TypedActionResult<Text> result = SendChatMessageCallback.EVENT.invoker().onSendChatMessage(chatPacket.getMessage());
+
+            if (result.getResult() == ActionResult.FAIL) {
+                info.cancel();
+                return;
+            }
+
+            ((PacketTextAccessor)packet).setMessage(result.getValue());
+        }
     }
 }
