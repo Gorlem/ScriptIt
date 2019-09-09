@@ -9,21 +9,21 @@ import net.minecraft.util.TypedActionResult;
 public interface SendChatMessageCallback {
     Event<SendChatMessageCallback> EVENT = EventFactory.createArrayBacked(
             SendChatMessageCallback.class,
-            (listeners) -> (text) -> {
+            (listeners) -> (message) -> {
 
                 for (SendChatMessageCallback event : listeners) {
-                    TypedActionResult<Text> result = event.onSendChatMessage(text);
+                    TypedActionResult<String> result = event.onSendChatMessage(message);
 
                     if (result.getResult() != ActionResult.PASS) {
                         return result;
                     }
 
-                    text = result.getValue();
+                    message = result.getValue();
                 }
 
-                return new TypedActionResult<>(ActionResult.PASS, text);
+                return new TypedActionResult<>(ActionResult.PASS, message);
             }
     );
 
-    TypedActionResult<Text> onSendChatMessage(Text text);
+    TypedActionResult<String> onSendChatMessage(String message);
 }

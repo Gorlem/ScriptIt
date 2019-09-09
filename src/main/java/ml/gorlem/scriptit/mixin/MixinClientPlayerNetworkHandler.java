@@ -8,6 +8,7 @@ import net.minecraft.client.network.packet.ChatMessageS2CPacket;
 import net.minecraft.client.network.packet.GameJoinS2CPacket;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.server.network.packet.ChatMessageC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
@@ -46,17 +47,17 @@ public abstract class MixinClientPlayerNetworkHandler implements ClientPlayPacke
 
     @Inject(method = "sendPacket", at = @At("HEAD"), cancellable = true)
     private void onSendPacket(Packet<?> packet, CallbackInfo info) {
-        if (packet.getClass().equals(ChatMessageS2CPacket.class)) {
-            ChatMessageS2CPacket chatPacket = (ChatMessageS2CPacket)packet;
+        if (packet.getClass().equals(ChatMessageC2SPacket.class)) {
+            ChatMessageC2SPacket chatPacket = (ChatMessageC2SPacket)packet;
 
-            TypedActionResult<Text> result = SendChatMessageCallback.EVENT.invoker().onSendChatMessage(chatPacket.getMessage());
+            TypedActionResult<String> result = SendChatMessageCallback.EVENT.invoker().onSendChatMessage(chatPacket.getChatMessage());
 
             if (result.getResult() == ActionResult.FAIL) {
                 info.cancel();
                 return;
             }
 
-            ((PacketTextAccessor)packet).setMessage(result.getValue());
+            ((SendPacketTextAccessor)packet).setMessage(result.getValue());
         }
     }
 }
