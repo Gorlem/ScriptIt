@@ -17,6 +17,8 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
 
 import java.util.*;
 
@@ -50,7 +52,20 @@ public class PlayerLibrary implements LibraryInitializer {
         armor.registerVariable("chestplate", this::armor);
         armor.registerVariable("leggings", this::armor);
         armor.registerVariable("boots", this::armor);
+
+        namespace.registerVariable("biome", (name, minecraft) -> convertBiome(minecraft.world.getBiome(minecraft.player.getBlockPos())));
     }
+
+    private static Map<String, Object> convertBiome(Biome biome) {
+        Map<String, Object> table = new HashMap<>();
+
+        table.put("id", Registry.BIOME.getId(biome));
+        table.put("name", biome.getName().getString());
+        table.put("category", biome.getCategory());
+
+        return table;
+    }
+
     private static Map<String, Object> convertItemStack(ItemStack stack) {
         Map<String, Object> table = new HashMap<>();
 
