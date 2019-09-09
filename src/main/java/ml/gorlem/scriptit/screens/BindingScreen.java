@@ -25,6 +25,7 @@ public class BindingScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        minecraft.keyboard.enableRepeatEvents(true);
 
         Window window = MinecraftClient.getInstance().window;
         keyBindingsListWidget = new KeyBindingsListWidget(MinecraftClient.getInstance(), window.getScaledWidth(), window.getScaledHeight() - 50, 0, window.getScaledHeight() - 50, 25);
@@ -45,6 +46,13 @@ public class BindingScreen extends Screen {
             MinecraftClient.getInstance().openScreen(new EventsScreen());
         });
         children.add(eventButton);
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+
+        minecraft.keyboard.enableRepeatEvents(false);
     }
 
     @Override

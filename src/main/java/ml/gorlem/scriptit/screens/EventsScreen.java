@@ -26,10 +26,18 @@ public class EventsScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        minecraft.keyboard.enableRepeatEvents(true);
 
         Window window = MinecraftClient.getInstance().window;
         eventBindingsListWidget = new EventBindingsListWidget(MinecraftClient.getInstance(), window.getScaledWidth(), window.getScaledHeight(), 0, window.getScaledHeight(), 35);
         children.add(eventBindingsListWidget);
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+
+        minecraft.keyboard.enableRepeatEvents(false);
     }
 
     @Override

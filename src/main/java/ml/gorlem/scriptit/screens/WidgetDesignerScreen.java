@@ -36,6 +36,8 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
     @Override
     protected void init() {
         super.init();
+        minecraft.keyboard.enableRepeatEvents(true);
+
         children.addAll(hudElementManager.getAll());
 
         Window window = MinecraftClient.getInstance().window;
@@ -54,6 +56,12 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
                 .map(factory -> new DropDownButtonWidget.Option(I18n.translate("scriptit:hud.add." + factory.getKey()), option -> hudElementFactory = factory.getValue()))
                 .collect(Collectors.toList());
         addButton.setOptions(options);
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+        minecraft.keyboard.enableRepeatEvents(false);
     }
 
     @Override
