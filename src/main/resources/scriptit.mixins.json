@@ -10,7 +10,9 @@
     "SendPacketTextAccessor",
     "MixinInGameHud",
     "MixinEntryListWidget",
-    "MixinClientPlayerNetworkHandler"
+    "MixinClientPlayerNetworkHandler",
+    "MixinScreen",
+    "MixinSleepingChatScreen"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -42,20 +42,4 @@ public abstract class MixinClientPlayerNetworkHandler implements ClientPlayPacke
     private void onGameJoinMixin(GameJoinS2CPacket packet, CallbackInfo info) {
         GameJoinCallback.EVENT.invoker().onGameJoin();
     }
-
-    @Inject(method = "sendPacket", at = @At("HEAD"), cancellable = true)
-    private void onSendPacket(Packet<?> packet, CallbackInfo info) {
-        if (packet.getClass().equals(ChatMessageC2SPacket.class)) {
-            ChatMessageC2SPacket chatPacket = (ChatMessageC2SPacket)packet;
-
-            TypedActionResult<String> result = SendChatMessageCallback.EVENT.invoker().onSendChatMessage(chatPacket.getChatMessage());
-
-            if (result.getResult() == ActionResult.FAIL) {
-                info.cancel();
-                return;
-            }
-
-            ((SendPacketTextAccessor)packet).setChatMessage(result.getValue());
-        }
-    }
 }
