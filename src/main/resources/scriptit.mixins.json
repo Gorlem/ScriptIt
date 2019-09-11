@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "ml.gorlem.scriptit.mixin",
+  "package": "com.ddoerr.scriptit.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],

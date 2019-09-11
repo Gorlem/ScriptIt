@@ -6,10 +6,10 @@
   "name": "ScriptIt",
   "description": "Script your Minecraft game with Lua!",
   "authors": [
-    "Gorlem"
+    "Gorlem / Dennis Dörr"
   ],
   "contact": {
-    "homepage": "https://gorlem.ml/"
+    "homepage": "https://ddoerr.com/"
   },
 
   "icon": "assets/scriptit/icon.png",
@@ -17,27 +17,27 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "ml.gorlem.scriptit.ScriptItMod"
+      "com.ddoerr.scriptit.ScriptItMod"
     ],
     "scriptit:library": [
-      "ml.gorlem.scriptit.scripts.libraries.ServerLibrary",
-      "ml.gorlem.scriptit.scripts.libraries.ScriptsLibrary",
-      "ml.gorlem.scriptit.scripts.libraries.ChatLibrary",
-      "ml.gorlem.scriptit.scripts.libraries.GameLibrary",
-      "ml.gorlem.scriptit.scripts.libraries.PlayerLibrary",
-      "ml.gorlem.scriptit.scripts.libraries.KeyboardLibrary",
-      "ml.gorlem.scriptit.scripts.libraries.JsonLibrary"
+      "com.ddoerr.scriptit.scripts.libraries.ServerLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.ScriptsLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.ChatLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.GameLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.PlayerLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.KeyboardLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.JsonLibrary"
     ],
     "scriptit:language": [
-      "ml.gorlem.scriptit.scripts.languages.lua.LuaLanguage"
+      "com.ddoerr.scriptit.scripts.languages.lua.LuaLanguage"
     ],
     "scriptit:hud": [
-      "ml.gorlem.scriptit.elements.BuiltInHudElements"
+      "com.ddoerr.scriptit.elements.BuiltInHudElements"
     ],
     "scriptit:event": [
-      "ml.gorlem.scriptit.events.ChatEventDispatcher",
-      "ml.gorlem.scriptit.events.SendChatEventDispatcher",
-      "ml.gorlem.scriptit.events.GameJoinEventDispatcher"
+      "com.ddoerr.scriptit.events.ChatEventDispatcher",
+      "com.ddoerr.scriptit.events.SendChatEventDispatcher",
+      "com.ddoerr.scriptit.events.GameJoinEventDispatcher"
     ]
   },
 
