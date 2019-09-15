@@ -47,6 +47,9 @@ Libraries
 
 ### `server` library
  - `list<string> server.players()`
+ - `string server.name`
+ - `string server.label`
+ - `string server.address`
 
 ### `player` library
  - `number player.x`
@@ -68,6 +71,7 @@ Libraries
  - `item player.armor.boots`
  - `nil player.look(number yaw, number pitch)`
  - `hit player.hit()`
+ - `string player.biome`
 
 
 Types
