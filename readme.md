@@ -115,8 +115,8 @@ Events
 ### Game Join Event
  - Gets fired once you join a server or a singleplayer world
 
-### Chat Mesage Event
- - Fires for every recieved chat message.
+### Chat Message Event
+ - Fires for every received chat message.
  - `string event.json`
     - Contains the chat message as a json string
  - `string event.message`
@@ -125,3 +125,12 @@ Events
     - Filters the message, so that it doesn't get displayed
  - `nil event.modify(string message)`
     - Modifies the chat message. Can be either a plain string or a json string.
+    
+### Send Message Event
+- Fires for every send chat message
+- `string event.message`
+    - The chat message
+ - `nil event.filter()`
+    - Filters the message, so that it doesn't get get sent to the server
+ - `nil event.modify(string message)`
+    - Modifies the chat message
