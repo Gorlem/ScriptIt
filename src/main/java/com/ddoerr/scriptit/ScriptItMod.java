@@ -20,7 +20,6 @@ import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.callbacks.RenderEntryListBackgroundCallback;
 import com.ddoerr.scriptit.callbacks.RenderHotbarCallback;
 import com.ddoerr.scriptit.callbacks.RenderInGameHudCallback;
-import ml.gorlem.scriptit.loader.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
