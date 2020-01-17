@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.config;
 
+import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.events.EventBinding;
@@ -21,7 +22,7 @@ public class Config {
 
     public Config() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(ScriptBinding.class, new ScriptBindingAdapter());
+        gsonBuilder.registerTypeAdapter(ScriptContainer.class, new ScriptBindingAdapter());
         gsonBuilder.registerTypeAdapter(HudElement.class, new HudElementAdapter());
         gsonBuilder.registerTypeAdapter(EventBinding.class, new EventBindingAdapter());
         gsonBuilder.setPrettyPrinting();
