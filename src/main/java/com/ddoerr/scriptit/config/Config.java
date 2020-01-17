@@ -4,7 +4,6 @@ import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.events.EventBinding;
-import com.ddoerr.scriptit.scripts.ScriptBinding;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;

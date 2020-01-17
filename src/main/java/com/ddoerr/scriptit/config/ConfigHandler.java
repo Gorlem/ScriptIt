@@ -10,7 +10,6 @@ import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.events.EventBinding;
 import com.ddoerr.scriptit.events.EventManager;
-import com.ddoerr.scriptit.scripts.ScriptBindings;
 
 import java.time.Duration;
 

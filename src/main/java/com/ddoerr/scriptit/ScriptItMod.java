@@ -11,7 +11,6 @@ import com.ddoerr.scriptit.loader.LanguageLoader;
 import com.ddoerr.scriptit.loader.LibraryLoader;
 import com.ddoerr.scriptit.screens.BindingScreen;
 import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
-import com.ddoerr.scriptit.scripts.ScriptBindings;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
 import com.ddoerr.scriptit.widgets.EventBindingsListWidget;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;
@@ -40,7 +39,6 @@ public class ScriptItMod implements ClientModInitializer {
 	public void onInitializeClient() {
 		Resolver resolver = Resolver.getInstance();
 
-		resolver.add(new ScriptBindings());
 		resolver.add(new ThreadLifetimeManager());
 		resolver.add(new LibraryLoader());
 		resolver.add(new LanguageLoader());

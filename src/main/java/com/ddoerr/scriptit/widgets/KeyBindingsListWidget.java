@@ -5,8 +5,6 @@ import com.ddoerr.scriptit.Scripts;
 import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import com.google.common.collect.ImmutableList;
 import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.scripts.ScriptBinding;
-import com.ddoerr.scriptit.scripts.ScriptBindings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;

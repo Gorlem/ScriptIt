@@ -5,7 +5,6 @@ import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.api.util.KeyBindingHelper;
 import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import com.google.gson.*;
-import com.ddoerr.scriptit.scripts.ScriptBinding;
 import net.fabricmc.fabric.mixin.client.keybinding.KeyCodeAccessor;
 import net.minecraft.client.options.KeyBinding;
 
