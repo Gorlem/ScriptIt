@@ -53,9 +53,9 @@ public class ScriptBuilder {
         return this;
     }
 
-    public Script build() throws Exception {
+    public Script build() {
         if (path == null && content == null) {
-            throw new Exception();
+            return null;
         }
 
         return new ScriptImplementation(language, path, content, registries, name);
@@ -76,6 +76,8 @@ public class ScriptBuilder {
             this.name = name;
         }
 
+        public ScriptImplementation() {}
+
         @Override
         public String getFileSource() {
             return path;
@@ -93,11 +95,17 @@ public class ScriptBuilder {
 
         @Override
         public Object runInstantly() {
+            if (language == null)
+                return null;
+
             return language.runScriptInstantly(this);
         }
 
         @Override
         public ScriptThread runThreaded() {
+            if (language == null)
+                return null;
+
             return language.runScriptThreaded(this);
         }
 

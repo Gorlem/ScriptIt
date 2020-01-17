@@ -1,57 +1,49 @@
 package com.ddoerr.scriptit.scripts;
 
+import com.ddoerr.scriptit.LifeCycle;
+import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
+import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.text.LiteralText;
 
 public class ScriptBinding {
-    KeyBinding keyBinding;
-    String scriptContent;
+    ScriptContainer scriptContainer;
 
     public ScriptBinding(KeyBinding keyBinding, String scriptContent) {
-        this.keyBinding = keyBinding;
-        this.scriptContent = scriptContent;
+        scriptContainer = new ScriptContainer(new KeybindingTrigger(keyBinding), LifeCycle.Threaded, scriptContent);
 
         ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
     }
 
     public boolean wasPressed() {
-        return keyBinding.wasPressed();
+        return scriptContainer.canRun();
     }
 
     public void run() {
-        try {
-            Script script = new ScriptBuilder()
-                    .fromString(scriptContent)
-                    .build();
-
-            ScriptThread thread = script.runThreaded();
-            Resolver.getInstance().resolve(ThreadLifetimeManager.class).watch(thread);
-        } catch (Exception e) {
-            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
-            e.printStackTrace();
-        }
+        scriptContainer.run();
+        scriptContainer.reset();
     }
 
     public String getId() {
-        return keyBinding.getId();
+        return ((KeybindingTrigger)scriptContainer.getTrigger()).getKeyBinding().getId();
     }
 
     public KeyBinding getKeyBinding() {
-        return keyBinding;
+        return ((KeybindingTrigger)scriptContainer.getTrigger()).getKeyBinding();
     }
 
     public String getScriptContent() {
-        return scriptContent;
+        return scriptContainer.getContent();
     }
 
     public void setScriptContent(String scriptContent) {
-        this.scriptContent = scriptContent;
+        scriptContainer.setContent(scriptContent);
         ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
     }
 

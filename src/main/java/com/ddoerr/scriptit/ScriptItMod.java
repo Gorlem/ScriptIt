@@ -48,6 +48,7 @@ public class ScriptItMod implements ClientModInitializer {
 		resolver.add(new HudElementManager());
 		resolver.add(new EventLoader());
 		resolver.add(new EventManager());
+		resolver.add(new Scripts());
 
 		resolver.add(new ConfigHandler());
 

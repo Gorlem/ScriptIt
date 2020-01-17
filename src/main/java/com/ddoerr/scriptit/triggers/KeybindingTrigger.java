@@ -16,4 +16,8 @@ public class KeybindingTrigger implements Trigger {
 
     @Override
     public void reset() { }
+
+    public KeyBinding getKeyBinding() {
+        return keyBinding;
+    }
 }
