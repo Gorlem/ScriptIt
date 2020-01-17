@@ -1,6 +1,11 @@
 package com.ddoerr.scriptit.screens;
 
+import com.ddoerr.scriptit.ScriptContainer;
+import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.Scripts;
+import com.ddoerr.scriptit.api.util.KeyBindingHelper;
 import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.scripts.ScriptBinding;
@@ -10,9 +15,13 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Identifier;
+
+import java.util.UUID;
 
 public class BindingScreen extends Screen {
     public BindingScreen() {
@@ -31,8 +40,12 @@ public class BindingScreen extends Screen {
         children.add(keyBindingsListWidget);
 
         ButtonWidget addButton = new ButtonWidget(window.getScaledWidth() - 220, window.getScaledHeight() - 35, 200, 20, I18n.translate("scriptit:bindings.add"), (button) -> {
-            ScriptBinding scriptBinding = Resolver.getInstance().resolve(ScriptBindings.class).addNew();
-            keyBindingsListWidget.addEntry(scriptBinding);
+            KeyBinding keyBinding = KeyBindingHelper.create(new Identifier(ScriptItMod.MOD_NAME, UUID.randomUUID().toString()));
+            ScriptContainer scriptContainer = new ScriptContainer(new KeybindingTrigger(keyBinding));
+            Resolver.getInstance().resolve(Scripts.class).add(Scripts.KEYBIND_CATEGORY, scriptContainer);
+
+
+            keyBindingsListWidget.addEntry(scriptContainer);
         });
         children.add(addButton);
 

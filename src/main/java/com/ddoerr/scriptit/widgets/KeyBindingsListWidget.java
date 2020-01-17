@@ -1,5 +1,8 @@
 package com.ddoerr.scriptit.widgets;
 
+import com.ddoerr.scriptit.ScriptContainer;
+import com.ddoerr.scriptit.Scripts;
+import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import com.google.common.collect.ImmutableList;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.scripts.ScriptBinding;
@@ -19,7 +22,7 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
     public KeyBindingsListWidget(MinecraftClient minecraft, int width, int height, int top, int bottom, int entryHeight) {
         super(minecraft, width, height, top, bottom, entryHeight);
 
-        for (ScriptBinding scriptBinding : Resolver.getInstance().resolve(ScriptBindings.class).getAll()) {
+        for (ScriptContainer scriptBinding : Resolver.getInstance().resolve(Scripts.class).getAll(Scripts.KEYBIND_CATEGORY)) {
             addEntry(scriptBinding);
         }
     }
@@ -34,11 +37,11 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
         return width - 5;
     }
 
-    public void addEntry(ScriptBinding scriptBinding) {
+    public void addEntry(ScriptContainer scriptBinding) {
         addEntry(new KeyBindingEntry(this, scriptBinding));
     }
 
-    public void removeEntry(ScriptBinding scriptBinding) {
+    public void removeEntry(ScriptContainer scriptBinding) {
         KeyBindingEntry toBeRemoved = null;
 
         for (KeyBindingEntry entry : children()) {
@@ -55,7 +58,7 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
     protected void renderHoleBackground(int int_1, int int_2, int int_3, int int_4) {}
 
     public static class KeyBindingEntry extends ElementListWidget.Entry<KeyBindingsListWidget.KeyBindingEntry> {
-        ScriptBinding scriptBinding;
+        ScriptContainer scriptBinding;
 
         KeyBindingButtonWidget keyBindingButtonWidget;
         TextFieldWidget textFieldWidget;
@@ -63,24 +66,24 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
 
         KeyBindingsListWidget parent;
 
-        public KeyBindingEntry(KeyBindingsListWidget parent, ScriptBinding scriptBinding) {
+        public KeyBindingEntry(KeyBindingsListWidget parent, ScriptContainer scriptBinding) {
             this.scriptBinding = scriptBinding;
             this.parent = parent;
 
             MinecraftClient minecraft = MinecraftClient.getInstance();
 
-            keyBindingButtonWidget = new KeyBindingButtonWidget( 0, 0, 75, 20, scriptBinding.getKeyBinding());
+            keyBindingButtonWidget = new KeyBindingButtonWidget( 0, 0, 75, 20, ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding());
 
             textFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
             textFieldWidget.setMaxLength(1000);
-            textFieldWidget.setText(scriptBinding.getScriptContent());
+            textFieldWidget.setText(scriptBinding.getContent());
             textFieldWidget.method_1883(0);
             textFieldWidget.setChangedListener((text) -> {
-                scriptBinding.setScriptContent(text);
+                scriptBinding.setContent(text);
             });
 
             buttonWidget = new ButtonWidget(0, 0, 100, 20, I18n.translate("scriptit:bindings.remove"), (button) -> {
-                Resolver.getInstance().resolve(ScriptBindings.class).remove(scriptBinding);
+                Resolver.getInstance().resolve(Scripts.class).remove(Scripts.KEYBIND_CATEGORY, scriptBinding);
                 parent.removeEntry(scriptBinding);
             });
         }
