@@ -1,11 +1,13 @@
 package com.ddoerr.scriptit;
 
+import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
 import com.ddoerr.scriptit.triggers.Trigger;
+import com.google.common.base.Strings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +17,8 @@ public class ScriptContainer implements Trigger {
     private Trigger trigger;
     private String content = StringUtils.EMPTY;
     private Object lastResult;
+    private String name;
+    private NamespaceRegistry namespaceRegistry;
 
     public ScriptContainer(Trigger trigger) {
         this.trigger = trigger;
@@ -47,11 +51,31 @@ public class ScriptContainer implements Trigger {
         return lastResult;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setNamespaceRegistry(NamespaceRegistry namespaceRegistry) {
+        this.namespaceRegistry = namespaceRegistry;
+    }
+
     public Object run() {
         try {
-            Script script = new ScriptBuilder()
-                    .fromString(content)
-                    .build();
+            ScriptBuilder scriptBuilder = new ScriptBuilder().fromString(content);
+
+            if (!Strings.isNullOrEmpty(name)) {
+                scriptBuilder.setName(name);
+            }
+
+            if (namespaceRegistry != null) {
+                scriptBuilder.withRegistry(namespaceRegistry);
+            }
+
+            Script script = scriptBuilder.build();
 
             switch (lifeCycle) {
                 case Instant:
@@ -83,5 +107,14 @@ public class ScriptContainer implements Trigger {
     public void reset() {
         if (trigger != null)
             trigger.reset();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ScriptContainer)) {
+            return false;
+        }
+
+        return getName().equals(((ScriptContainer)obj).getName());
     }
 }
