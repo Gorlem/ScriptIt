@@ -1,23 +1,22 @@
 package com.ddoerr.scriptit.loader;
 
+import com.ddoerr.scriptit.ScriptContainer;
+import com.ddoerr.scriptit.Scripts;
 import com.ddoerr.scriptit.api.events.EventInitializer;
 import com.ddoerr.scriptit.api.events.EventRegistry;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.events.EventManager;
+import com.ddoerr.scriptit.triggers.ManualTrigger;
 import net.fabricmc.loader.api.FabricLoader;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EventLoader implements EventRegistry, Loadable {
-    Map<String, Event> dispatchers = new HashMap<>();
-    EventManager eventManager;
+    private Scripts scripts;
 
     public void load() {
-        eventManager = Resolver.getInstance().resolve(EventManager.class);
+        scripts = Resolver.getInstance().resolve(Scripts.class);
 
         List<EventInitializer> entrypoints = FabricLoader.getInstance().getEntrypoints("scriptit:event", EventInitializer.class);
 
@@ -28,17 +27,11 @@ public class EventLoader implements EventRegistry, Loadable {
 
     @Override
     public Event registerEvent(String name) {
-        Event event = new EventContainer(name, eventManager);
-        dispatchers.put(name, event);
+        ScriptContainer scriptContainer = new ScriptContainer(new ManualTrigger());
+        scriptContainer.setName(name);
+        Event event = new EventContainer(scriptContainer);
+        scripts.add(Scripts.EVENT_CATEGORY, scriptContainer);
 
         return event;
-    }
-
-    public Map<String, Event> getDispatchers() {
-        return dispatchers;
-    }
-
-    public Event findByName(String name) {
-        return dispatchers.get(name);
     }
 }

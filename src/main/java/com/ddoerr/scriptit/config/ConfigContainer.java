@@ -2,7 +2,6 @@ package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.api.hud.HudElement;
-import com.ddoerr.scriptit.events.EventBinding;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,5 +9,5 @@ import java.util.Collection;
 public class ConfigContainer {
     public Collection<HudElement> elements = new ArrayList<>();
     public Collection<ScriptContainer> bindings = new ArrayList<>();
-    public Collection<EventBinding> events = new ArrayList<>();
+    public Collection<ScriptContainer> events = new ArrayList<>();
 }

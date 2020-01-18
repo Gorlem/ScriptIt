@@ -4,7 +4,6 @@ import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.events.EventManager;
 import com.ddoerr.scriptit.loader.EventLoader;
 import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.loader.LanguageLoader;
@@ -45,7 +44,6 @@ public class ScriptItMod implements ClientModInitializer {
 		resolver.add(new HudElementLoader());
 		resolver.add(new HudElementManager());
 		resolver.add(new EventLoader());
-		resolver.add(new EventManager());
 		resolver.add(new Scripts());
 
 		resolver.add(new ConfigHandler());

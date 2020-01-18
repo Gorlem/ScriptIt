@@ -38,6 +38,7 @@ public class Scripts implements Tickable {
             for (ScriptContainer script : category) {
                 if (script.canRun()) {
                     script.run();
+                    script.reset();
                 }
             }
         }

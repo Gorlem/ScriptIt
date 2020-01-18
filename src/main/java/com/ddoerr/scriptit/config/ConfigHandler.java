@@ -8,10 +8,9 @@ import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.events.EventBinding;
-import com.ddoerr.scriptit.events.EventManager;
 
 import java.time.Duration;
+import java.util.List;
 
 public class ConfigHandler implements ConfigCallback, Loadable {
     private Config config = new Config();
@@ -19,12 +18,10 @@ public class ConfigHandler implements ConfigCallback, Loadable {
 
     private Scripts scripts;
     private HudElementManager hudElementManager;
-    private EventManager eventManager;
 
     public ConfigHandler() {
         scripts = Resolver.getInstance().resolve(Scripts.class);
         hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
-        eventManager = Resolver.getInstance().resolve(EventManager.class);
     }
 
     public void save() {
@@ -32,7 +29,7 @@ public class ConfigHandler implements ConfigCallback, Loadable {
 
         configContainer.bindings = scripts.getAll(Scripts.KEYBIND_CATEGORY);
         configContainer.elements = hudElementManager.getAll();
-        configContainer.events = eventManager.getAll();
+        configContainer.events = scripts.getAll(Scripts.EVENT_CATEGORY);
 
         config.write(configContainer);
     }
@@ -49,8 +46,10 @@ public class ConfigHandler implements ConfigCallback, Loadable {
             hudElementManager.add(element);
         }
 
-        for (EventBinding eventBinding : configContainer.events) {
-            eventManager.setContent(eventBinding.getEvent(), eventBinding.getScriptContent());
+        List<ScriptContainer> all = scripts.getAll(Scripts.EVENT_CATEGORY);
+        for (ScriptContainer eventBinding : configContainer.events) {
+            ScriptContainer any = all.stream().filter(event -> event.getName().equals(eventBinding.getName())).findAny().orElse(null);
+            any.setContent(eventBinding.getContent());
         }
 
         ConfigCallback.EVENT.register(this);

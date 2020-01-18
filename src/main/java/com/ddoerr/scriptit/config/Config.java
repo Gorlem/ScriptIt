@@ -3,7 +3,9 @@ package com.ddoerr.scriptit.config;
 import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.HudElement;
-import com.ddoerr.scriptit.events.EventBinding;
+import com.ddoerr.scriptit.triggers.KeybindingTrigger;
+import com.ddoerr.scriptit.triggers.ManualTrigger;
+import com.ddoerr.scriptit.triggers.Trigger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
@@ -21,9 +23,13 @@ public class Config {
 
     public Config() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(ScriptContainer.class, new ScriptBindingAdapter());
+
         gsonBuilder.registerTypeAdapter(HudElement.class, new HudElementAdapter());
-        gsonBuilder.registerTypeAdapter(EventBinding.class, new EventBindingAdapter());
+        gsonBuilder.registerTypeAdapter(ScriptContainer.class, new ScriptContainerAdapter());
+        gsonBuilder.registerTypeAdapter(Trigger.class, new TriggerAdapter());
+        gsonBuilder.registerTypeAdapter(KeybindingTrigger.class, new KeybindingTriggerAdapter());
+        gsonBuilder.registerTypeAdapter(ManualTrigger.class, new ManualTriggerAdapter());
+
         gsonBuilder.setPrettyPrinting();
         gson = gsonBuilder.create();
     }

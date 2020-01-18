@@ -1,29 +1,30 @@
 package com.ddoerr.scriptit.loader;
 
+import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.events.EventManager;
+import com.ddoerr.scriptit.triggers.ManualTrigger;
 
 public class EventContainer implements Event {
-    String name;
-    EventManager eventManager;
+    ScriptContainer scriptContainer;
 
-    public EventContainer(String name, EventManager eventManager) {
-        this.name = name;
-        this.eventManager = eventManager;
+    public EventContainer(ScriptContainer scriptContainer) {
+        this.scriptContainer = scriptContainer;
     }
 
     @Override
     public void dispatch() {
-        eventManager.dispatch(this, null);
+        scriptContainer.setNamespaceRegistry(null);
+        ((ManualTrigger)scriptContainer.getTrigger()).activate();
     }
 
     @Override
     public void dispatch(NamespaceRegistry registry) {
-        eventManager.dispatch(this, registry);
+        scriptContainer.setNamespaceRegistry(registry);
+        ((ManualTrigger)scriptContainer.getTrigger()).activate();
     }
 
     public String getName() {
-        return name;
+        return scriptContainer.getName();
     }
 }

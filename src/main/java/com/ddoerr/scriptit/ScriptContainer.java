@@ -63,6 +63,10 @@ public class ScriptContainer implements Trigger {
         this.namespaceRegistry = namespaceRegistry;
     }
 
+    public LifeCycle getLifeCycle() {
+        return lifeCycle;
+    }
+
     public Object run() {
         try {
             ScriptBuilder scriptBuilder = new ScriptBuilder().fromString(content);

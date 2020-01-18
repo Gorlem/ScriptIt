@@ -1,11 +1,10 @@
 package com.ddoerr.scriptit.widgets;
 
+import com.ddoerr.scriptit.ScriptContainer;
+import com.ddoerr.scriptit.Scripts;
 import com.google.common.collect.ImmutableList;
-import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.events.EventManager;
-import com.ddoerr.scriptit.loader.EventLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
@@ -16,15 +15,14 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resource.language.I18n;
 
 import java.util.List;
-import java.util.Map;
 
 public class EventBindingsListWidget extends ElementListWidget<EventBindingsListWidget.EventEntry> {
 
     public EventBindingsListWidget(MinecraftClient minecraft, int width, int height, int top, int bottom, int entryHeight) {
         super(minecraft, width, height, top, bottom, entryHeight);
 
-        for (Map.Entry<String, Event> entry : Resolver.getInstance().resolve(EventLoader.class).getDispatchers().entrySet()) {
-            addEntry(entry.getValue(), entry.getKey());
+        for (ScriptContainer entry : Resolver.getInstance().resolve(Scripts.class).getAll(Scripts.EVENT_CATEGORY)) {
+            addEntry(entry);
         }
     }
 
@@ -38,33 +36,30 @@ public class EventBindingsListWidget extends ElementListWidget<EventBindingsList
         return width - 5;
     }
 
-    private void addEntry(Event entry, String name) {
-        addEntry(new EventEntry(this, entry, name));
+    private void addEntry(ScriptContainer scriptContainer) {
+        addEntry(new EventEntry(this, scriptContainer));
     }
 
     @Override
     protected void renderHoleBackground(int int_1, int int_2, int int_3, int int_4) {}
 
     public class EventEntry extends ElementListWidget.Entry<EventEntry> {
-        Event event;
+        ScriptContainer event;
         TextFieldWidget textFieldWidget;
         EventBindingsListWidget parent;
 
-        public EventEntry(EventBindingsListWidget parent, Event event, String name)  {
-            this.event = event;
+        public EventEntry(EventBindingsListWidget parent, ScriptContainer scriptContainer)  {
+            this.event = scriptContainer;
             this.parent = parent;
-
-            EventManager eventManager = Resolver.getInstance().resolve(EventManager.class);
-
             MinecraftClient minecraft = MinecraftClient.getInstance();
 
-            String eventTranslation = I18n.translate("scriptit:event." + name);
+            String eventTranslation = I18n.translate("scriptit:event." + event.getName());
             textFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, eventTranslation);
             textFieldWidget.setMaxLength(1000);
-            textFieldWidget.setText(eventManager.getContent(event));
+            textFieldWidget.setText(event.getContent());
             textFieldWidget.method_1883(0);
             textFieldWidget.setChangedListener((text) -> {
-                eventManager.setContent(event, text);
+                event.setContent(text);
             });
         }
 
