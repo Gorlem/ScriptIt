@@ -14,6 +14,14 @@ public class EventBus {
         }
     }
 
+    public void unsubscribe(String id, Consumer<Object> consumer) {
+        if (!subscribers.containsKey(id)) {
+            return;
+        }
+
+        subscribers.get(id).remove(consumer);
+    }
+
     public void publish(String id, Object data) {
         if (!subscribers.containsKey(id)) {
             return;

@@ -6,4 +6,5 @@ public interface Trigger {
     boolean canRun();
     void reset();
     NamespaceRegistry additionalRegistry();
+    void close();
 }

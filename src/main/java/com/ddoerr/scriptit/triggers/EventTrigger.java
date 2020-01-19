@@ -8,11 +8,12 @@ public class EventTrigger implements Trigger {
     boolean shouldActivate = false;
     NamespaceRegistry registry = null;
     String name;
+    EventBus eventBus;
 
     public EventTrigger(String name) {
         this.name = name;
 
-        EventBus eventBus = Resolver.getInstance().resolve(EventBus.class);
+        eventBus = Resolver.getInstance().resolve(EventBus.class);
         eventBus.subscribe(name, this::activate);
     }
 
@@ -38,5 +39,10 @@ public class EventTrigger implements Trigger {
     @Override
     public NamespaceRegistry additionalRegistry() {
         return registry;
+    }
+
+    @Override
+    public void close() {
+        eventBus.unsubscribe(name, this::activate);
     }
 }
