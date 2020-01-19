@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.config;
 
+import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import com.ddoerr.scriptit.triggers.EventTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
@@ -18,6 +19,10 @@ public class TriggerAdapter implements JsonDeserializer<Trigger> {
 
         if (jsonObject.has("event")) {
             return context.deserialize(json, EventTrigger.class);
+        }
+
+        if (jsonObject.has("duration")) {
+            return context.deserialize(json, ContinuousTrigger.class);
         }
 
         return null;

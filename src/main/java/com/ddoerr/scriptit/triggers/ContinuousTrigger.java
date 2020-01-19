@@ -42,4 +42,8 @@ public class ContinuousTrigger implements Trigger {
     public void close() {
 
     }
+
+    public Duration getDuration() {
+        return duration;
+    }
 }
