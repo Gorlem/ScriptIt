@@ -5,6 +5,7 @@ import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import com.google.gson.*;
 import net.fabricmc.fabric.mixin.client.keybinding.KeyCodeAccessor;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 import java.lang.reflect.Type;
 

@@ -4,7 +4,7 @@ import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.triggers.KeybindingTrigger;
-import com.ddoerr.scriptit.triggers.ManualTrigger;
+import com.ddoerr.scriptit.triggers.EventTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,7 +28,7 @@ public class Config {
         gsonBuilder.registerTypeAdapter(ScriptContainer.class, new ScriptContainerAdapter());
         gsonBuilder.registerTypeAdapter(Trigger.class, new TriggerAdapter());
         gsonBuilder.registerTypeAdapter(KeybindingTrigger.class, new KeybindingTriggerAdapter());
-        gsonBuilder.registerTypeAdapter(ManualTrigger.class, new ManualTriggerAdapter());
+        gsonBuilder.registerTypeAdapter(EventTrigger.class, new EventTriggerAdapter());
 
         gsonBuilder.setPrettyPrinting();
         gson = gsonBuilder.create();

@@ -58,7 +58,7 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
     public static class KeyBindingEntry extends ElementListWidget.Entry<KeyBindingsListWidget.KeyBindingEntry> {
         ScriptContainer scriptBinding;
 
-        KeyBindingButtonWidget keyBindingButtonWidget;
+//        KeyBindingButtonWidget keyBindingButtonWidget;
         TextFieldWidget textFieldWidget;
         ButtonWidget buttonWidget;
 
@@ -70,7 +70,7 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
 
             MinecraftClient minecraft = MinecraftClient.getInstance();
 
-            keyBindingButtonWidget = new KeyBindingButtonWidget( 0, 0, 75, 20, ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding());
+//            keyBindingButtonWidget = new KeyBindingButtonWidget( 0, 0, 75, 20, ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding());
 
             textFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
             textFieldWidget.setMaxLength(1000);
@@ -88,13 +88,13 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
 
         @Override
         public List<? extends Element> children() {
-            return ImmutableList.of(keyBindingButtonWidget, textFieldWidget, buttonWidget);
+            return ImmutableList.of(/*keyBindingButtonWidget, */textFieldWidget, buttonWidget);
         }
 
         @Override
         public void render(int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovering, float delta) {
-            keyBindingButtonWidget.x = x + 5;
-            keyBindingButtonWidget.y = y + 2;
+//            keyBindingButtonWidget.x = x + 5;
+//            keyBindingButtonWidget.y = y + 2;
 
             textFieldWidget.x = x + 85;
             textFieldWidget.y = y + 2;

@@ -12,7 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import org.apache.commons.lang3.StringUtils;
 
-public class ScriptContainer implements Trigger {
+public class ScriptContainer {
     private LifeCycle lifeCycle = LifeCycle.Instant;
     private Trigger trigger;
     private String content = StringUtils.EMPTY;
@@ -79,6 +79,8 @@ public class ScriptContainer implements Trigger {
                 scriptBuilder.withRegistry(namespaceRegistry);
             }
 
+            scriptBuilder.setLifeCycle(lifeCycle);
+
             Script script = scriptBuilder.build();
 
             switch (lifeCycle) {
@@ -97,20 +99,6 @@ public class ScriptContainer implements Trigger {
         }
 
         return lastResult;
-    }
-
-    @Override
-    public boolean canRun() {
-        if (trigger == null)
-            return false;
-
-        return trigger.canRun();
-    }
-
-    @Override
-    public void reset() {
-        if (trigger != null)
-            trigger.reset();
     }
 
     @Override

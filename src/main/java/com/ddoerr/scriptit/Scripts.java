@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit;
 
+import com.ddoerr.scriptit.triggers.Trigger;
 import net.minecraft.util.Tickable;
 
 import java.util.*;
@@ -36,9 +37,11 @@ public class Scripts implements Tickable {
     public void tick() {
         for (List<ScriptContainer> category : scripts.values()) {
             for (ScriptContainer script : category) {
-                if (script.canRun()) {
+                Trigger trigger = script.getTrigger();
+                if (trigger.canRun()) {
+                    script.setNamespaceRegistry(trigger.additionalRegistry());
                     script.run();
-                    script.reset();
+                    trigger.reset();
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.ddoerr.scriptit.triggers;
 
+import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+
 import java.time.Duration;
 import java.time.Instant;
 
@@ -29,5 +31,10 @@ public class ContinuousTrigger implements Trigger {
     @Override
     public void reset() {
         lastActivation = Instant.now();
+    }
+
+    @Override
+    public NamespaceRegistry additionalRegistry() {
+        return null;
     }
 }

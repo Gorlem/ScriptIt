@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.api.scripts;
 
+import com.ddoerr.scriptit.LifeCycle;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.dependencies.Resolver;
@@ -15,6 +16,7 @@ public class ScriptBuilder {
     private String content;
     private List<NamespaceRegistry> registries = new ArrayList<>();
     private String name;
+    private LifeCycle lifeCycle;
 
     private LanguageLoader languageLoader;
 
@@ -22,6 +24,7 @@ public class ScriptBuilder {
         languageLoader = Resolver.getInstance().resolve(LanguageLoader.class);
         language = languageLoader.findByName("lua");
         name = "main";
+        lifeCycle = LifeCycle.Instant;
     }
 
     public ScriptBuilder setLanguage(String language) {
@@ -53,12 +56,17 @@ public class ScriptBuilder {
         return this;
     }
 
+    public ScriptBuilder setLifeCycle(LifeCycle lifeCycle) {
+        this.lifeCycle = lifeCycle;
+        return this;
+    }
+
     public Script build() {
         if (path == null && content == null) {
             return null;
         }
 
-        return new ScriptImplementation(language, path, content, registries, name);
+        return new ScriptImplementation(language, path, content, registries, name, lifeCycle);
     }
 
     static class ScriptImplementation implements Script {
@@ -67,16 +75,16 @@ public class ScriptBuilder {
         String content;
         Collection<NamespaceRegistry> namespaceRegistries;
         private String name;
+        LifeCycle lifeCycle;
 
-        public ScriptImplementation(LanguageImplementation language, String path, String content, Collection<NamespaceRegistry> namespaceRegistries, String name) {
+        public ScriptImplementation(LanguageImplementation language, String path, String content, Collection<NamespaceRegistry> namespaceRegistries, String name, LifeCycle lifeCycle) {
             this.language = language;
             this.path = path;
             this.content = content;
             this.namespaceRegistries = namespaceRegistries;
             this.name = name;
+            this.lifeCycle = lifeCycle;
         }
-
-        public ScriptImplementation() {}
 
         @Override
         public String getFileSource() {

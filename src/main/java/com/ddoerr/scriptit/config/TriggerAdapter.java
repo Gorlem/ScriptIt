@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.triggers.KeybindingTrigger;
-import com.ddoerr.scriptit.triggers.ManualTrigger;
+import com.ddoerr.scriptit.triggers.EventTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.google.gson.*;
 
@@ -16,6 +16,6 @@ public class TriggerAdapter implements JsonDeserializer<Trigger> {
             return context.deserialize(json, KeybindingTrigger.class);
         }
 
-        return context.deserialize(json, ManualTrigger.class);
+        return context.deserialize(json, EventTrigger.class);
     }
 }

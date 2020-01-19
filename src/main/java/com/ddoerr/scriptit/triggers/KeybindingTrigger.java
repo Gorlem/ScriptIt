@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.triggers;
 
+import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import net.minecraft.client.options.KeyBinding;
 
 public class KeybindingTrigger implements Trigger {
@@ -16,6 +17,11 @@ public class KeybindingTrigger implements Trigger {
 
     @Override
     public void reset() { }
+
+    @Override
+    public NamespaceRegistry additionalRegistry() {
+        return null;
+    }
 
     public KeyBinding getKeyBinding() {
         return keyBinding;
