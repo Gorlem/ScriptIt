@@ -1,7 +1,6 @@
 package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
-import com.ddoerr.scriptit.triggers.EventTrigger;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;

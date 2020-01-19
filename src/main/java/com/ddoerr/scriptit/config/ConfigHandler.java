@@ -29,7 +29,6 @@ public class ConfigHandler implements ConfigCallback, Loadable {
 
         configContainer.bindings = scripts.getAll(Scripts.KEYBIND_CATEGORY);
         configContainer.elements = hudElementManager.getAll();
-        configContainer.events = scripts.getAll(Scripts.EVENT_CATEGORY);
 
         config.write(configContainer);
     }
@@ -44,12 +43,6 @@ public class ConfigHandler implements ConfigCallback, Loadable {
 
         for (HudElement element : configContainer.elements) {
             hudElementManager.add(element);
-        }
-
-        List<ScriptContainer> all = scripts.getAll(Scripts.EVENT_CATEGORY);
-        for (ScriptContainer eventBinding : configContainer.events) {
-            ScriptContainer any = all.stream().filter(event -> event.getName().equals(eventBinding.getName())).findAny().orElse(null);
-            any.setContent(eventBinding.getContent());
         }
 
         ConfigCallback.EVENT.register(this);

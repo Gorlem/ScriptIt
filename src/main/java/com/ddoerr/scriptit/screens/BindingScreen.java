@@ -1,11 +1,9 @@
 package com.ddoerr.scriptit.screens;
 
-import com.ddoerr.scriptit.ScriptContainer;
-import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.Scripts;
-import com.ddoerr.scriptit.api.util.KeyBindingHelper;
+import com.ddoerr.scriptit.*;
 import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.triggers.KeybindingTrigger;
+import com.ddoerr.scriptit.triggers.BusTrigger;
+import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;
 import com.ddoerr.scriptit.api.util.Color;
 import net.minecraft.client.MinecraftClient;
@@ -13,14 +11,10 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.Identifier;
-
-import java.util.UUID;
 
 public class BindingScreen extends Screen {
     public BindingScreen() {
@@ -39,7 +33,8 @@ public class BindingScreen extends Screen {
         children.add(keyBindingsListWidget);
 
         ButtonWidget addButton = new ButtonWidget(window.getScaledWidth() - 220, window.getScaledHeight() - 35, 200, 20, I18n.translate("scriptit:bindings.add"), (button) -> {
-            ScriptContainer scriptContainer = new ScriptContainer(new KeybindingTrigger(InputUtil.UNKNOWN_KEYCODE));
+            Trigger trigger = new BusTrigger(KeyBindingBus.class.getSimpleName(), InputUtil.UNKNOWN_KEYCODE.getName());
+            ScriptContainer scriptContainer = new ScriptContainer(trigger);
             Resolver.getInstance().resolve(Scripts.class).add(Scripts.KEYBIND_CATEGORY, scriptContainer);
 
 

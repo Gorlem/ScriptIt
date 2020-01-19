@@ -1,25 +1,38 @@
 package com.ddoerr.scriptit.triggers;
 
+import com.ddoerr.scriptit.Bus;
 import com.ddoerr.scriptit.EventBus;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.dependencies.Resolver;
 
-public class EventTrigger implements Trigger {
+import java.util.Collection;
+
+public class BusTrigger implements Trigger {
     boolean shouldActivate = false;
     NamespaceRegistry registry = null;
-    String name;
-    EventBus eventBus;
+    String id;
+    Bus<NamespaceRegistry> bus;
 
-    public EventTrigger(String name) {
-        this.name = name;
+    public BusTrigger(String busName, String id) {
+        this.id = id;
 
-        eventBus = Resolver.getInstance().resolve(EventBus.class);
-        eventBus.subscribe(name, this::activate);
+        Collection<Bus> buses = Resolver.getInstance().resolveAll(Bus.class);
+        bus = buses.stream().filter(b -> b.getClass().getSimpleName().equals(busName)).findAny().get();
+
+        bus.subscribe(this.id, this::activate);
     }
 
     public void activate(NamespaceRegistry registry) {
         shouldActivate = true;
         this.registry = registry;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getBusName() {
+        return bus.getClass().getSimpleName();
     }
 
     @Override
@@ -32,10 +45,6 @@ public class EventTrigger implements Trigger {
         shouldActivate = false;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Override
     public NamespaceRegistry additionalRegistry() {
         return registry;
@@ -43,6 +52,6 @@ public class EventTrigger implements Trigger {
 
     @Override
     public void close() {
-        eventBus.unsubscribe(name, this::activate);
+        bus.unsubscribe(id, this::activate);
     }
 }

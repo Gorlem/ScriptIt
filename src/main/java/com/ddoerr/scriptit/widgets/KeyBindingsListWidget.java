@@ -2,7 +2,6 @@ package com.ddoerr.scriptit.widgets;
 
 import com.ddoerr.scriptit.ScriptContainer;
 import com.ddoerr.scriptit.Scripts;
-import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import com.google.common.collect.ImmutableList;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import net.minecraft.client.MinecraftClient;

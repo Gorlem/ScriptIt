@@ -1,10 +1,6 @@
 package com.ddoerr.scriptit.api.util;
 
-import com.ddoerr.scriptit.ScriptContainer;
-import com.ddoerr.scriptit.Scripts;
-import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.mixin.KeyBindingAccessor;
-import com.ddoerr.scriptit.triggers.KeybindingTrigger;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;

@@ -53,7 +53,7 @@ public class EventBindingsListWidget extends ElementListWidget<EventBindingsList
             this.parent = parent;
             MinecraftClient minecraft = MinecraftClient.getInstance();
 
-            String eventTranslation = I18n.translate("scriptit:event." + event.getName());
+            String eventTranslation = I18n.translate("scriptit:event."/* + event.getName()*/);
             textFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, eventTranslation);
             textFieldWidget.setMaxLength(1000);
             textFieldWidget.setText(event.getContent());

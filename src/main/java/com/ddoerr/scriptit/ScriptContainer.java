@@ -17,7 +17,6 @@ public class ScriptContainer {
     private Trigger trigger;
     private String content = StringUtils.EMPTY;
     private Object lastResult;
-    private String name;
     private NamespaceRegistry namespaceRegistry;
 
     public ScriptContainer(Trigger trigger) {
@@ -51,14 +50,6 @@ public class ScriptContainer {
         return lastResult;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public void setNamespaceRegistry(NamespaceRegistry namespaceRegistry) {
         this.namespaceRegistry = namespaceRegistry;
     }
@@ -70,10 +61,6 @@ public class ScriptContainer {
     public Object run() {
         try {
             ScriptBuilder scriptBuilder = new ScriptBuilder().fromString(content);
-
-            if (!Strings.isNullOrEmpty(name)) {
-                scriptBuilder.setName(name);
-            }
 
             if (namespaceRegistry != null) {
                 scriptBuilder.withRegistry(namespaceRegistry);
@@ -99,14 +86,5 @@ public class ScriptContainer {
         }
 
         return lastResult;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof ScriptContainer)) {
-            return false;
-        }
-
-        return getName().equals(((ScriptContainer)obj).getName());
     }
 }
