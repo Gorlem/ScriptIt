@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
@@ -38,8 +39,7 @@ public class BindingScreen extends Screen {
         children.add(keyBindingsListWidget);
 
         ButtonWidget addButton = new ButtonWidget(window.getScaledWidth() - 220, window.getScaledHeight() - 35, 200, 20, I18n.translate("scriptit:bindings.add"), (button) -> {
-            KeyBinding keyBinding = KeyBindingHelper.create(new Identifier(ScriptItMod.MOD_NAME, UUID.randomUUID().toString()));
-            ScriptContainer scriptContainer = new ScriptContainer(new KeybindingTrigger(keyBinding));
+            ScriptContainer scriptContainer = new ScriptContainer(new KeybindingTrigger(InputUtil.UNKNOWN_KEYCODE));
             Resolver.getInstance().resolve(Scripts.class).add(Scripts.KEYBIND_CATEGORY, scriptContainer);
 
 

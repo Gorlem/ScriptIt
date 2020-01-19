@@ -23,17 +23,18 @@ public class KeyBindingHelper {
             }
         }
 
-        Scripts scriptBindings = Resolver.getInstance().resolve(Scripts.class);
-        for (ScriptContainer scriptBinding : scriptBindings.getAll(Scripts.KEYBIND_CATEGORY)) {
-            if (!(scriptBinding.getTrigger() instanceof  KeybindingTrigger)) {
-                continue;
-            }
-
-            KeyBinding otherKeyBinding = ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding();
-            if (otherKeyBinding != keyBinding && otherKeyBinding.equals(keyBinding)) {
-                return true;
-            }
-        }
+        // TODO: Fix keybinding conflic detection
+//        Scripts scriptBindings = Resolver.getInstance().resolve(Scripts.class);
+//        for (ScriptContainer scriptBinding : scriptBindings.getAll(Scripts.KEYBIND_CATEGORY)) {
+//            if (!(scriptBinding.getTrigger() instanceof  KeybindingTrigger)) {
+//                continue;
+//            }
+//
+//            KeyBinding otherKeyBinding = ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding();
+//            if (otherKeyBinding != keyBinding && otherKeyBinding.equals(keyBinding)) {
+//                return true;
+//            }
+//        }
 
         return false;
     }

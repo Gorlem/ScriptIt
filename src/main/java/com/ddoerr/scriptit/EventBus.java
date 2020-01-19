@@ -1,12 +1,15 @@
 package com.ddoerr.scriptit;
 
+import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+
 import java.util.*;
 import java.util.function.Consumer;
 
-public class EventBus {
-    Map<String, List<Consumer<Object>>> subscribers = new HashMap<>();
+public class EventBus implements Bus<NamespaceRegistry> {
+    Map<String, List<Consumer<NamespaceRegistry>>> subscribers = new HashMap<>();
 
-    public void subscribe(String id, Consumer<Object> consumer) {
+    @Override
+    public void subscribe(String id, Consumer<NamespaceRegistry> consumer) {
         if (subscribers.containsKey(id)) {
             subscribers.get(id).add(consumer);
         } else {
@@ -14,7 +17,8 @@ public class EventBus {
         }
     }
 
-    public void unsubscribe(String id, Consumer<Object> consumer) {
+    @Override
+    public void unsubscribe(String id, Consumer<NamespaceRegistry> consumer) {
         if (!subscribers.containsKey(id)) {
             return;
         }
@@ -22,12 +26,13 @@ public class EventBus {
         subscribers.get(id).remove(consumer);
     }
 
-    public void publish(String id, Object data) {
+    @Override
+    public void publish(String id, NamespaceRegistry data) {
         if (!subscribers.containsKey(id)) {
             return;
         }
 
-        for (Consumer<Object> consumer : subscribers.get(id)) {
+        for (Consumer<NamespaceRegistry> consumer : subscribers.get(id)) {
             consumer.accept(data);
         }
     }

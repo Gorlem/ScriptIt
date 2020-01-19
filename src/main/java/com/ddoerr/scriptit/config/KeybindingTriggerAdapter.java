@@ -14,20 +14,16 @@ public class KeybindingTriggerAdapter implements JsonSerializer<KeybindingTrigge
     public KeybindingTrigger deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
-        int keyCode = jsonObject.getAsJsonPrimitive("keyCode").getAsInt();
-        String id = jsonObject.getAsJsonPrimitive("id").getAsString();
+        String keyCode = jsonObject.getAsJsonPrimitive("keyCode").getAsString();
 
-        KeyBinding keyBinding = KeyBindingHelper.create(id, keyCode);
-
-        return new KeybindingTrigger(keyBinding);
+        return new KeybindingTrigger(InputUtil.fromName(keyCode));
     }
 
     @Override
     public JsonElement serialize(KeybindingTrigger src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject obj = new JsonObject();
 
-        obj.addProperty("id", src.getKeyBinding().getId());
-        obj.addProperty("keyCode", ((KeyCodeAccessor)src.getKeyBinding()).getKeyCode().getKeyCode());
+        obj.addProperty("keyCode", src.getName());
 
         return obj;
     }

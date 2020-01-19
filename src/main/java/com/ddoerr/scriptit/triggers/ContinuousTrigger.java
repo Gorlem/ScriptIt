@@ -37,4 +37,9 @@ public class ContinuousTrigger implements Trigger {
     public NamespaceRegistry additionalRegistry() {
         return null;
     }
+
+    @Override
+    public void close() {
+
+    }
 }

@@ -12,10 +12,14 @@ public class TriggerAdapter implements JsonDeserializer<Trigger> {
     public Trigger deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
-        if (jsonObject.has("keyCode") && jsonObject.has("id")) {
+        if (jsonObject.has("keyCode")) {
             return context.deserialize(json, KeybindingTrigger.class);
         }
 
-        return context.deserialize(json, EventTrigger.class);
+        if (jsonObject.has("event")) {
+            return context.deserialize(json, EventTrigger.class);
+        }
+
+        return null;
     }
 }

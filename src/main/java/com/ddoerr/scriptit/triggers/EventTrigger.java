@@ -17,9 +17,9 @@ public class EventTrigger implements Trigger {
         eventBus.subscribe(name, this::activate);
     }
 
-    public void activate(Object registry) {
+    public void activate(NamespaceRegistry registry) {
         shouldActivate = true;
-        this.registry = (NamespaceRegistry) registry;
+        this.registry = registry;
     }
 
     @Override
