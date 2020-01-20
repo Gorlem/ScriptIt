@@ -11,17 +11,15 @@ public class BusTriggerAdapter implements JsonSerializer<BusTrigger>, JsonDeseri
         JsonObject jsonObject = json.getAsJsonObject();
 
         String bus = jsonObject.getAsJsonPrimitive("bus").getAsString();
-        String id = jsonObject.getAsJsonPrimitive("id").getAsString();
 
-        return new BusTrigger(bus, id);
+        return new BusTrigger(bus);
     }
 
     @Override
     public JsonElement serialize(BusTrigger src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject obj = new JsonObject();
 
-        obj.addProperty("bud", src.getBusName());
-        obj.addProperty("id", src.getId());
+        obj.addProperty("bus", src.getId());
 
         return obj;
     }

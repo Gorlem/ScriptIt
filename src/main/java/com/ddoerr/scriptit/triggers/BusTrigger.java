@@ -11,28 +11,23 @@ public class BusTrigger implements Trigger {
     boolean shouldActivate = false;
     NamespaceRegistry registry = null;
     String id;
-    Bus<NamespaceRegistry> bus;
+    Bus<Object> bus;
 
-    public BusTrigger(String busName, String id) {
+    public BusTrigger(String id) {
         this.id = id;
 
-        Collection<Bus> buses = Resolver.getInstance().resolveAll(Bus.class);
-        bus = buses.stream().filter(b -> b.getClass().getSimpleName().equals(busName)).findAny().get();
+        bus = Resolver.getInstance().resolve(EventBus.class);
 
         bus.subscribe(this.id, this::activate);
     }
 
-    public void activate(NamespaceRegistry registry) {
+    public void activate(Object registry) {
         shouldActivate = true;
-        this.registry = registry;
+        this.registry = (NamespaceRegistry) registry;
     }
 
     public String getId() {
         return id;
-    }
-
-    public String getBusName() {
-        return bus.getClass().getSimpleName();
     }
 
     @Override
