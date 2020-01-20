@@ -12,18 +12,20 @@ import java.util.function.Consumer;
 
 public class KeyBindingBusExtension implements Tickable{
     EventBus eventBus;
-
-    Map<String, List<Consumer<Object>>> subscribers = new HashMap<>();
     Map<String, KeyBinding> keyBindings = new HashMap<>();
 
     public KeyBindingBusExtension() {
         eventBus = Resolver.getInstance().resolve(EventBus.class);
-        eventBus.subscribe("bus:new", this::newEvent);
+        eventBus.subscribe("bus:added", this::newEvent);
         eventBus.subscribe("bus:removed", this::removedEvent);
     }
 
     private void newEvent(Object idObject) {
         String id = (String) idObject;
+
+        if (!id.startsWith("key.")) {
+            return;
+        }
 
         int keyCode = InputUtil.fromName(id).getKeyCode();
         KeyBinding keyBinding = KeyBindingHelper.create(new Identifier(ScriptItMod.MOD_NAME, UUID.randomUUID().toString()), keyCode);
@@ -33,6 +35,10 @@ public class KeyBindingBusExtension implements Tickable{
 
     private void removedEvent(Object idObject) {
         String id = (String) idObject;
+
+        if (!id.startsWith("key.")) {
+            return;
+        }
 
         KeyBindingHelper.remove(keyBindings.get(id));
         keyBindings.remove(id);
