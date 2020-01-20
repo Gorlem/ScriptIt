@@ -39,7 +39,7 @@ public class ScriptItMod implements ClientModInitializer {
 		Resolver resolver = Resolver.getInstance();
 
 		resolver.add(new EventBus());
-		resolver.add(new KeyBindingBus());
+		resolver.add(new KeyBindingBusExtension());
 		resolver.add(new ThreadLifetimeManager());
 		resolver.add(new LibraryLoader());
 		resolver.add(new LanguageLoader());
