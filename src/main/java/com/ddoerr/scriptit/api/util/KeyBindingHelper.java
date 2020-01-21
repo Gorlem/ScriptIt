@@ -35,23 +35,23 @@ public class KeyBindingHelper {
         return false;
     }
 
-    public static KeyBinding create(Identifier identifier, int keyCode) {
+    public static KeyBinding create(Identifier identifier, InputUtil.KeyCode keyCode) {
         return FabricKeyBinding.Builder.create(
                 identifier,
-                InputUtil.Type.KEYSYM,
-                keyCode,
+                keyCode.getCategory(),
+                keyCode.getKeyCode(),
                 "Scripts"
         ).build();
     }
     public static KeyBinding create(Identifier identifier) {
-        return create(identifier, -1);
+        return create(identifier, InputUtil.UNKNOWN_KEYCODE);
     }
 
-    public static KeyBinding create(String id, int keyCode) {
+    public static KeyBinding create(String id, InputUtil.KeyCode keyCode) {
         return new KeyBinding(
                 id,
-                InputUtil.Type.KEYSYM,
-                keyCode,
+                keyCode.getCategory(),
+                keyCode.getKeyCode(),
                 "Scripts"
         );
     }

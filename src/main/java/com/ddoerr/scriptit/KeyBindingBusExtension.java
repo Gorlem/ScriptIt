@@ -27,7 +27,7 @@ public class KeyBindingBusExtension implements Tickable{
             return;
         }
 
-        int keyCode = InputUtil.fromName(id).getKeyCode();
+        InputUtil.KeyCode keyCode = InputUtil.fromName(id);
         KeyBinding keyBinding = KeyBindingHelper.create(new Identifier(ScriptItMod.MOD_NAME, UUID.randomUUID().toString()), keyCode);
 
         keyBindings.put(id, keyBinding);
