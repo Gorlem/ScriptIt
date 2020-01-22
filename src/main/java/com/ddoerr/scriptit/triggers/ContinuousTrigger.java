@@ -46,4 +46,9 @@ public class ContinuousTrigger implements Trigger {
     public Duration getDuration() {
         return duration;
     }
+
+    @Override
+    public String toString() {
+        return "every " + duration.toString();
+    }
 }

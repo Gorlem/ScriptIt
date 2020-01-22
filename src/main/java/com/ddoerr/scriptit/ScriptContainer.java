@@ -87,4 +87,9 @@ public class ScriptContainer {
 
         return lastResult;
     }
+
+    @Override
+    public String toString() {
+        return "on " + trigger.toString() + "; " + lifeCycle.toString() + "; " + content;
+    }
 }

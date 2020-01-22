@@ -73,10 +73,10 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
 
             textFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
             textFieldWidget.setMaxLength(1000);
-            textFieldWidget.setText(scriptBinding.getContent());
+            textFieldWidget.setText(scriptBinding.toString());
             textFieldWidget.method_1883(0);
             textFieldWidget.setChangedListener((text) -> {
-                scriptBinding.setContent(text);
+//                scriptBinding.setContent(text);
             });
 
             buttonWidget = new ButtonWidget(0, 0, 100, 20, I18n.translate("scriptit:bindings.remove"), (button) -> {

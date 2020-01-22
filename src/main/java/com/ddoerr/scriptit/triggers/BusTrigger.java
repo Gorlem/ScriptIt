@@ -49,4 +49,9 @@ public class BusTrigger implements Trigger {
     public void close() {
         bus.unsubscribe(id, this::activate);
     }
+
+    @Override
+    public String toString() {
+        return "bus: " + getId();
+    }
 }
