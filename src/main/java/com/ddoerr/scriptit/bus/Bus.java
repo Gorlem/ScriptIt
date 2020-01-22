@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit;
+package com.ddoerr.scriptit.bus;
 
 import java.util.function.Consumer;
 

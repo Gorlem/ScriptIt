@@ -1,6 +1,4 @@
-package com.ddoerr.scriptit;
-
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+package com.ddoerr.scriptit.bus;
 
 import java.util.*;
 import java.util.function.Consumer;

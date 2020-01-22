@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit;
+package com.ddoerr.scriptit.scripts;
 
 import com.ddoerr.scriptit.triggers.Trigger;
 import net.minecraft.util.Tickable;

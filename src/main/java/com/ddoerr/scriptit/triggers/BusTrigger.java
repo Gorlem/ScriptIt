@@ -1,11 +1,9 @@
 package com.ddoerr.scriptit.triggers;
 
-import com.ddoerr.scriptit.Bus;
-import com.ddoerr.scriptit.EventBus;
+import com.ddoerr.scriptit.bus.Bus;
+import com.ddoerr.scriptit.bus.EventBus;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.dependencies.Resolver;
-
-import java.util.Collection;
 
 public class BusTrigger implements Trigger {
     boolean shouldActivate = false;

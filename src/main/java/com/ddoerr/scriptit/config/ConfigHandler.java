@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.ScriptContainer;
-import com.ddoerr.scriptit.Scripts;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.api.util.Debouncer;
 import com.ddoerr.scriptit.api.hud.HudElement;
@@ -10,7 +10,6 @@ import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 
 import java.time.Duration;
-import java.util.List;
 
 public class ConfigHandler implements ConfigCallback, Loadable {
     private Config config = new Config();

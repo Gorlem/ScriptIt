@@ -1,13 +1,11 @@
-package com.ddoerr.scriptit;
+package com.ddoerr.scriptit.scripts;
 
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
 import com.ddoerr.scriptit.triggers.Trigger;
-import com.google.common.base.Strings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import org.apache.commons.lang3.StringUtils;

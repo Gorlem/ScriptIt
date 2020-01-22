@@ -1,6 +1,8 @@
 package com.ddoerr.scriptit;
 
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.bus.EventBus;
+import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.dependencies.Resolver;
@@ -10,6 +12,7 @@ import com.ddoerr.scriptit.loader.LanguageLoader;
 import com.ddoerr.scriptit.loader.LibraryLoader;
 import com.ddoerr.scriptit.screens.BindingScreen;
 import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
+import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
 import com.ddoerr.scriptit.widgets.EventBindingsListWidget;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;

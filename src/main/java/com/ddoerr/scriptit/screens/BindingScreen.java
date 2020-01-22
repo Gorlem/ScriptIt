@@ -1,7 +1,8 @@
 package com.ddoerr.scriptit.screens;
 
-import com.ddoerr.scriptit.*;
 import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;

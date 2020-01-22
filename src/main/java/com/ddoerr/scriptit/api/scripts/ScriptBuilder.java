@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.api.scripts;
 
-import com.ddoerr.scriptit.LifeCycle;
+import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.dependencies.Resolver;

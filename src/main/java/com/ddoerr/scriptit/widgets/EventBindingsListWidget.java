@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.widgets;
 
-import com.ddoerr.scriptit.ScriptContainer;
-import com.ddoerr.scriptit.Scripts;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.scripts.Scripts;
 import com.google.common.collect.ImmutableList;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.dependencies.Resolver;
