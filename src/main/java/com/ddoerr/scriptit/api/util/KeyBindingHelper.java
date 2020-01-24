@@ -1,5 +1,7 @@
 package com.ddoerr.scriptit.api.util;
 
+import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
+import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.mixin.KeyBindingAccessor;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.minecraft.client.MinecraftClient;
@@ -19,18 +21,12 @@ public class KeyBindingHelper {
             }
         }
 
-        // TODO: Fix keybinding conflic detection
-//        Scripts scriptBindings = Resolver.getInstance().resolve(Scripts.class);
-//        for (ScriptContainer scriptBinding : scriptBindings.getAll(Scripts.KEYBIND_CATEGORY)) {
-//            if (!(scriptBinding.getTrigger() instanceof  KeybindingTrigger)) {
-//                continue;
-//            }
-//
-//            KeyBinding otherKeyBinding = ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding();
-//            if (otherKeyBinding != keyBinding && otherKeyBinding.equals(keyBinding)) {
-//                return true;
-//            }
-//        }
+        KeyBindingBusExtension keyBindingBusExtension = Resolver.getInstance().resolve(KeyBindingBusExtension.class);
+        for (KeyBinding otherKeyBinding : keyBindingBusExtension.getKeyBindings()) {
+            if (otherKeyBinding != keyBinding && otherKeyBinding.equals(keyBinding)) {
+                return true;
+            }
+        }
 
         return false;
     }

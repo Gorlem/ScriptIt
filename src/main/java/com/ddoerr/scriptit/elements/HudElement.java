@@ -15,10 +15,11 @@ import com.ddoerr.scriptit.screens.WidgetOptionsPopup;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.Window;
 import net.minecraft.util.Tickable;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,28 +30,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AbstractHudElement extends DrawableHelper implements HudElement, Tickable {
+public class HudElement extends DrawableHelper implements Tickable, Element, Drawable {
 
     public static final int DEFAULT_PADDING = 2;
     public static final int HOTBAR_WIDTH = 182;
     public static final int HOTBAR_HEIGHT = 24;
 
+    public static final String BINDING = "binding";
+    public static final String FORE_COLOR = "fore-color";
+    public static final String BACK_COLOR = "back-color";
+    public static final String HORIZONTAL_ANCHOR = "horizontal-anchor";
+    public static final String VERTICAL_ANCHOR = "vertical-anchor";
+
     static Map<InputUtil.KeyCode, Point> movementKeys = new HashMap<>();
     static List<InputUtil.KeyCode> removalKeys = new ArrayList<>();
-
-    double xDifference = 0;
-    double yDifference = 0;
-
-    Instant lastTimeClicked = Instant.now();
-    Duration durationBetweenClicks = Duration.ofMillis(200);
-
-    Map<String, Object> options = new HashMap<>();
-    Window window;
-    String lastResult = StringUtils.EMPTY;
-    HudElementProvider provider;
-
-    Rectangle rectangle;
-    ScriptContainer scriptContainer;
 
     static {
         movementKeys.put(InputUtil.fromName("key.keyboard.up"), new Point(0, -1));
@@ -62,51 +55,59 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
         removalKeys.add(InputUtil.fromName("key.keyboard.delete"));
     }
 
-    public AbstractHudElement(HudElementProvider provider, double xPosition, double yPosition) {
+    double xDifference = 0;
+    double yDifference = 0;
+
+    Instant lastTimeClicked = Instant.now();
+    Duration durationBetweenClicks = Duration.ofMillis(200);
+
+    Map<String, Object> options = new HashMap<>();
+    HudElementProvider provider;
+    ScriptContainer scriptContainer;
+
+    int width = 0;
+    int height = 0;
+
+    HudHorizontalAnchor horizontalAnchor = HudHorizontalAnchor.LEFT;
+    HudVerticalAnchor verticalAnchor = HudVerticalAnchor.TOP;
+
+
+    public HudElement(HudElementProvider provider, double xPosition, double yPosition) {
         scriptContainer = new ScriptContainer(new ContinuousTrigger());
 
-        window = MinecraftClient.getInstance().window;
         this.provider = provider;
 
-        initOptions();
+        provider.setDefaults(this);
         setRealPosition(new Point(xPosition, yPosition));
     }
 
-    @Override
-    public int getWidth() {
-        if (rectangle == null) {
-            return 0;
-        }
-
-        return rectangle.getWidth();
+    public void setAnchor(HudHorizontalAnchor horizontalAnchor, HudVerticalAnchor verticalAnchor) {
+        this.horizontalAnchor = horizontalAnchor;
+        this.verticalAnchor = verticalAnchor;
     }
 
-    @Override
-    public int getHeight() {
-        if (rectangle == null) {
-            return 0;
-        }
-
-        return rectangle.getHeight();
+    public HudVerticalAnchor getVerticalAnchor() {
+        return verticalAnchor;
     }
 
-    @Override
+    public HudHorizontalAnchor getHorizontalAnchor() {
+        return horizontalAnchor;
+    }
+
     public void setRealPosition(Point position) {
-        xDifference = position.getX() - this.<HudAnchor>getOption(HORIZONTAL_ANCHOR).getBaseValue();
-        yDifference = position.getY() - this.<HudAnchor>getOption(VERTICAL_ANCHOR).getBaseValue();
+        xDifference = position.getX() - horizontalAnchor.getBaseValue();
+        yDifference = position.getY() - verticalAnchor.getBaseValue();
 
         ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
     }
 
-    @Override
     public Point getRealPosition() {
         return new Point(
-                this.<HudAnchor>getOption(HORIZONTAL_ANCHOR).getBaseValue() + xDifference,
-                this.<HudAnchor>getOption(VERTICAL_ANCHOR).getBaseValue() + yDifference
+                horizontalAnchor.getBaseValue() + xDifference,
+                verticalAnchor.getBaseValue() + yDifference
         );
     }
 
-    @Override
     public void setRelativePosition(Point position) {
         xDifference = position.getX();
         yDifference = position.getY();
@@ -114,48 +115,25 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
         ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
     }
 
-    @Override
     public Point getRelativePosition() {
         return new Point(xDifference, yDifference);
     }
 
-    @Override
     public void setOption(String key, Object value) {
-        if (key.equals("binding")) {
-            scriptContainer.setContent(value.toString());
-        }
-
         options.put(key, value);
         ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
     }
 
-    @Override
-    public <T> T getOption(String key) {
-        if (key.equals("binding")) {
-            return (T) scriptContainer.getContent();
-        }
-
-        return (T)options.getOrDefault(key, null);
+    public Object getOption(String key) {
+        return options.getOrDefault(key, null);
     }
 
-    @Override
     public Map<String, Object> getOptions() {
         return options;
     }
 
-    @Override
     public HudElementProvider getProvider() {
         return provider;
-    }
-
-    void initOptions() {
-        setOption(BINDING, "return \"Hud Element\"");
-        setOption(FORE_COLOR, "WHITE");
-        setOption(BACK_COLOR, "BLACK 50%");
-        setOption(HORIZONTAL_ANCHOR, HudHorizontalAnchor.LEFT);
-        setOption(VERTICAL_ANCHOR, HudVerticalAnchor.TOP);
-
-        options.putAll(provider.defaultOptions());
     }
 
     private void move(double xDelta, double yDelta) {
@@ -166,7 +144,7 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
     @Override
     public boolean isMouseOver(double x, double y) {
         Point point = getRealPosition();
-        return x >= point.getX() && x <= point.getX() + getWidth() && y >= point.getY() && y <= point.getY() + getHeight();
+        return x >= point.getX() && x <= point.getX() + width && y >= point.getY() && y <= point.getY() + height;
     }
 
     @Override
@@ -234,7 +212,9 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
 
     @Override
     public void render(int var1, int var2, float var3) {
-        rectangle = provider.render(getRealPosition(), this);
+        Rectangle rectangle = provider.render(getRealPosition(), this);
+        width = rectangle.getWidth();
+        height = rectangle.getHeight();
 
         Screen screen = MinecraftClient.getInstance().currentScreen;
         if (!(screen instanceof WidgetDesignerScreen)) {
@@ -245,21 +225,21 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
         int x = (int) point.getX();
         int y = (int) point.getY();
 
-        switch (this.<HudVerticalAnchor>getOption(VERTICAL_ANCHOR)) {
+        switch (verticalAnchor) {
             case MIDDLE:
-                y += getHeight() / 2;
+                y += height / 2;
                 break;
             case BOTTOM:
-                y += getHeight() - 1;
+                y += height - 1;
                 break;
         }
 
-        switch (this.<HudHorizontalAnchor>getOption(HORIZONTAL_ANCHOR)) {
+        switch (horizontalAnchor) {
             case CENTER:
-                x += getWidth() / 2;
+                x += width / 2;
                 break;
             case RIGHT:
-                x+= getWidth() - 1;
+                x += width - 1;
                 break;
         }
 
@@ -274,12 +254,9 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
             return;
 
         scriptContainer.runIfPossible();
-        lastResult = scriptContainer.getLastResult().toString();
-        setOption("result", lastResult);
     }
 
-    protected Color parseColorFromOption(String option) {
-        String value = getOption(option);
+    public static Color parseAndRun(String value) {
         Color color = Color.parse(value);
 
         if (color != null)

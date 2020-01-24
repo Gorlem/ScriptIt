@@ -14,7 +14,6 @@ import com.ddoerr.scriptit.screens.BindingScreen;
 import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
-import com.ddoerr.scriptit.widgets.EventBindingsListWidget;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.elements.HudElementManager;
@@ -92,7 +91,7 @@ public class ScriptItMod implements ClientModInitializer {
 		});
 
 		RenderHotbarCallback.SHOULD_RENDER.register(() -> minecraft.currentScreen instanceof WidgetDesignerScreen ? ActionResult.FAIL : ActionResult.PASS);
-		RenderEntryListBackgroundCallback.SHOULD_RENDER.register((widget) -> widget instanceof KeyBindingsListWidget || widget instanceof EventBindingsListWidget ? ActionResult.FAIL : ActionResult.PASS);
+		RenderEntryListBackgroundCallback.SHOULD_RENDER.register((widget) -> widget instanceof KeyBindingsListWidget ? ActionResult.FAIL : ActionResult.PASS);
 
 		HudElementManager hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
 		RenderInGameHudCallback.EVENT.register(hudElementManager::renderAll);

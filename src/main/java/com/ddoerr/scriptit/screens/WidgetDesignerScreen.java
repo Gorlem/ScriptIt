@@ -1,10 +1,9 @@
 package com.ddoerr.scriptit.screens;
 
-import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.elements.AbstractHudElement;
 import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.widgets.DropDownButtonWidget;
@@ -21,7 +20,7 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
     private Rectangle hotbar;
     private DropDownButtonWidget addButton;
 
-    private HudElementProvider hudElementFactory = null;
+    private HudElementProvider hudElementProvider = null;
     private HudElementManager hudElementManager;
     private HudElementLoader hudElementLoader;
 
@@ -41,18 +40,18 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
 
         Window window = MinecraftClient.getInstance().window;
         hotbar = Rectangle.centerHorizontal(
-                window.getScaledWidth(), window.getScaledHeight() - AbstractHudElement.HOTBAR_HEIGHT,
-                AbstractHudElement.HOTBAR_WIDTH, AbstractHudElement.HOTBAR_HEIGHT);
+                window.getScaledWidth(), window.getScaledHeight() - HudElement.HOTBAR_HEIGHT,
+                HudElement.HOTBAR_WIDTH, HudElement.HOTBAR_HEIGHT);
 
         this.addButton(addButton = new DropDownButtonWidget(
                 hotbar.getMinX(), hotbar.getMinY() + 1,
                 hotbar.getWidth(), 20,
                 I18n.translate("scriptit:hud.add")));
 
-        Map<String, HudElementProvider> factories = hudElementLoader.getProviders();
+        Map<String, HudElementProvider> providers = hudElementLoader.getProviders();
 
-        List<DropDownButtonWidget.Option> options = factories.entrySet().stream()
-                .map(factory -> new DropDownButtonWidget.Option(I18n.translate("scriptit:hud.add." + factory.getKey()), option -> hudElementFactory = factory.getValue()))
+        List<DropDownButtonWidget.Option> options = providers.entrySet().stream()
+                .map(provider -> new DropDownButtonWidget.Option(I18n.translate("scriptit:hud.add." + provider.getKey()), option -> hudElementProvider = provider.getValue()))
                 .collect(Collectors.toList());
         addButton.setOptions(options);
     }
@@ -75,19 +74,19 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
         if (result)
             return true;
 
-        if (hudElementFactory == null)
+        if (hudElementProvider == null)
             return false;
 
-        HudElement hudElement = new AbstractHudElement(hudElementFactory, x, y);
+        HudElement hudElement = new HudElement(hudElementProvider, x, y);
 
         hudElementManager.add(hudElement);
         children.add(hudElement);
 
-        if (hudElement instanceof AbstractHudElement) {
-            ((AbstractHudElement) hudElement).openPopup();
+        if (hudElement instanceof HudElement) {
+            ((HudElement) hudElement).openPopup();
         }
 
-        hudElementFactory = null;
+        hudElementProvider = null;
         return true;
     }
 }

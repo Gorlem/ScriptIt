@@ -2,7 +2,7 @@ package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;

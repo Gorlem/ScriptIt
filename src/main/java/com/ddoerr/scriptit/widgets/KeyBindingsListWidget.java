@@ -21,7 +21,7 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
     public KeyBindingsListWidget(MinecraftClient minecraft, int width, int height, int top, int bottom, int entryHeight) {
         super(minecraft, width, height, top, bottom, entryHeight);
 
-        for (ScriptContainer scriptBinding : Resolver.getInstance().resolve(Scripts.class).getAll(Scripts.KEYBIND_CATEGORY)) {
+        for (ScriptContainer scriptBinding : Resolver.getInstance().resolve(Scripts.class).getAll()) {
             addEntry(scriptBinding);
         }
     }
@@ -92,7 +92,7 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
             textFieldWidget.method_1883(0);
 
             removeWidget = new ButtonWidget(0, 0, 50, 20, I18n.translate("scriptit:bindings.remove"), (button) -> {
-                Resolver.getInstance().resolve(Scripts.class).remove(Scripts.KEYBIND_CATEGORY, scriptBinding);
+                Resolver.getInstance().resolve(Scripts.class).remove(scriptBinding);
                 scriptBinding.getTrigger().close();
                 parent.removeEntry(scriptBinding);
             });

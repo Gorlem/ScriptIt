@@ -6,44 +6,24 @@ import net.minecraft.util.Tickable;
 import java.util.*;
 
 public class Scripts implements Tickable {
-    public static final String KEYBIND_CATEGORY = "keybind";
-    public static final String EVENT_CATEGORY = "event";
-    public static final String ELEMENT_CATEGORY = "element";
+    private List<ScriptContainer> scripts = new ArrayList<>();
 
-
-    private Map<String, List<ScriptContainer>> scripts = new HashMap<>();
-
-    public void add(String category, ScriptContainer scriptContainer) {
-        if (scripts.containsKey(category)) {
-            scripts.get(category).add(scriptContainer);
-        } else {
-            scripts.put(category, new ArrayList<>(Collections.singletonList(scriptContainer)));
-        }
+    public void add(ScriptContainer scriptContainer) {
+        scripts.add(scriptContainer);
     }
 
-    public List<ScriptContainer> getAll(String category) {
-        if (!scripts.containsKey(category)) {
-            return Collections.emptyList();
-        }
-
-        return scripts.get(category);
+    public List<ScriptContainer> getAll() {
+        return scripts;
     }
 
-    public void remove(String category, ScriptContainer scriptContainer) {
-        scripts.get(category).remove(scriptContainer);
+    public void remove(ScriptContainer scriptContainer) {
+        scripts.remove(scriptContainer);
     }
 
     @Override
     public void tick() {
-        for (List<ScriptContainer> category : scripts.values()) {
-            for (ScriptContainer script : category) {
-                Trigger trigger = script.getTrigger();
-                if (trigger.canRun()) {
-                    script.setNamespaceRegistry(trigger.additionalRegistry());
-                    script.run();
-                    trigger.reset();
-                }
-            }
+        for (ScriptContainer script : scripts) {
+            script.runIfPossible();
         }
     }
 }

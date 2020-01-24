@@ -36,7 +36,7 @@ public class BindingScreen extends Screen {
         ButtonWidget addButton = new ButtonWidget(window.getScaledWidth() - 220, window.getScaledHeight() - 35, 200, 20, I18n.translate("scriptit:bindings.add"), (button) -> {
             Trigger trigger = new BusTrigger(InputUtil.UNKNOWN_KEYCODE.getName());
             ScriptContainer scriptContainer = new ScriptContainer(trigger);
-            Resolver.getInstance().resolve(Scripts.class).add(Scripts.KEYBIND_CATEGORY, scriptContainer);
+            Resolver.getInstance().resolve(Scripts.class).add(scriptContainer);
 
             keyBindingsListWidget.addEntry(scriptContainer);
         });
@@ -46,11 +46,6 @@ public class BindingScreen extends Screen {
             MinecraftClient.getInstance().openScreen(new WidgetDesignerScreen());
         });
         children.add(designerButton);
-
-        ButtonWidget eventButton = new ButtonWidget(20, window.getScaledHeight() - 24, 150, 20, "Events Screen", (button) -> {
-            MinecraftClient.getInstance().openScreen(new EventsScreen());
-        });
-        children.add(eventButton);
     }
 
     @Override

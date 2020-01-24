@@ -13,9 +13,7 @@ public class BusTrigger implements Trigger {
 
     public BusTrigger(String id) {
         this.id = id;
-
         bus = Resolver.getInstance().resolve(EventBus.class);
-
         bus.subscribe(this.id, this::activate);
     }
 
