@@ -98,6 +98,17 @@ public class ScriptContainer {
         return lastResult;
     }
 
+    public Object runIfPossible() {
+        if (trigger.canRun()) {
+            setNamespaceRegistry(trigger.additionalRegistry());
+            Object result = run();
+            trigger.reset();
+            return result;
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return "on " + trigger.toString() + "; " + lifeCycle.toString() + "; " + content;

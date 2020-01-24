@@ -1,7 +1,9 @@
 package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.api.hud.*;
+import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.elements.AbstractHudElement;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.google.gson.*;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.dependencies.Resolver;
@@ -26,6 +28,7 @@ public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeseri
         json.addProperty("type", hudElementLoader.getName(src.getProvider()));
         json.add("relative", context.serialize(src.getRelativePosition()));
         json.add("options",  context.serialize(src.getOptions()));
+        json.add("script", context.serialize(((AbstractHudElement)src).getScriptContainer()));
 
         return json;
     }
@@ -36,6 +39,7 @@ public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeseri
 
         String type = jsonObject.getAsJsonPrimitive("type").getAsString();
         Point point = context.deserialize(jsonObject.get("relative"), Point.class);
+        ScriptContainer scriptContainer = context.deserialize(jsonObject.get("script"), ScriptContainer.class);
 
         Map<String, Object> options = new HashMap<>();
 
@@ -60,6 +64,8 @@ public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeseri
         for (Map.Entry<String, Object> entry : options.entrySet()) {
             hudElement.setOption(entry.getKey(), entry.getValue());
         }
+
+        hudElement.setOption("binding", scriptContainer.getContent());
 
         return hudElement;
     }

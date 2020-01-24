@@ -12,6 +12,8 @@ import com.ddoerr.scriptit.screens.Popup;
 import com.ddoerr.scriptit.screens.ScreenWithPopup;
 import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
 import com.ddoerr.scriptit.screens.WidgetOptionsPopup;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
@@ -48,6 +50,7 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
     HudElementProvider provider;
 
     Rectangle rectangle;
+    ScriptContainer scriptContainer;
 
     static {
         movementKeys.put(InputUtil.fromName("key.keyboard.up"), new Point(0, -1));
@@ -60,6 +63,8 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
     }
 
     public AbstractHudElement(HudElementProvider provider, double xPosition, double yPosition) {
+        scriptContainer = new ScriptContainer(new ContinuousTrigger());
+
         window = MinecraftClient.getInstance().window;
         this.provider = provider;
 
@@ -116,12 +121,20 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
 
     @Override
     public void setOption(String key, Object value) {
+        if (key.equals("binding")) {
+            scriptContainer.setContent(value.toString());
+        }
+
         options.put(key, value);
         ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
     }
 
     @Override
     public <T> T getOption(String key) {
+        if (key.equals("binding")) {
+            return (T) scriptContainer.getContent();
+        }
+
         return (T)options.getOrDefault(key, null);
     }
 
@@ -260,15 +273,9 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
         if (minecraft.player == null || minecraft.world == null)
             return;
 
-        String binding = this.getOption(BINDING);
-
-        try {
-            Script script = new ScriptBuilder().fromString(binding).build();
-            lastResult = script.runInstantly().toString();
-            setOption("result", lastResult);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        scriptContainer.runIfPossible();
+        lastResult = scriptContainer.getLastResult().toString();
+        setOption("result", lastResult);
     }
 
     protected Color parseColorFromOption(String option) {
@@ -288,5 +295,9 @@ public class AbstractHudElement extends DrawableHelper implements HudElement, Ti
         }
 
         return null;
+    }
+
+    public ScriptContainer getScriptContainer() {
+        return scriptContainer;
     }
 }
