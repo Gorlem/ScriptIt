@@ -36,6 +36,14 @@ public class ScriptContainer {
         return trigger;
     }
 
+    public void setTrigger(Trigger trigger) {
+        if (this.trigger != null) {
+            trigger.close();
+        }
+
+        this.trigger = trigger;
+    }
+
     public String getContent() {
         return content;
     }
@@ -54,6 +62,10 @@ public class ScriptContainer {
 
     public LifeCycle getLifeCycle() {
         return lifeCycle;
+    }
+
+    public void setLifeCycle(LifeCycle lifeCycle) {
+        this.lifeCycle = lifeCycle;
     }
 
     public Object run() {

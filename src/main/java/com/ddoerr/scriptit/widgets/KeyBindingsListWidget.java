@@ -1,7 +1,9 @@
 package com.ddoerr.scriptit.widgets;
 
+import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.Scripts;
+import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.google.common.collect.ImmutableList;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import net.minecraft.client.MinecraftClient;
@@ -58,8 +60,11 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
         ScriptContainer scriptBinding;
 
 //        KeyBindingButtonWidget keyBindingButtonWidget;
+        TextFieldWidget busFieldWidget;
+        TextFieldWidget lifeCycleFieldWidget;
         TextFieldWidget textFieldWidget;
-        ButtonWidget buttonWidget;
+        ButtonWidget removeWidget;
+        ButtonWidget saveWidget;
 
         KeyBindingsListWidget parent;
 
@@ -71,23 +76,37 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
 
 //            keyBindingButtonWidget = new KeyBindingButtonWidget( 0, 0, 75, 20, ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding());
 
+            busFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
+            busFieldWidget.setMaxLength(1000);
+            busFieldWidget.setText(((BusTrigger)scriptBinding.getTrigger()).getId());
+            busFieldWidget.method_1883(0);
+
+            lifeCycleFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
+            lifeCycleFieldWidget.setMaxLength(1000);
+            lifeCycleFieldWidget.setText(scriptBinding.getLifeCycle().toString());
+            lifeCycleFieldWidget.method_1883(0);
+
             textFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
             textFieldWidget.setMaxLength(1000);
-            textFieldWidget.setText(scriptBinding.toString());
+            textFieldWidget.setText(scriptBinding.getContent());
             textFieldWidget.method_1883(0);
-            textFieldWidget.setChangedListener((text) -> {
-//                scriptBinding.setContent(text);
+
+            removeWidget = new ButtonWidget(0, 0, 50, 20, I18n.translate("scriptit:bindings.remove"), (button) -> {
+                Resolver.getInstance().resolve(Scripts.class).remove(Scripts.KEYBIND_CATEGORY, scriptBinding);
+                scriptBinding.getTrigger().close();
+                parent.removeEntry(scriptBinding);
             });
 
-            buttonWidget = new ButtonWidget(0, 0, 100, 20, I18n.translate("scriptit:bindings.remove"), (button) -> {
-                Resolver.getInstance().resolve(Scripts.class).remove(Scripts.KEYBIND_CATEGORY, scriptBinding);
-                parent.removeEntry(scriptBinding);
+            saveWidget = new ButtonWidget(0, 0, 50, 20, "Save", (button) -> {
+                scriptBinding.setTrigger(new BusTrigger(busFieldWidget.getText()));
+                scriptBinding.setLifeCycle(LifeCycle.valueOf(lifeCycleFieldWidget.getText()));
+                scriptBinding.setContent(textFieldWidget.getText());
             });
         }
 
         @Override
         public List<? extends Element> children() {
-            return ImmutableList.of(/*keyBindingButtonWidget, */textFieldWidget, buttonWidget);
+            return ImmutableList.of(busFieldWidget, lifeCycleFieldWidget, textFieldWidget, removeWidget, saveWidget);
         }
 
         @Override
@@ -95,12 +114,23 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
 //            keyBindingButtonWidget.x = x + 5;
 //            keyBindingButtonWidget.y = y + 2;
 
-            textFieldWidget.x = x + 85;
-            textFieldWidget.y = y + 2;
-            textFieldWidget.setWidth(width - 195);
+            busFieldWidget.x = x + 5;
+            busFieldWidget.y = y + 2;
+            busFieldWidget.setWidth(50);
 
-            buttonWidget.x = x + width - 105;
-            buttonWidget.y = y + 2;
+            lifeCycleFieldWidget.x = x + 60;
+            lifeCycleFieldWidget.y = y + 2;
+            lifeCycleFieldWidget.setWidth(50);
+
+            textFieldWidget.x = x + 115;
+            textFieldWidget.y = y + 2;
+            textFieldWidget.setWidth(width - 230);
+
+            removeWidget.x = x + width - 105;
+            removeWidget.y = y + 2;
+
+            saveWidget.x = x + width - 55;
+            saveWidget.y = y + 2;
 
             for (Element element : children()) {
                 if (element instanceof Drawable) {
