@@ -1,5 +1,10 @@
 package com.ddoerr.scriptit.elements;
 
+import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.api.hud.HudElementInitializer;
+import com.ddoerr.scriptit.api.hud.HudElementProvider;
+import com.ddoerr.scriptit.api.hud.HudElementRegistry;
+import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.screens.Popup;
 import com.ddoerr.scriptit.screens.WidgetOptionsPopup;
 import com.ddoerr.scriptit.api.util.Color;
@@ -10,51 +15,44 @@ import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-public class IconHudElement extends AbstractHudElement {
-    public IconHudElement(double xPosition, double yPosition) {
-        super(xPosition, yPosition);
+import java.util.HashMap;
+import java.util.Map;
+
+import static net.minecraft.client.gui.DrawableHelper.fill;
+
+public class IconHudElement implements HudElementInitializer, HudElementProvider {
+
+    @Override
+    public void onInitialize(HudElementRegistry registry) {
+        registry.registerHudElement("Icon", this);
     }
 
     @Override
-    public int getWidth() {
-        return 16 + 2 * DEFAULT_PADDING;
-    }
+    public Rectangle render(Point origin, HudElement hudElement) {
+        Rectangle rectangle = new Rectangle((int) origin.getX(), (int) origin.getY(), 20, 20);
 
-    @Override
-    public int getHeight() {
-        return 16 + 2 * DEFAULT_PADDING;
-    }
-
-    @Override
-    void initOptions() {
-        super.initOptions();
-
-        setOption(BINDING, "return \"grass_block\"");
-    }
-
-    @Override
-    Popup getOptionsPopup() {
-        return new WidgetOptionsPopup(this);
-    }
-
-    @Override
-    public void render(int var1, int var2, float var3) {
-        Point point = getRealPosition();
-        double xPosition = point.getX();
-        double yPosition = point.getY();
-
-        Color backColor = parseColorFromOption(BACK_COLOR);
+        // TODO: parse color also as a script
+        Color backColor = Color.parse(hudElement.getOption("back-color").toString());
         if (backColor != null) {
-            fill((int)xPosition, (int)yPosition, (int)xPosition + getWidth(), (int)yPosition + getHeight(), backColor.getValue());
+            fill(rectangle.getMinX(), rectangle.getMinY(), rectangle.getMaxX(), rectangle.getMaxY(), backColor.getValue());
         }
 
         try {
-            Item item = Registry.ITEM.get(new Identifier(lastResult));
+            Item item = Registry.ITEM.get(new Identifier(hudElement.getOption("result").toString()));
             GuiLighting.enableForItems();
-            MinecraftClient.getInstance().getItemRenderer().renderGuiItemIcon(item.getStackForRender(), (int)xPosition + DEFAULT_PADDING, (int)yPosition + DEFAULT_PADDING);
+            MinecraftClient.getInstance().getItemRenderer().renderGuiItemIcon(item.getStackForRender(), rectangle.getMinX() + 2, rectangle.getMinY() + 2);
         }
         catch (Exception e) { }
 
-        super.render(var1, var2, var3);
+        return rectangle;
+    }
+
+    @Override
+    public Map<String, Object> defaultOptions() {
+        HashMap<String, Object> options = new HashMap<>();
+
+        options.put("binding", "return \"grass_block\"");
+
+        return options;
     }
 }

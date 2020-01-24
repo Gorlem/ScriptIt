@@ -1,18 +1,17 @@
 package com.ddoerr.scriptit.elements;
 
-import com.ddoerr.scriptit.api.hud.HudAnchor;
-import com.ddoerr.scriptit.api.hud.HudElement;
-import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
-import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
+import com.ddoerr.scriptit.api.hud.*;
 import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
+import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.screens.Popup;
 import com.ddoerr.scriptit.screens.ScreenWithPopup;
 import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
+import com.ddoerr.scriptit.screens.WidgetOptionsPopup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractHudElement extends DrawableHelper implements HudElement, Tickable {
+public class AbstractHudElement extends DrawableHelper implements HudElement, Tickable {
 
     public static final int DEFAULT_PADDING = 2;
     public static final int HOTBAR_WIDTH = 182;
@@ -46,6 +45,9 @@ public abstract class AbstractHudElement extends DrawableHelper implements HudEl
     Map<String, Object> options = new HashMap<>();
     Window window;
     String lastResult = StringUtils.EMPTY;
+    HudElementProvider provider;
+
+    Rectangle rectangle;
 
     static {
         movementKeys.put(InputUtil.fromName("key.keyboard.up"), new Point(0, -1));
@@ -57,14 +59,31 @@ public abstract class AbstractHudElement extends DrawableHelper implements HudEl
         removalKeys.add(InputUtil.fromName("key.keyboard.delete"));
     }
 
-    public AbstractHudElement(double xPosition, double yPosition) {
+    public AbstractHudElement(HudElementProvider provider, double xPosition, double yPosition) {
         window = MinecraftClient.getInstance().window;
+        this.provider = provider;
 
         initOptions();
         setRealPosition(new Point(xPosition, yPosition));
     }
 
-    abstract Popup getOptionsPopup();
+    @Override
+    public int getWidth() {
+        if (rectangle == null) {
+            return 0;
+        }
+
+        return rectangle.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        if (rectangle == null) {
+            return 0;
+        }
+
+        return rectangle.getHeight();
+    }
 
     @Override
     public void setRealPosition(Point position) {
@@ -111,12 +130,19 @@ public abstract class AbstractHudElement extends DrawableHelper implements HudEl
         return options;
     }
 
+    @Override
+    public HudElementProvider getProvider() {
+        return provider;
+    }
+
     void initOptions() {
         setOption(BINDING, "return \"Hud Element\"");
         setOption(FORE_COLOR, "WHITE");
         setOption(BACK_COLOR, "BLACK 50%");
         setOption(HORIZONTAL_ANCHOR, HudHorizontalAnchor.LEFT);
         setOption(VERTICAL_ANCHOR, HudVerticalAnchor.TOP);
+
+        options.putAll(provider.defaultOptions());
     }
 
     private void move(double xDelta, double yDelta) {
@@ -155,7 +181,7 @@ public abstract class AbstractHudElement extends DrawableHelper implements HudEl
     }
 
     public void openPopup() {
-        Popup popup = getOptionsPopup();
+        Popup popup = new WidgetOptionsPopup(this);
         Screen screen = MinecraftClient.getInstance().currentScreen;
 
         if (screen instanceof ScreenWithPopup) {
@@ -195,6 +221,8 @@ public abstract class AbstractHudElement extends DrawableHelper implements HudEl
 
     @Override
     public void render(int var1, int var2, float var3) {
+        rectangle = provider.render(getRealPosition(), this);
+
         Screen screen = MinecraftClient.getInstance().currentScreen;
         if (!(screen instanceof WidgetDesignerScreen)) {
             return;
@@ -237,6 +265,7 @@ public abstract class AbstractHudElement extends DrawableHelper implements HudEl
         try {
             Script script = new ScriptBuilder().fromString(binding).build();
             lastResult = script.runInstantly().toString();
+            setOption("result", lastResult);
         } catch (Exception e) {
             e.printStackTrace();
         }

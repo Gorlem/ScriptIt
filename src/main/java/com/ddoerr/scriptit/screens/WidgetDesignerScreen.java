@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.api.hud.HudElement;
-import com.ddoerr.scriptit.api.hud.HudElementFactory;
+import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.elements.AbstractHudElement;
@@ -21,7 +21,7 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
     private Rectangle hotbar;
     private DropDownButtonWidget addButton;
 
-    private HudElementFactory hudElementFactory = null;
+    private HudElementProvider hudElementFactory = null;
     private HudElementManager hudElementManager;
     private HudElementLoader hudElementLoader;
 
@@ -49,7 +49,7 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
                 hotbar.getWidth(), 20,
                 I18n.translate("scriptit:hud.add")));
 
-        Map<String, HudElementFactory> factories = hudElementLoader.getFactories();
+        Map<String, HudElementProvider> factories = hudElementLoader.getProviders();
 
         List<DropDownButtonWidget.Option> options = factories.entrySet().stream()
                 .map(factory -> new DropDownButtonWidget.Option(I18n.translate("scriptit:hud.add." + factory.getKey()), option -> hudElementFactory = factory.getValue()))
@@ -78,7 +78,7 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
         if (hudElementFactory == null)
             return false;
 
-        HudElement hudElement = hudElementFactory.create(x, y);
+        HudElement hudElement = new AbstractHudElement(hudElementFactory, x, y);
 
         hudElementManager.add(hudElement);
         children.add(hudElement);

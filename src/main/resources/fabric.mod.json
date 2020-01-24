@@ -32,7 +32,8 @@
       "com.ddoerr.scriptit.scripts.languages.lua.LuaLanguage"
     ],
     "scriptit:hud": [
-      "com.ddoerr.scriptit.elements.BuiltInHudElements"
+      "com.ddoerr.scriptit.elements.IconHudElement",
+      "com.ddoerr.scriptit.elements.TextHudElement"
     ],
     "scriptit:event": [
       "com.ddoerr.scriptit.events.ChatEventDispatcher",

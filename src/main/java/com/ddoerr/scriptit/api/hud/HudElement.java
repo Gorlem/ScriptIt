@@ -25,4 +25,6 @@ public interface HudElement extends Element, Drawable {
     void setOption(String key, Object value);
     <T> T getOption(String key);
     Map<String, Object> getOptions();
+
+    HudElementProvider getProvider();
 }
