@@ -1,19 +1,19 @@
 package com.ddoerr.scriptit;
 
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.bus.EventBus;
+import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.events.EventManager;
 import com.ddoerr.scriptit.loader.EventLoader;
 import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.loader.LanguageLoader;
 import com.ddoerr.scriptit.loader.LibraryLoader;
 import com.ddoerr.scriptit.screens.BindingScreen;
 import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
-import com.ddoerr.scriptit.scripts.ScriptBindings;
+import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
-import com.ddoerr.scriptit.widgets.EventBindingsListWidget;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.elements.HudElementManager;
@@ -40,14 +40,15 @@ public class ScriptItMod implements ClientModInitializer {
 	public void onInitializeClient() {
 		Resolver resolver = Resolver.getInstance();
 
-		resolver.add(new ScriptBindings());
+		resolver.add(new EventBus());
+		resolver.add(new KeyBindingBusExtension());
 		resolver.add(new ThreadLifetimeManager());
 		resolver.add(new LibraryLoader());
 		resolver.add(new LanguageLoader());
 		resolver.add(new HudElementLoader());
 		resolver.add(new HudElementManager());
 		resolver.add(new EventLoader());
-		resolver.add(new EventManager());
+		resolver.add(new Scripts());
 
 		resolver.add(new ConfigHandler());
 
@@ -90,7 +91,7 @@ public class ScriptItMod implements ClientModInitializer {
 		});
 
 		RenderHotbarCallback.SHOULD_RENDER.register(() -> minecraft.currentScreen instanceof WidgetDesignerScreen ? ActionResult.FAIL : ActionResult.PASS);
-		RenderEntryListBackgroundCallback.SHOULD_RENDER.register((widget) -> widget instanceof KeyBindingsListWidget || widget instanceof EventBindingsListWidget ? ActionResult.FAIL : ActionResult.PASS);
+		RenderEntryListBackgroundCallback.SHOULD_RENDER.register((widget) -> widget instanceof KeyBindingsListWidget ? ActionResult.FAIL : ActionResult.PASS);
 
 		HudElementManager hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
 		RenderInGameHudCallback.EVENT.register(hudElementManager::renderAll);

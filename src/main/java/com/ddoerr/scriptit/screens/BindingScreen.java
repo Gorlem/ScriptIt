@@ -1,16 +1,19 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.scripts.Scripts;
+import com.ddoerr.scriptit.triggers.BusTrigger;
+import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;
 import com.ddoerr.scriptit.api.util.Color;
-import com.ddoerr.scriptit.scripts.ScriptBinding;
-import com.ddoerr.scriptit.scripts.ScriptBindings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.LiteralText;
 
@@ -31,8 +34,11 @@ public class BindingScreen extends Screen {
         children.add(keyBindingsListWidget);
 
         ButtonWidget addButton = new ButtonWidget(window.getScaledWidth() - 220, window.getScaledHeight() - 35, 200, 20, I18n.translate("scriptit:bindings.add"), (button) -> {
-            ScriptBinding scriptBinding = Resolver.getInstance().resolve(ScriptBindings.class).addNew();
-            keyBindingsListWidget.addEntry(scriptBinding);
+            Trigger trigger = new BusTrigger(InputUtil.UNKNOWN_KEYCODE.getName());
+            ScriptContainer scriptContainer = new ScriptContainer(trigger);
+            Resolver.getInstance().resolve(Scripts.class).add(scriptContainer);
+
+            keyBindingsListWidget.addEntry(scriptContainer);
         });
         children.add(addButton);
 
@@ -40,11 +46,6 @@ public class BindingScreen extends Screen {
             MinecraftClient.getInstance().openScreen(new WidgetDesignerScreen());
         });
         children.add(designerButton);
-
-        ButtonWidget eventButton = new ButtonWidget(20, window.getScaledHeight() - 24, 150, 20, "Events Screen", (button) -> {
-            MinecraftClient.getInstance().openScreen(new EventsScreen());
-        });
-        children.add(eventButton);
     }
 
     @Override

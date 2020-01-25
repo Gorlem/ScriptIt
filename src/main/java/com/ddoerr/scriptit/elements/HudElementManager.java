@@ -1,6 +1,5 @@
 package com.ddoerr.scriptit.elements;
 
-import com.ddoerr.scriptit.api.hud.HudElement;
 import net.minecraft.util.Tickable;
 
 import java.util.ArrayList;

@@ -1,26 +1,27 @@
 package com.ddoerr.scriptit.loader;
 
+import com.ddoerr.scriptit.bus.EventBus;
 import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.events.EventManager;
+import com.ddoerr.scriptit.dependencies.Resolver;
 
-public class EventContainer implements Event {
+public class EventImpl implements Event {
     String name;
-    EventManager eventManager;
+    EventBus eventBus;
 
-    public EventContainer(String name, EventManager eventManager) {
+    public EventImpl(String name) {
         this.name = name;
-        this.eventManager = eventManager;
+        eventBus = Resolver.getInstance().resolve(EventBus.class);
     }
 
     @Override
     public void dispatch() {
-        eventManager.dispatch(this, null);
+        eventBus.publish(name, null);
     }
 
     @Override
     public void dispatch(NamespaceRegistry registry) {
-        eventManager.dispatch(this, registry);
+        eventBus.publish(name, registry);
     }
 
     public String getName() {

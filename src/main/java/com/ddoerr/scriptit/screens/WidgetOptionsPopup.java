@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
-import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
@@ -44,13 +44,12 @@ public class WidgetOptionsPopup extends Popup {
     }
 
     void save() {
-        hudElement.setOption(HudElement.BINDING, binding.getText());
+        hudElement.getScriptContainer().setContent(binding.getText());
         hudElement.setOption(HudElement.FORE_COLOR, forecolorSelection.getText());
         hudElement.setOption(HudElement.BACK_COLOR, backcolorSelection.getText());
 
         Point point = hudElement.getRealPosition();
-        hudElement.setOption(HudElement.HORIZONTAL_ANCHOR, horizontalAnchor);
-        hudElement.setOption(HudElement.VERTICAL_ANCHOR, verticalAnchor);
+        hudElement.setAnchor(horizontalAnchor, verticalAnchor);
         hudElement.setRealPosition(point);
 
         onClose();
@@ -63,8 +62,8 @@ public class WidgetOptionsPopup extends Popup {
         boolean firstLoad = background == null;
 
         if (firstLoad) {
-            horizontalAnchor = hudElement.getOption(HudElement.HORIZONTAL_ANCHOR);
-            verticalAnchor = hudElement.getOption(HudElement.VERTICAL_ANCHOR);
+            horizontalAnchor = hudElement.getHorizontalAnchor();
+            verticalAnchor = hudElement.getVerticalAnchor();
         }
 
         Window window = MinecraftClient.getInstance().window;
@@ -151,9 +150,9 @@ public class WidgetOptionsPopup extends Popup {
         }));
 
         if (firstLoad) {
-            binding.setText(hudElement.getOption(HudElement.BINDING));
-            forecolorSelection.setText(hudElement.getOption(HudElement.FORE_COLOR));
-            backcolorSelection.setText(hudElement.getOption(HudElement.BACK_COLOR));
+            binding.setText(hudElement.getScriptContainer().getContent());
+            forecolorSelection.setText(hudElement.getOption(HudElement.FORE_COLOR).toString());
+            backcolorSelection.setText(hudElement.getOption(HudElement.BACK_COLOR).toString());
         }
     }
 

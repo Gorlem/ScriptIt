@@ -1,56 +1,48 @@
 package com.ddoerr.scriptit.elements;
 
-import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.api.hud.HudElementInitializer;
+import com.ddoerr.scriptit.api.hud.HudElementProvider;
+import com.ddoerr.scriptit.api.hud.HudElementRegistry;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
-import com.ddoerr.scriptit.screens.Popup;
-import com.ddoerr.scriptit.screens.WidgetOptionsPopup;
+import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
+import org.apache.commons.lang3.StringUtils;
 
-public class TextHudElement extends AbstractHudElement {
-    public TextHudElement(double xPosition, double yPosition) {
-        super(xPosition, yPosition);
+public class TextHudElement implements HudElementInitializer, HudElementProvider {
+    @Override
+    public void onInitialize(HudElementRegistry registry) {
+        registry.registerHudElement("Text", this);
     }
 
     @Override
-    void initOptions() {
-        super.initOptions();
+    public Rectangle render(Point origin, HudElement hudElement) {
+        Object lastResult = hudElement.getScriptContainer().getLastResult();
 
-        setOption(HudElement.BINDING, "return \"Text Hud Element\"");
-    }
+        Rectangle rectangle = new Rectangle(
+                (int) origin.getX(), (int) origin.getY(),
+                MinecraftClient.getInstance().textRenderer.getStringWidth(lastResult == null ? StringUtils.EMPTY : lastResult.toString()) + 2 * HudElement.DEFAULT_PADDING,
+                MinecraftClient.getInstance().textRenderer.fontHeight + 2 * HudElement.DEFAULT_PADDING);
 
-    @Override
-    Popup getOptionsPopup() {
-        return new WidgetOptionsPopup(this);
-    }
-
-    @Override
-    public int getWidth() {
-        return MinecraftClient.getInstance().textRenderer.getStringWidth(lastResult) + 2 * DEFAULT_PADDING;
-    }
-
-    @Override
-    public int getHeight() {
-        return MinecraftClient.getInstance().textRenderer.fontHeight + 2 * DEFAULT_PADDING;
-    }
-
-    @Override
-    public void render(int mouseX, int mouseY, float float1) {
-        Point point = getRealPosition();
-        double xPosition = point.getX();
-        double yPosition = point.getY();
-
-        Color backColor = parseColorFromOption(HudElement.BACK_COLOR);
+        Color backColor = HudElement.parseAndRun(hudElement.getOption(HudElement.BACK_COLOR).toString());
         if (backColor != null) {
-            fill((int)xPosition, (int)yPosition, (int)xPosition + getWidth(), (int)yPosition + getHeight(), backColor.getValue());
+            DrawableHelper.fill(rectangle.getMinX(), rectangle.getMinY(), rectangle.getMaxX(), rectangle.getMaxY(), backColor.getValue());
         }
 
-        Color foreColor = parseColorFromOption(HudElement.FORE_COLOR);
+        Color foreColor = HudElement.parseAndRun(hudElement.getOption(HudElement.FORE_COLOR).toString());
         if (foreColor != null) {
             MinecraftClient.getInstance().textRenderer
-                .drawWithShadow(lastResult, (int)xPosition + DEFAULT_PADDING, (int)yPosition + DEFAULT_PADDING, foreColor.getValue());
+                    .drawWithShadow(lastResult == null ? StringUtils.EMPTY : lastResult.toString(), rectangle.getMinX() + HudElement.DEFAULT_PADDING, rectangle.getMinY() + HudElement.DEFAULT_PADDING, foreColor.getValue());
         }
 
-        super.render(mouseX, mouseY, float1);
+        return rectangle;
+    }
+
+    @Override
+    public void setDefaults(HudElement hudElement) {
+        hudElement.getScriptContainer().setContent("return \"Text Hud Element\"");
+        hudElement.setOption(HudElement.FORE_COLOR, "WHITE");
+        hudElement.setOption(HudElement.BACK_COLOR, "BLACK 50%");
     }
 }
