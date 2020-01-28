@@ -3,6 +3,7 @@ package com.ddoerr.scriptit.api.scripts;
 import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.scripts.ScriptBuilder.ScriptImplementation;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.loader.LanguageLoader;
 

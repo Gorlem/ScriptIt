@@ -31,7 +31,7 @@ public class PlayerLibrary implements LibraryInitializer {
         namespace.registerVariable("hunger", (name, minecraft) -> minecraft.player.getHungerManager().getFoodLevel());
         namespace.registerVariable("saturation", (name, minecraft) -> minecraft.player.getHungerManager().getSaturationLevel());
         namespace.registerVariable("armor", (name, minecraft) -> minecraft.player.getArmor());
-        namespace.registerVariable("breath", (name, minecraft) -> minecraft.player.getBreath());
+        namespace.registerVariable("breath", (name, minecraft) -> minecraft.player.getAir());
         namespace.registerVariable("gamemode", (name, minecraft) -> minecraft.getNetworkHandler().getPlayerListEntry(minecraft.player.getUuid()).getGameMode().getName());
 
         namespace.registerVariable("x", (name, minecraft) -> minecraft.player.x);
@@ -135,8 +135,8 @@ public class PlayerLibrary implements LibraryInitializer {
     Object hit(String name, MinecraftClient minecraft, Object... arguments) {
         Map<String, Object> map = new HashMap<>();
 
-        if (minecraft.hitResult.getType() == HitResult.Type.BLOCK) {
-            BlockPos blockPos = ((BlockHitResult)minecraft.hitResult).getBlockPos();
+        if (minecraft.crosshairTarget.getType() == HitResult.Type.BLOCK) {
+            BlockPos blockPos = ((BlockHitResult)minecraft.crosshairTarget).getBlockPos();
             BlockState blockState = minecraft.world.getBlockState(blockPos);
             Block block = blockState.getBlock();
             Item item = block.asItem();
@@ -152,8 +152,8 @@ public class PlayerLibrary implements LibraryInitializer {
             map.put("properties", props);
         }
 
-        if (minecraft.hitResult.getType() == HitResult.Type.ENTITY) {
-            Entity entity = ((EntityHitResult)minecraft.hitResult).getEntity();
+        if (minecraft.crosshairTarget.getType() == HitResult.Type.ENTITY) {
+            Entity entity = ((EntityHitResult)minecraft.crosshairTarget).getEntity();
 
             Map<String, String> names = new HashMap<>();
             names.put("name", entity.getEntityName());

@@ -3,6 +3,7 @@ package com.ddoerr.scriptit.scripts.languages.lua;
 import com.ddoerr.scriptit.api.libraries.FunctionExecutor;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.api.libraries.VariableUpdater;
+import com.ddoerr.scriptit.scripts.languages.lua.LibraryAdapter.LuaFunction;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Tickable;
 import org.luaj.vm2.LuaValue;

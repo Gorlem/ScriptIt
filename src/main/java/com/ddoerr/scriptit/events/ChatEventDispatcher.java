@@ -6,6 +6,7 @@ import com.ddoerr.scriptit.api.events.EventRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.loader.NamespaceRegistryContainer;
 import com.ddoerr.scriptit.callbacks.ChatMessageCallback;
+import com.ddoerr.scriptit.events.ChatEventDispatcher.ChatMessage;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;

@@ -4,8 +4,7 @@ import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.options.ServerEntry;
-
+import net.minecraft.client.network.ServerInfo;
 import java.util.stream.Collectors;
 
 public class ServerLibrary implements LibraryInitializer {
@@ -21,7 +20,7 @@ public class ServerLibrary implements LibraryInitializer {
     }
 
     private Object name(String name, MinecraftClient minecraft) {
-        ServerEntry currentServerEntry = minecraft.getCurrentServerEntry();
+        ServerInfo currentServerEntry = minecraft.getCurrentServerEntry();
         if (currentServerEntry != null) {
             return currentServerEntry.name;
         }
@@ -34,7 +33,7 @@ public class ServerLibrary implements LibraryInitializer {
     }
 
     private Object address(String name, MinecraftClient minecraft) {
-        ServerEntry currentServerEntry = minecraft.getCurrentServerEntry();
+        ServerInfo currentServerEntry = minecraft.getCurrentServerEntry();
         if (currentServerEntry != null) {
             return currentServerEntry.address;
         }
@@ -47,7 +46,7 @@ public class ServerLibrary implements LibraryInitializer {
     }
 
     private Object label(String name, MinecraftClient minecraft) {
-        ServerEntry currentServerEntry = minecraft.getCurrentServerEntry();
+        ServerInfo currentServerEntry = minecraft.getCurrentServerEntry();
         if (currentServerEntry != null) {
             return currentServerEntry.label;
         }

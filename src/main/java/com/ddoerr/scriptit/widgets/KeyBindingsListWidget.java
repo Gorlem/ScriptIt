@@ -79,17 +79,17 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
             busFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
             busFieldWidget.setMaxLength(1000);
             busFieldWidget.setText(((BusTrigger)scriptBinding.getTrigger()).getId());
-            busFieldWidget.method_1883(0);
+            busFieldWidget.setCursor(0);
 
             lifeCycleFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
             lifeCycleFieldWidget.setMaxLength(1000);
             lifeCycleFieldWidget.setText(scriptBinding.getLifeCycle().toString());
-            lifeCycleFieldWidget.method_1883(0);
+            lifeCycleFieldWidget.setCursor(0);
 
             textFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
             textFieldWidget.setMaxLength(1000);
             textFieldWidget.setText(scriptBinding.getContent());
-            textFieldWidget.method_1883(0);
+            textFieldWidget.setCursor(0);
 
             removeWidget = new ButtonWidget(0, 0, 50, 20, I18n.translate("scriptit:bindings.remove"), (button) -> {
                 Resolver.getInstance().resolve(Scripts.class).remove(scriptBinding);
