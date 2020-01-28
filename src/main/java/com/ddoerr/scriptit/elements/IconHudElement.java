@@ -7,7 +7,7 @@ import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GuiLighting;
+import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -35,7 +35,7 @@ public class IconHudElement implements HudElementInitializer, HudElementProvider
         try {
             String lastResult = hudElement.getScriptContainer().getLastResult().toString();
             Item item = Registry.ITEM.get(new Identifier(lastResult));
-            GuiLighting.enableForItems();
+            DiffuseLighting.enableForItems();
             MinecraftClient.getInstance()
                     .getItemRenderer()
                     .renderGuiItemIcon(item.getStackForRender(), rectangle.getMinX() + HudElement.DEFAULT_PADDING, rectangle.getMinY() + HudElement.DEFAULT_PADDING);
