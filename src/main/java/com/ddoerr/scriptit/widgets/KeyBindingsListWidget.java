@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.widgets;
 
+import com.ddoerr.scriptit.screens.ScriptEditorScreen;
 import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.Scripts;
@@ -98,9 +99,7 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
             });
 
             saveWidget = new ButtonWidget(0, 0, 50, 20, "Save", (button) -> {
-                scriptBinding.setTrigger(new BusTrigger(busFieldWidget.getText()));
-                scriptBinding.setLifeCycle(LifeCycle.valueOf(lifeCycleFieldWidget.getText()));
-                scriptBinding.setContent(textFieldWidget.getText());
+                minecraft.openScreen(new ScriptEditorScreen(scriptBinding));
             });
         }
 
