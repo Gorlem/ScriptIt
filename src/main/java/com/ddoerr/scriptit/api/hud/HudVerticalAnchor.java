@@ -15,12 +15,12 @@ public enum HudVerticalAnchor implements HudAnchor {
 
     HudVerticalAnchor(Function<Window, Integer> baseValueFunction) {
         this.baseValueFunction = baseValueFunction;
-        window = MinecraftClient.getInstance().window;
+        window = MinecraftClient.getInstance().getWindow();
     }
 
     private Window getWindow() {
         if (window == null)
-            window = MinecraftClient.getInstance().window;
+            window = MinecraftClient.getInstance().getWindow();
 
         return window;
     }

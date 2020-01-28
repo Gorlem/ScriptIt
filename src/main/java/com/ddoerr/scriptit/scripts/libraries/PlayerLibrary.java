@@ -34,9 +34,9 @@ public class PlayerLibrary implements LibraryInitializer {
         namespace.registerVariable("breath", (name, minecraft) -> minecraft.player.getAir());
         namespace.registerVariable("gamemode", (name, minecraft) -> minecraft.getNetworkHandler().getPlayerListEntry(minecraft.player.getUuid()).getGameMode().getName());
 
-        namespace.registerVariable("x", (name, minecraft) -> minecraft.player.x);
-        namespace.registerVariable("y", (name, minecraft) -> minecraft.player.y);
-        namespace.registerVariable("z", (name, minecraft) -> minecraft.player.z);
+        namespace.registerVariable("x", (name, minecraft) -> minecraft.player.getX());
+        namespace.registerVariable("y", (name, minecraft) -> minecraft.player.getY());
+        namespace.registerVariable("z", (name, minecraft) -> minecraft.player.getZ());
 
         namespace.registerVariable("yaw", (name, minecraft) -> minecraft.player.yaw % 360);
         namespace.registerVariable("pitch", (name, minecraft) -> minecraft.player.pitch);

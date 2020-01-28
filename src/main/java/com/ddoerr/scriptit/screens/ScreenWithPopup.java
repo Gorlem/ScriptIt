@@ -19,7 +19,7 @@ public abstract class ScreenWithPopup extends Screen {
     public void openPopup(Popup popup) {
         this.popup = popup;
         MinecraftClient minecraft = MinecraftClient.getInstance();
-        popup.init(minecraft, minecraft.window.getScaledWidth(), minecraft.window.getScaledHeight());
+        popup.init(minecraft, minecraft.getWindow().getScaledWidth(), minecraft.getWindow().getScaledHeight());
     }
 
     public void clearPopup() {

@@ -23,7 +23,7 @@ public abstract class MixinClientPlayerNetworkHandler implements ClientPlayPacke
             at = @At(
                     value = "INVOKE",
                     shift = At.Shift.AFTER,
-                    target = "net/minecraft/network/NetworkThreadUtils.forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/ThreadExecutor;)V"))
+                    target = "net/minecraft/network/NetworkThreadUtils.forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
     private void onChatMessageMixin(ChatMessageS2CPacket packet, CallbackInfo info) {
         TypedActionResult<Text> result = ChatMessageCallback.EVENT.invoker().onChatMessage(packet.getMessage());
 

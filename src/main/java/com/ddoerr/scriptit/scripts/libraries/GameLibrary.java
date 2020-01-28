@@ -10,7 +10,7 @@ public class GameLibrary implements LibraryInitializer {
     public void onInitialize(LibraryRegistry registry) {
         NamespaceRegistry namespace = registry.registerLibrary("game");
 
-        namespace.registerVariable("fps", (name, minecraft) -> MinecraftClient.getCurrentFps());
+//        namespace.registerVariable("fps", (name, minecraft) -> MinecraftClient.getCurrentFps());
         namespace.registerVariable("version", (name, minecraft) -> minecraft.getGame().getVersion().getName());
     }
 }

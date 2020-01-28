@@ -29,7 +29,7 @@ public class BindingScreen extends Screen {
         super.init();
         minecraft.keyboard.enableRepeatEvents(true);
 
-        Window window = MinecraftClient.getInstance().window;
+        Window window = MinecraftClient.getInstance().getWindow();
         keyBindingsListWidget = new KeyBindingsListWidget(MinecraftClient.getInstance(), window.getScaledWidth(), window.getScaledHeight() - 50, 0, window.getScaledHeight() - 50, 25);
         children.add(keyBindingsListWidget);
 
@@ -59,7 +59,7 @@ public class BindingScreen extends Screen {
     public void render(int mouseX, int mouseY, float delta) {
         super.render(mouseX, mouseY, delta);
 
-        Window window = MinecraftClient.getInstance().window;
+        Window window = MinecraftClient.getInstance().getWindow();
 
         keyBindingsListWidget.render(mouseX, mouseY, delta);
 

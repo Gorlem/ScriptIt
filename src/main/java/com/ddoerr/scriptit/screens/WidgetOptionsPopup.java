@@ -66,7 +66,7 @@ public class WidgetOptionsPopup extends Popup {
             verticalAnchor = hudElement.getVerticalAnchor();
         }
 
-        Window window = MinecraftClient.getInstance().window;
+        Window window = MinecraftClient.getInstance().getWindow();
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         background = Rectangle.center(window.getScaledWidth(), window.getScaledHeight(), width, height);

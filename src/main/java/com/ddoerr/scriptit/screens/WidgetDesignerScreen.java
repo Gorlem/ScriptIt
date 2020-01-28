@@ -38,7 +38,7 @@ public class WidgetDesignerScreen extends ScreenWithPopup {
 
         children.addAll(hudElementManager.getAll());
 
-        Window window = MinecraftClient.getInstance().window;
+        Window window = MinecraftClient.getInstance().getWindow();
         hotbar = Rectangle.centerHorizontal(
                 window.getScaledWidth(), window.getScaledHeight() - HudElement.HOTBAR_HEIGHT,
                 HudElement.HOTBAR_WIDTH, HudElement.HOTBAR_HEIGHT);

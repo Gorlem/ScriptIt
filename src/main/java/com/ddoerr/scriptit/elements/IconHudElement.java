@@ -35,7 +35,7 @@ public class IconHudElement implements HudElementInitializer, HudElementProvider
         try {
             String lastResult = hudElement.getScriptContainer().getLastResult().toString();
             Item item = Registry.ITEM.get(new Identifier(lastResult));
-            DiffuseLighting.enableForItems();
+            DiffuseLighting.enableGuiDepthLighting();
             MinecraftClient.getInstance()
                     .getItemRenderer()
                     .renderGuiItemIcon(item.getStackForRender(), rectangle.getMinX() + HudElement.DEFAULT_PADDING, rectangle.getMinY() + HudElement.DEFAULT_PADDING);
