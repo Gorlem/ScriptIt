@@ -77,10 +77,10 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
 
 //            keyBindingButtonWidget = new KeyBindingButtonWidget( 0, 0, 75, 20, ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding());
 
-            busFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
-            busFieldWidget.setMaxLength(1000);
-            busFieldWidget.setText(((BusTrigger)scriptBinding.getTrigger()).getId());
-            busFieldWidget.setCursor(0);
+//            busFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
+//            busFieldWidget.setMaxLength(1000);
+//            busFieldWidget.setText(((BusTrigger)scriptBinding.getTrigger()).getId());
+//            busFieldWidget.setCursor(0);
 
             lifeCycleFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
             lifeCycleFieldWidget.setMaxLength(1000);
@@ -99,13 +99,13 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
             });
 
             saveWidget = new ButtonWidget(0, 0, 50, 20, "Save", (button) -> {
-                minecraft.openScreen(new ScriptEditorScreen());
+                minecraft.openScreen(new ScriptEditorScreen(scriptBinding));
             });
         }
 
         @Override
         public List<? extends Element> children() {
-            return ImmutableList.of(busFieldWidget, lifeCycleFieldWidget, textFieldWidget, removeWidget, saveWidget);
+            return ImmutableList.of(lifeCycleFieldWidget, textFieldWidget, removeWidget, saveWidget);
         }
 
         @Override
@@ -113,9 +113,9 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
 //            keyBindingButtonWidget.x = x + 5;
 //            keyBindingButtonWidget.y = y + 2;
 
-            busFieldWidget.x = x + 5;
-            busFieldWidget.y = y + 2;
-            busFieldWidget.setWidth(50);
+//            busFieldWidget.x = x + 5;
+//            busFieldWidget.y = y + 2;
+//            busFieldWidget.setWidth(50);
 
             lifeCycleFieldWidget.x = x + 60;
             lifeCycleFieldWidget.y = y + 2;

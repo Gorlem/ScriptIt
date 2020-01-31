@@ -23,7 +23,7 @@ public class KeyBindingBusExtension implements Tickable{
     private void newEvent(Object idObject) {
         String id = (String) idObject;
 
-        if (!id.startsWith("key.")) {
+        if (!isKeyEvent(id)) {
             return;
         }
 
@@ -36,7 +36,7 @@ public class KeyBindingBusExtension implements Tickable{
     private void removedEvent(Object idObject) {
         String id = (String) idObject;
 
-        if (!id.startsWith("key.")) {
+        if (!isKeyEvent(id)) {
             return;
         }
 
@@ -57,5 +57,9 @@ public class KeyBindingBusExtension implements Tickable{
                 eventBus.publish(entry.getKey(), null);
             }
         }
+    }
+
+    public static boolean isKeyEvent(String eventId) {
+        return eventId.startsWith("key.");
     }
 }

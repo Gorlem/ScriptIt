@@ -35,6 +35,7 @@ public class KeyBindingButtonWidget extends WButton {
 
     public void setKeyCode(InputUtil.KeyCode keyCode) {
         this.keyCode = keyCode;
+        setLabel(new LiteralText(getFormattedKey()));
     }
 
     @Override
