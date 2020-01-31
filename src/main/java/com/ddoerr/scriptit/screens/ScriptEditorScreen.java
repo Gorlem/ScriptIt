@@ -1,77 +1,148 @@
 package com.ddoerr.scriptit.screens;
 
+import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.loader.EventLoader;
 import com.ddoerr.scriptit.scripts.LifeCycle;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
-import com.ddoerr.scriptit.triggers.BusTrigger;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
+import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
+import javafx.scene.input.KeyCode;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.Window;
+import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
 import org.apache.commons.lang3.StringUtils;
+import spinnery.client.BaseScreen;
+import spinnery.widget.*;
 
-public class ScriptEditorScreen extends Screen {
-    String eventBus = StringUtils.EMPTY;
-    TextFieldWidget eventBusField;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    String lifeCycle = LifeCycle.Instant.toString();
-    TextFieldWidget lifeCycleField;
+public class ScriptEditorScreen extends BaseScreen {
+    private LifeCycle lifeCycle = LifeCycle.Instant;
+    private String event;
+    private ChronoUnit unit;
 
-    String script = StringUtils.EMPTY;
-    TextFieldWidget scriptField;
+    private EventLoader eventLoader;
 
     public ScriptEditorScreen() {
-        super(new LiteralText("Script Editor"));
-    }
+        super();
+        eventLoader = Resolver.getInstance().resolve(EventLoader.class);
 
-    public ScriptEditorScreen(ScriptContainer scriptContainer) {
-        super(new LiteralText("Script Editor"));
+        WInterface mainInterface = new WInterface(WPosition.of(WType.FREE, 0, 0, 0));
+        getInterfaceHolder().add(mainInterface);
 
-        eventBus = ((BusTrigger)scriptContainer.getTrigger()).getId();
-        lifeCycle = scriptContainer.getLifeCycle().toString();
-        script = scriptContainer.getContent();
-    }
+        WDropdown dropdown = new WDropdown(WPosition.of(WType.FREE, 200, 50, 0), WSize.of(100, 20, 100, 43), mainInterface);
+        dropdown.setLabel(new LiteralText( lifeCycle.toString()));
 
-    @Override
-    protected void init() {
-        super.init();
-        minecraft.keyboard.enableRepeatEvents(true);
+        WStaticText instantText = new WStaticText(
+                WPosition.of(WType.ANCHORED, 0, 0, 1, dropdown),
+                mainInterface,
+                new LiteralText(LifeCycle.Instant.toString()));
+        instantText.setOnMouseClicked(() -> {
+            lifeCycle = LifeCycle.Instant;
 
-        TextRenderer textRenderer = minecraft.textRenderer;
+            dropdown.setLabel(new LiteralText(lifeCycle.toString()));
+            dropdown.setState(false);
+        });
 
-        eventBusField = new TextFieldWidget(textRenderer, 20, 20, 200, 20, "");
-        eventBusField.setMaxLength(1000);
-        eventBusField.setText(eventBus);
-        eventBusField.setChangedListener(text -> eventBus = text);
-        children.add(eventBusField);
+        WStaticText threadedText = new WStaticText(
+                WPosition.of(WType.ANCHORED, 0, 0, 1, dropdown),
+                mainInterface,
+                new LiteralText(LifeCycle.Threaded.toString()));
+        threadedText.setOnMouseClicked(() -> {
+            lifeCycle = LifeCycle.Threaded;
 
-        lifeCycleField = new TextFieldWidget(textRenderer, 20, 50, 200, 20, "");
-        lifeCycleField.setMaxLength(1000);
-        lifeCycleField.setText(lifeCycle);
-        lifeCycleField.setChangedListener(text -> lifeCycle = text);
-        children.add(lifeCycleField);
+            dropdown.setLabel(new LiteralText(lifeCycle.toString()));
+            dropdown.setState(false);
+        });
 
-        scriptField = new TextFieldWidget(textRenderer, 20, 80, 200, 20, "");
-        scriptField.setMaxLength(1000);
-        scriptField.setText(script);
-        scriptField.setChangedListener(text -> script = text);
-        children.add(scriptField);
+        dropdown.add(instantText);
+        dropdown.add(threadedText);
 
-    }
+        WTabHolder tabHolder = new WTabHolder(WPosition.of(WType.FREE, 50, 100, 0), WSize.of(300, 60), mainInterface);
 
-    @Override
-    public void removed() {
-        super.removed();
-        minecraft.keyboard.enableRepeatEvents(false);
-    }
+        WTabHolder.WTab keyBindings = tabHolder.addTab(Items.TRIPWIRE_HOOK, new LiteralText("Key Bindings"));
 
-    @Override
-    public void render(int mouseX, int mouseY, float delta) {
-        for (Element child : children) {
-            if (child instanceof Drawable) {
-                ((Drawable) child).render(mouseX, mouseY, delta);
-            }
+        KeyBindingButtonWidget keyBindingButtonWidget = new KeyBindingButtonWidget(
+            WPosition.of(WType.ANCHORED, 10, 30, 0, tabHolder),
+            WSize.of(100, 20),
+            mainInterface
+        );
+
+        keyBindings.add(keyBindingButtonWidget);
+
+        List<String> eventsList = eventLoader.getEvents();
+
+        WTabHolder.WTab events = tabHolder.addTab(Items.FIREWORK_ROCKET, new LiteralText("Events"));
+        WDropdown eventDropdown = new WDropdown(
+                WPosition.of(WType.ANCHORED, 10, 30, 0, tabHolder),
+                WSize.of(100, 20, 100, 20 + eventsList.size() * 11),
+                mainInterface);
+        eventDropdown.setLabel(new LiteralText("Select an event:"));
+
+        for (String name : eventsList) {
+            WStaticText eventText = new WStaticText(
+                    WPosition.of(WType.ANCHORED, 0, 0, 1, eventDropdown),
+                    mainInterface,
+                    new LiteralText(name));
+            eventText.setOnMouseClicked(() -> {
+                event = name;
+
+                eventDropdown.setLabel(new LiteralText(name));
+                eventDropdown.setState(false);
+            });
+
+            eventDropdown.add(eventText);
         }
+
+        events.add(eventDropdown);
+
+        List<ChronoUnit> units = Arrays.stream(ChronoUnit.values()).filter(ChronoUnit::isTimeBased).collect(Collectors.toList());
+
+        WTabHolder.WTab duration = tabHolder.addTab(Items.CLOCK, new LiteralText("Duration"));
+
+        WDynamicText timeText = new WDynamicText(
+                WPosition.of(WType.ANCHORED, 10, 30, 0, tabHolder),
+                WSize.of(100, 20),
+                mainInterface
+        );
+
+        WDropdown durationDropdown = new WDropdown(
+                WPosition.of(WType.ANCHORED, 140, 30, 0, tabHolder),
+                WSize.of(100, 20, 100, 20 + units.size() * 11),
+                mainInterface);
+        durationDropdown.setLabel(new LiteralText("Select a time unit:"));
+
+        for (ChronoUnit unit : units) {
+            WStaticText unitText = new WStaticText(
+                    WPosition.of(WType.ANCHORED, 0, 0, 1, durationDropdown),
+                    mainInterface,
+                    new LiteralText(unit.toString()));
+            unitText.setOnMouseClicked(() -> {
+                this.unit = unit;
+
+                durationDropdown.setLabel(new LiteralText(unit.toString()));
+                durationDropdown.setState(false);
+            });
+
+            durationDropdown.add(unitText);
+        }
+        duration.add(durationDropdown, timeText);
+
+        tabHolder.selectTab(1);
+
+        WDynamicText scriptContent = new WDynamicText(
+                WPosition.of(WType.FREE, 50, 160, 0),
+                WSize.of(300, 200),
+                mainInterface
+        );
+
+
+        mainInterface.add(dropdown, tabHolder, scriptContent);
     }
 }

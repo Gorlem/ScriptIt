@@ -14,6 +14,7 @@ import com.ddoerr.scriptit.screens.BindingScreen;
 import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
+import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
 import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.elements.HudElementManager;
@@ -24,13 +25,24 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 import org.lwjgl.glfw.GLFW;
+import spinnery.registry.ResourceRegistry;
+import spinnery.registry.ThemeRegistry;
+import spinnery.registry.WidgetRegistry;
+import spinnery.util.ResourceListener;
+import spinnery.widget.WButton;
 
+import java.io.IOException;
 import java.util.Collection;
 
 public class ScriptItMod implements ClientModInitializer {
@@ -95,5 +107,23 @@ public class ScriptItMod implements ClientModInitializer {
 
 		HudElementManager hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
 		RenderInGameHudCallback.EVENT.register(hudElementManager::renderAll);
+
+		WidgetRegistry.register(KeyBindingButtonWidget.class);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+			@Override
+			public Identifier getFabricId() {
+				return new Identifier("scriptit", "reload_listener");
+			}
+
+			@Override
+			public void apply(ResourceManager manager) {
+				try {
+					Resource resource = manager.getResource(new Identifier("scriptit", "themes/light.json"));
+					ResourceRegistry.register(resource.getInputStream());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

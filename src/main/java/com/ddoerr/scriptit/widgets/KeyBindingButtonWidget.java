@@ -3,55 +3,101 @@ package com.ddoerr.scriptit.widgets;
 import com.ddoerr.scriptit.api.util.KeyBindingHelper;
 import net.minecraft.client.gui.widget.AbstractPressableButtonWidget;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
+import spinnery.widget.*;
 
-public class KeyBindingButtonWidget extends AbstractPressableButtonWidget {
-    private KeyBinding keyBinding;
-    boolean isCurrentlyReassigning = false;
+import java.text.Normalizer;
+import java.util.Map;
+import java.util.Objects;
 
-    public KeyBindingButtonWidget(int x, int y, int width, int height, KeyBinding keyBinding) {
-        super(x, y, width, height, "");
+public class KeyBindingButtonWidget extends WButton {
+    private InputUtil.KeyCode keyCode = InputUtil.UNKNOWN_KEYCODE;
 
-        this.keyBinding = keyBinding;
-        setMessage(getFormattedKey());
+    public KeyBindingButtonWidget(WPosition position, WSize size, WInterface linkedInterface) {
+        super(position, size, linkedInterface);
+
+        setLabel(new LiteralText(getFormattedKey()));
+    }
+
+    public KeyBindingButtonWidget(WPosition position, WSize size, WInterface linkedInterface, InputUtil.KeyCode keyCode) {
+        super(position, size, linkedInterface);
+
+        this.keyCode = keyCode;
+        setLabel(new LiteralText(getFormattedKey()));
+    }
+
+    public static Theme of(Map<String, String> rawTheme) {
+        return WButton.of(rawTheme);
+    }
+
+    public void setKeyCode(InputUtil.KeyCode keyCode) {
+        this.keyCode = keyCode;
     }
 
     @Override
-    public void onPress() {
-        isCurrentlyReassigning = true;
-    }
-
-    @Override
-    public boolean keyPressed(int int_1, int int_2, int int_3) {
-        if (!isCurrentlyReassigning) {
-            return super.keyPressed(int_1, int_2, int_3);
+    public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (isLowered()) {
+            keyCode = InputUtil.Type.MOUSE.createFromCode(mouseButton);
+            setLowered(false);
+        } else {
+            super.onMouseClicked(mouseX, mouseY, mouseButton);
         }
 
-        InputUtil.KeyCode keyCode = InputUtil.getKeyCode(int_1, int_2);
-        keyBinding.setKeyCode(keyCode);
-        KeyBinding.updateKeysByCode();
+        setLabel(new LiteralText(getFormattedKey()));
+    }
 
-        isCurrentlyReassigning = false;
-        return true;
+    @Override
+    public void tick() {
+        // do not trigger `tick` from `WButton`
+    }
+
+    @Override
+    public void onKeyPressed(int keyPressed, int character, int keyModifier) {
+        super.onKeyPressed(keyPressed, character, keyModifier);
+
+        if (isLowered()) {
+            keyCode = InputUtil.getKeyCode(keyPressed, character);
+
+            setLowered(false);
+            setLabel(new LiteralText(getFormattedKey()));
+        }
     }
 
     public String getFormattedKey() {
-        if (isCurrentlyReassigning) {
-            return Formatting.WHITE + "> " + Formatting.YELLOW + keyBinding.getLocalizedName() + Formatting.WHITE + " <";
+        if (keyCode == null) {
+            return Formatting.DARK_RED + "???";
         }
 
-        if (KeyBindingHelper.hasConflict(keyBinding)) {
-            return Formatting.RED + keyBinding.getLocalizedName();
+        if (isLowered()) {
+            return Formatting.WHITE + "> " + Formatting.YELLOW + getKeyCodeName(keyCode) + Formatting.WHITE + " <";
         }
 
-        return keyBinding.getLocalizedName();
+        if (KeyBindingHelper.hasConflict(keyCode)) {
+            return Formatting.RED + getKeyCodeName(keyCode);
+        }
+
+        return getKeyCodeName(keyCode);
     }
 
-    @Override
-    public void render(int int_1, int int_2, float float_1) {
-        setMessage(getFormattedKey());
+    private String getKeyCodeName(InputUtil.KeyCode keyCode) {
+        String result = null;
 
-        super.render(int_1, int_2, float_1);
+        switch(keyCode.getCategory()) {
+            case KEYSYM:
+                result = InputUtil.getKeycodeName(keyCode.getKeyCode());
+                break;
+            case SCANCODE:
+                result = InputUtil.getScancodeName(keyCode.getKeyCode());
+                break;
+            case MOUSE:
+                String translated = I18n.translate(keyCode.getName());
+                result = translated.equals(keyCode.getName()) ? I18n.translate(InputUtil.Type.MOUSE.getName(), keyCode.getKeyCode() + 1) : translated;
+                break;
+        }
+
+        return result == null ? I18n.translate(keyCode.getName()) : result;
     }
 }

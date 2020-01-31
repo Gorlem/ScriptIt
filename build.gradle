@@ -15,6 +15,10 @@ repositories {
 		name = "Cotton"
 		url = "http://server.bbkr.space:8081/artifactory/libs-release/"
 	}
+	maven {
+		name = "JitPack"
+		url = "https://jitpack.io"
+	}
 }
 
 minecraft {
@@ -38,6 +42,8 @@ dependencies {
 	// You may need to force-disable transitiveness on them.
 
 	embed fileTree(dir: "lib", includes: ["*.jar"])
+
+	modImplementation "com.github.vini2003:Spinnery:932a9bc"
 }
 
 processResources {

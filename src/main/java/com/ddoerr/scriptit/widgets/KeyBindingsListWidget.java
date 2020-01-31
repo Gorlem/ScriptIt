@@ -99,7 +99,7 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
             });
 
             saveWidget = new ButtonWidget(0, 0, 50, 20, "Save", (button) -> {
-                minecraft.openScreen(new ScriptEditorScreen(scriptBinding));
+                minecraft.openScreen(new ScriptEditorScreen());
             });
         }
 
