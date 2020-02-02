@@ -8,7 +8,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Tickable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EventLoader implements EventRegistry, Loadable {
     List<Event> events = new ArrayList<>();
@@ -26,5 +28,9 @@ public class EventLoader implements EventRegistry, Loadable {
         Event event = new EventImpl(name);
         events.add(event);
         return event;
+    }
+
+    public List<String> getEvents() {
+        return events.stream().map(Event::getName).collect(Collectors.toList());
     }
 }

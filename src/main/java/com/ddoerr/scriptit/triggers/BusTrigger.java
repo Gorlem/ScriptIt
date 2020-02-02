@@ -1,11 +1,16 @@
 package com.ddoerr.scriptit.triggers;
 
+import com.ddoerr.scriptit.api.util.KeyBindingHelper;
 import com.ddoerr.scriptit.bus.Bus;
 import com.ddoerr.scriptit.bus.EventBus;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.dependencies.Resolver;
+import net.minecraft.client.util.InputUtil;
 
-public class BusTrigger implements Trigger {
+import java.util.function.Consumer;
+
+public class BusTrigger implements Trigger, Consumer<Object> {
     boolean shouldActivate = false;
     NamespaceRegistry registry = null;
     String id;
@@ -14,12 +19,12 @@ public class BusTrigger implements Trigger {
     public BusTrigger(String id) {
         this.id = id;
         bus = Resolver.getInstance().resolve(EventBus.class);
-        bus.subscribe(this.id, this::activate);
+        bus.subscribe(this.id, this);
     }
 
-    public void activate(Object registry) {
+    public void activate(NamespaceRegistry registry) {
         shouldActivate = true;
-        this.registry = (NamespaceRegistry) registry;
+        this.registry = registry;
     }
 
     public String getId() {
@@ -43,11 +48,19 @@ public class BusTrigger implements Trigger {
 
     @Override
     public void close() {
-        bus.unsubscribe(id, this::activate);
+        bus.unsubscribe(id, this);
     }
 
     @Override
     public String toString() {
-        return "bus: " + getId();
+        if (KeyBindingBusExtension.isKeyEvent(id)) {
+            return "on key " + KeyBindingHelper.getKeyCodeName(InputUtil.fromName(id));
+        }
+        return "on event " + id;
+    }
+
+    @Override
+    public void accept(Object o) {
+        activate((NamespaceRegistry) o);
     }
 }

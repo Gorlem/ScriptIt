@@ -1,57 +1,124 @@
 package com.ddoerr.scriptit.widgets;
 
 import com.ddoerr.scriptit.api.util.KeyBindingHelper;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
 import net.minecraft.client.gui.widget.AbstractPressableButtonWidget;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
+import spinnery.client.BaseRenderer;
+import spinnery.widget.*;
 
-public class KeyBindingButtonWidget extends AbstractPressableButtonWidget {
-    private KeyBinding keyBinding;
-    boolean isCurrentlyReassigning = false;
+import java.text.Normalizer;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
 
-    public KeyBindingButtonWidget(int x, int y, int width, int height, KeyBinding keyBinding) {
-        super(x, y, width, height, "");
+public class KeyBindingButtonWidget extends WButton {
+    private InputUtil.KeyCode keyCode = InputUtil.UNKNOWN_KEYCODE;
 
-        this.keyBinding = keyBinding;
-        setMessage(getFormattedKey());
+    private Consumer<InputUtil.KeyCode> onChange;
+
+    public KeyBindingButtonWidget(WPosition position, WSize size, WInterface linkedInterface) {
+        super(position, size, linkedInterface);
+
+        setLabel(new LiteralText(getFormattedKey()));
+    }
+
+    public KeyBindingButtonWidget(WPosition position, WSize size, WInterface linkedInterface, InputUtil.KeyCode keyCode) {
+        super(position, size, linkedInterface);
+
+        this.keyCode = keyCode;
+        setLabel(new LiteralText(getFormattedKey()));
+    }
+
+    public static Theme of(Map<String, String> rawTheme) {
+        return WButton.of(rawTheme);
+    }
+
+    public void setKeyCode(InputUtil.KeyCode keyCode) {
+        this.keyCode = keyCode;
+        setLabel(new LiteralText(getFormattedKey()));
+    }
+
+    public void setOnChange(Consumer<InputUtil.KeyCode> onChange) {
+        this.onChange = onChange;
     }
 
     @Override
-    public void onPress() {
-        isCurrentlyReassigning = true;
-    }
+    public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (isLowered()) {
+            keyCode = InputUtil.Type.MOUSE.createFromCode(mouseButton);
+            setLowered(false);
 
-    @Override
-    public boolean keyPressed(int int_1, int int_2, int int_3) {
-        if (!isCurrentlyReassigning) {
-            return super.keyPressed(int_1, int_2, int_3);
+            if (onChange != null) {
+                onChange.accept(keyCode);
+            }
+        } else {
+            super.onMouseClicked(mouseX, mouseY, mouseButton);
         }
 
-        InputUtil.KeyCode keyCode = InputUtil.getKeyCode(int_1, int_2);
-        keyBinding.setKeyCode(keyCode);
-        KeyBinding.updateKeysByCode();
+        setLabel(new LiteralText(getFormattedKey()));
+    }
 
-        isCurrentlyReassigning = false;
-        return true;
+    @Override
+    public void tick() {
+        // do not trigger `tick` from `WButton`
+    }
+
+    @Override
+    public void onKeyPressed(int keyPressed, int character, int keyModifier) {
+        super.onKeyPressed(keyPressed, character, keyModifier);
+
+        if (isLowered()) {
+            keyCode = InputUtil.getKeyCode(keyPressed, character);
+
+            setLowered(false);
+            setLabel(new LiteralText(getFormattedKey()));
+
+            if (onChange != null) {
+                onChange.accept(keyCode);
+            }
+        }
+    }
+
+    // Copied and modified from WDropdown::draw
+    @Override
+    public void draw() {
+        if (!this.isHidden()) {
+            if (this.isLowered()) {
+                BaseRenderer.drawBeveledPanel((double) this.getX(), (double) this.getY(), (double) this.getZ(), (double) this.getWidth(), (double) this.getHeight(), this.getResourceAsColor(0), this.getResourceAsColor(2), this.getResourceAsColor(1));
+            } else {
+                BaseRenderer.drawBeveledPanel((double) this.getX(), (double) this.getY(), (double) this.getZ(), (double) this.getWidth(), (double) this.getHeight(), this.getResourceAsColor(3), this.getResourceAsColor(5), this.getResourceAsColor(4));
+            }
+
+            if (this.hasLabel()) {
+                if (BaseRenderer.getTextRenderer().getStringWidth(this.getLabel().asFormattedString()) > this.getWidth() - 6) {
+                    BaseRenderer.drawText(this.isLabelShadowed(), this.getLabel().asFormattedString(), this.getX() + this.getWidth() + 2, (int) ((double) (this.getY() + this.getHeight() / 2) - 4.5D), this.getResourceAsColor(6).RGB);
+                } else {
+                    BaseRenderer.drawText(this.isLabelShadowed(), this.getLabel().asFormattedString(), this.getX() + this.getWidth() / 2 - BaseRenderer.getTextRenderer().getStringWidth(this.getLabel().asFormattedString()) / 2, this.getY() + 6, this.getResourceAsColor(6).RGB);
+                }
+            }
+
+        }
     }
 
     public String getFormattedKey() {
-        if (isCurrentlyReassigning) {
-            return Formatting.WHITE + "> " + Formatting.YELLOW + keyBinding.getLocalizedName() + Formatting.WHITE + " <";
+        if (keyCode == null) {
+            return Formatting.DARK_RED + "???";
         }
 
-        if (KeyBindingHelper.hasConflict(keyBinding)) {
-            return Formatting.RED + keyBinding.getLocalizedName();
+        if (isLowered()) {
+            return Formatting.WHITE + "> " + Formatting.YELLOW + KeyBindingHelper.getKeyCodeName(keyCode) + Formatting.WHITE + " <";
         }
 
-        return keyBinding.getLocalizedName();
-    }
+        if (KeyBindingHelper.hasConflict(keyCode)) {
+            return Formatting.RED + KeyBindingHelper.getKeyCodeName(keyCode);
+        }
 
-    @Override
-    public void render(int int_1, int int_2, float float_1) {
-        setMessage(getFormattedKey());
-
-        super.render(int_1, int_2, float_1);
+        return KeyBindingHelper.getKeyCodeName(keyCode);
     }
 }
+
