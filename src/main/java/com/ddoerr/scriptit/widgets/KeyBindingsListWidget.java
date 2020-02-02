@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.widgets;
 
+import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.screens.ScriptEditorScreen;
 import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
@@ -57,13 +58,9 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
     @Override
     protected void renderHoleBackground(int int_1, int int_2, int int_3, int int_4) {}
 
-    public static class KeyBindingEntry extends ElementListWidget.Entry<KeyBindingsListWidget.KeyBindingEntry> {
+    public class KeyBindingEntry extends ElementListWidget.Entry<KeyBindingsListWidget.KeyBindingEntry> {
         ScriptContainer scriptBinding;
 
-//        KeyBindingButtonWidget keyBindingButtonWidget;
-        TextFieldWidget busFieldWidget;
-        TextFieldWidget lifeCycleFieldWidget;
-        TextFieldWidget textFieldWidget;
         ButtonWidget removeWidget;
         ButtonWidget saveWidget;
 
@@ -73,57 +70,30 @@ public class KeyBindingsListWidget extends ElementListWidget<KeyBindingsListWidg
             this.scriptBinding = scriptBinding;
             this.parent = parent;
 
-            MinecraftClient minecraft = MinecraftClient.getInstance();
-
-//            keyBindingButtonWidget = new KeyBindingButtonWidget( 0, 0, 75, 20, ((KeybindingTrigger)scriptBinding.getTrigger()).getKeyBinding());
-
-//            busFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
-//            busFieldWidget.setMaxLength(1000);
-//            busFieldWidget.setText(((BusTrigger)scriptBinding.getTrigger()).getId());
-//            busFieldWidget.setCursor(0);
-
-            lifeCycleFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
-            lifeCycleFieldWidget.setMaxLength(1000);
-            lifeCycleFieldWidget.setText(scriptBinding.getLifeCycle().toString());
-            lifeCycleFieldWidget.setCursor(0);
-
-            textFieldWidget = new TextFieldWidget(minecraft.textRenderer, 0,0, 100, 20, "");
-            textFieldWidget.setMaxLength(1000);
-            textFieldWidget.setText(scriptBinding.getContent());
-            textFieldWidget.setCursor(0);
-
             removeWidget = new ButtonWidget(0, 0, 50, 20, I18n.translate("scriptit:bindings.remove"), (button) -> {
                 Resolver.getInstance().resolve(Scripts.class).remove(scriptBinding);
                 scriptBinding.getTrigger().close();
                 parent.removeEntry(scriptBinding);
             });
 
-            saveWidget = new ButtonWidget(0, 0, 50, 20, "Save", (button) -> {
+            saveWidget = new ButtonWidget(0, 0, 50, 20, "Edit", (button) -> {
                 minecraft.openScreen(new ScriptEditorScreen(scriptBinding));
             });
         }
 
         @Override
         public List<? extends Element> children() {
-            return ImmutableList.of(lifeCycleFieldWidget, textFieldWidget, removeWidget, saveWidget);
+            return ImmutableList.of(removeWidget, saveWidget);
         }
 
         @Override
         public void render(int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovering, float delta) {
-//            keyBindingButtonWidget.x = x + 5;
-//            keyBindingButtonWidget.y = y + 2;
 
-//            busFieldWidget.x = x + 5;
-//            busFieldWidget.y = y + 2;
-//            busFieldWidget.setWidth(50);
-
-            lifeCycleFieldWidget.x = x + 60;
-            lifeCycleFieldWidget.y = y + 2;
-            lifeCycleFieldWidget.setWidth(50);
-
-            textFieldWidget.x = x + 115;
-            textFieldWidget.y = y + 2;
-            textFieldWidget.setWidth(width - 230);
+            KeyBindingsListWidget.this.drawString(
+                    KeyBindingsListWidget.this.minecraft.textRenderer,
+                    scriptBinding.toString(),
+                    x, y + 7,
+                    Color.WHITE.getValue());
 
             removeWidget.x = x + width - 105;
             removeWidget.y = y + 2;

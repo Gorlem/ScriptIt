@@ -1,20 +1,25 @@
 package com.ddoerr.scriptit.widgets;
 
 import com.ddoerr.scriptit.api.util.KeyBindingHelper;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
 import net.minecraft.client.gui.widget.AbstractPressableButtonWidget;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
+import spinnery.client.BaseRenderer;
 import spinnery.widget.*;
 
 import java.text.Normalizer;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class KeyBindingButtonWidget extends WButton {
     private InputUtil.KeyCode keyCode = InputUtil.UNKNOWN_KEYCODE;
+
+    private Consumer<InputUtil.KeyCode> onChange;
 
     public KeyBindingButtonWidget(WPosition position, WSize size, WInterface linkedInterface) {
         super(position, size, linkedInterface);
@@ -38,11 +43,19 @@ public class KeyBindingButtonWidget extends WButton {
         setLabel(new LiteralText(getFormattedKey()));
     }
 
+    public void setOnChange(Consumer<InputUtil.KeyCode> onChange) {
+        this.onChange = onChange;
+    }
+
     @Override
     public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (isLowered()) {
             keyCode = InputUtil.Type.MOUSE.createFromCode(mouseButton);
             setLowered(false);
+
+            if (onChange != null) {
+                onChange.accept(keyCode);
+            }
         } else {
             super.onMouseClicked(mouseX, mouseY, mouseButton);
         }
@@ -64,6 +77,31 @@ public class KeyBindingButtonWidget extends WButton {
 
             setLowered(false);
             setLabel(new LiteralText(getFormattedKey()));
+
+            if (onChange != null) {
+                onChange.accept(keyCode);
+            }
+        }
+    }
+
+    // Copied and modified from WDropdown::draw
+    @Override
+    public void draw() {
+        if (!this.isHidden()) {
+            if (this.isLowered()) {
+                BaseRenderer.drawBeveledPanel((double) this.getX(), (double) this.getY(), (double) this.getZ(), (double) this.getWidth(), (double) this.getHeight(), this.getResourceAsColor(0), this.getResourceAsColor(2), this.getResourceAsColor(1));
+            } else {
+                BaseRenderer.drawBeveledPanel((double) this.getX(), (double) this.getY(), (double) this.getZ(), (double) this.getWidth(), (double) this.getHeight(), this.getResourceAsColor(3), this.getResourceAsColor(5), this.getResourceAsColor(4));
+            }
+
+            if (this.hasLabel()) {
+                if (BaseRenderer.getTextRenderer().getStringWidth(this.getLabel().asFormattedString()) > this.getWidth() - 6) {
+                    BaseRenderer.drawText(this.isLabelShadowed(), this.getLabel().asFormattedString(), this.getX() + this.getWidth() + 2, (int) ((double) (this.getY() + this.getHeight() / 2) - 4.5D), this.getResourceAsColor(6).RGB);
+                } else {
+                    BaseRenderer.drawText(this.isLabelShadowed(), this.getLabel().asFormattedString(), this.getX() + this.getWidth() / 2 - BaseRenderer.getTextRenderer().getStringWidth(this.getLabel().asFormattedString()) / 2, this.getY() + 6, this.getResourceAsColor(6).RGB);
+                }
+            }
+
         }
     }
 
@@ -73,32 +111,14 @@ public class KeyBindingButtonWidget extends WButton {
         }
 
         if (isLowered()) {
-            return Formatting.WHITE + "> " + Formatting.YELLOW + getKeyCodeName(keyCode) + Formatting.WHITE + " <";
+            return Formatting.WHITE + "> " + Formatting.YELLOW + KeyBindingHelper.getKeyCodeName(keyCode) + Formatting.WHITE + " <";
         }
 
         if (KeyBindingHelper.hasConflict(keyCode)) {
-            return Formatting.RED + getKeyCodeName(keyCode);
+            return Formatting.RED + KeyBindingHelper.getKeyCodeName(keyCode);
         }
 
-        return getKeyCodeName(keyCode);
-    }
-
-    private String getKeyCodeName(InputUtil.KeyCode keyCode) {
-        String result = null;
-
-        switch(keyCode.getCategory()) {
-            case KEYSYM:
-                result = InputUtil.getKeycodeName(keyCode.getKeyCode());
-                break;
-            case SCANCODE:
-                result = InputUtil.getScancodeName(keyCode.getKeyCode());
-                break;
-            case MOUSE:
-                String translated = I18n.translate(keyCode.getName());
-                result = translated.equals(keyCode.getName()) ? I18n.translate(InputUtil.Type.MOUSE.getName(), keyCode.getKeyCode() + 1) : translated;
-                break;
-        }
-
-        return result == null ? I18n.translate(keyCode.getName()) : result;
+        return KeyBindingHelper.getKeyCodeName(keyCode);
     }
 }
+

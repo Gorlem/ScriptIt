@@ -1,9 +1,12 @@
 package com.ddoerr.scriptit.triggers;
 
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.util.DurationHelper;
+import net.minecraft.util.Pair;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 public class ContinuousTrigger implements Trigger {
     Duration duration;
@@ -49,6 +52,7 @@ public class ContinuousTrigger implements Trigger {
 
     @Override
     public String toString() {
-        return "every " + duration.toString();
+        Pair<ChronoUnit, Long> unitAndAmount = DurationHelper.getUnitAndAmount(duration);
+        return "every " + unitAndAmount.getRight().toString() + " " + unitAndAmount.getLeft().toString();
     }
 }

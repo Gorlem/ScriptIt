@@ -34,11 +34,12 @@ public class BindingScreen extends Screen {
         children.add(keyBindingsListWidget);
 
         ButtonWidget addButton = new ButtonWidget(window.getScaledWidth() - 220, window.getScaledHeight() - 35, 200, 20, I18n.translate("scriptit:bindings.add"), (button) -> {
-            Trigger trigger = new BusTrigger(InputUtil.UNKNOWN_KEYCODE.getName());
-            ScriptContainer scriptContainer = new ScriptContainer(trigger);
+            ScriptContainer scriptContainer = new ScriptContainer();
             Resolver.getInstance().resolve(Scripts.class).add(scriptContainer);
 
             keyBindingsListWidget.addEntry(scriptContainer);
+
+            minecraft.openScreen(new ScriptEditorScreen(scriptContainer));
         });
         children.add(addButton);
 

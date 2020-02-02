@@ -3,12 +3,16 @@ package com.ddoerr.scriptit.api.util;
 import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.mixin.KeyBindingAccessor;
+import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.triggers.BusTrigger;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.mixin.client.keybinding.KeyCodeAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
@@ -17,13 +21,6 @@ public class KeyBindingHelper {
         MinecraftClient minecraft = MinecraftClient.getInstance();
 
         for (KeyBinding keyBinding : minecraft.options.keysAll) {
-            if (hasKeyBindingKeyCode(keyBinding, keyCode)) {
-                return true;
-            }
-        }
-
-        KeyBindingBusExtension keyBindingBusExtension = Resolver.getInstance().resolve(KeyBindingBusExtension.class);
-        for (KeyBinding keyBinding : keyBindingBusExtension.getKeyBindings()) {
             if (hasKeyBindingKeyCode(keyBinding, keyCode)) {
                 return true;
             }
@@ -61,5 +58,26 @@ public class KeyBindingHelper {
         Map<String, KeyBinding> keyBindings = KeyBindingAccessor.getKeysById();
         keyBindings.remove(keyBinding.getId());
         KeyBinding.updateKeysByCode();
+    }
+
+
+    // Copied from KeyBinding::getLocalizedName
+    public static String getKeyCodeName(InputUtil.KeyCode keyCode) {
+        String result = null;
+
+        switch(keyCode.getCategory()) {
+            case KEYSYM:
+                result = InputUtil.getKeycodeName(keyCode.getKeyCode());
+                break;
+            case SCANCODE:
+                result = InputUtil.getScancodeName(keyCode.getKeyCode());
+                break;
+            case MOUSE:
+                String translated = I18n.translate(keyCode.getName());
+                result = translated.equals(keyCode.getName()) ? I18n.translate(InputUtil.Type.MOUSE.getName(), keyCode.getKeyCode() + 1) : translated;
+                break;
+        }
+
+        return result == null ? I18n.translate(keyCode.getName()) : result;
     }
 }

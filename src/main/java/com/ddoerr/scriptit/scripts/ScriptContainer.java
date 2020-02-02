@@ -8,6 +8,7 @@ import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.triggers.Trigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.StringUtils;
 
 public class ScriptContainer {
@@ -16,6 +17,9 @@ public class ScriptContainer {
     private String content = StringUtils.EMPTY;
     private Object lastResult;
     private NamespaceRegistry namespaceRegistry;
+
+    public ScriptContainer() {
+    }
 
     public ScriptContainer(Trigger trigger) {
         this.trigger = trigger;
@@ -38,7 +42,7 @@ public class ScriptContainer {
 
     public void setTrigger(Trigger trigger) {
         if (this.trigger != null) {
-            trigger.close();
+            this.trigger.close();
         }
 
         this.trigger = trigger;
@@ -99,7 +103,7 @@ public class ScriptContainer {
     }
 
     public Object runIfPossible() {
-        if (trigger.canRun()) {
+        if (trigger != null && trigger.canRun()) {
             setNamespaceRegistry(trigger.additionalRegistry());
             Object result = run();
             trigger.reset();
@@ -111,6 +115,6 @@ public class ScriptContainer {
 
     @Override
     public String toString() {
-        return "on " + trigger.toString() + "; " + lifeCycle.toString() + "; " + content;
+        return "triggers " + Formatting.YELLOW + trigger.toString() + Formatting.WHITE + "; is " + Formatting.YELLOW + lifeCycle.toString() + Formatting.WHITE + "; " + StringUtils.abbreviate(content, 50);
     }
 }
