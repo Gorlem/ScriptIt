@@ -1,6 +1,5 @@
 package com.ddoerr.scriptit.screens;
 
-import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
@@ -8,7 +7,6 @@ import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.PlaneWidget;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Window;
 import net.minecraft.text.LiteralText;
 import spinnery.client.BaseScreen;
 import spinnery.widget.*;
@@ -28,9 +26,10 @@ public class ScriptsOverviewScreen extends BaseScreen {
         getInterfaceHolder().add(mainInterface);
 
         scriptsList = setupList(mainInterface);
-        WWidget buttonBar = setupButtonBar(mainInterface);
+        WWidget addScript = setupAddScriptButton(mainInterface);
+        WWidget openDesigner = setupOpenDesignerButton(mainInterface);
 
-        mainInterface.add(scriptsList, buttonBar);
+        mainInterface.add(scriptsList, addScript, openDesigner);
     }
 
     private WVerticalList setupList(WInterface mainInterface) {
@@ -93,7 +92,7 @@ public class ScriptsOverviewScreen extends BaseScreen {
         return entry;
     }
 
-    private WWidget setupButtonBar(WInterface mainInterface) {
+    private WWidget setupAddScriptButton(WInterface mainInterface) {
         WHorizontalList buttonBar = new WHorizontalList(
                 WPosition.of(WType.FREE, minecraft.getWindow().getScaledWidth() - 134, minecraft.getWindow().getScaledHeight() - 40, 5),
                 WSize.of(114, 30),
@@ -108,6 +107,28 @@ public class ScriptsOverviewScreen extends BaseScreen {
         saveButton.setLabel(new LiteralText("Add new Script"));
         saveButton.setOnMouseClicked(() -> {
             minecraft.openScreen(new ScriptEditorScreen());
+        });
+
+        buttonBar.add(saveButton);
+
+        return buttonBar;
+    }
+
+    private WWidget setupOpenDesignerButton(WInterface mainInterface) {
+        WHorizontalList buttonBar = new WHorizontalList(
+                WPosition.of(WType.FREE, 20, minecraft.getWindow().getScaledHeight() - 40, 5),
+                WSize.of(114, 30),
+                mainInterface
+        );
+
+        WButton saveButton = new WButton(
+                WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
+                WSize.of(100, 20),
+                mainInterface
+        );
+        saveButton.setLabel(new LiteralText("Open Designer"));
+        saveButton.setOnMouseClicked(() -> {
+            minecraft.openScreen(new WidgetDesignerScreen());
         });
 
         buttonBar.add(saveButton);
