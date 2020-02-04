@@ -2,10 +2,12 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.api.util.DurationHelper;
 import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
+import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.loader.EventLoader;
 import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
@@ -16,6 +18,7 @@ import net.minecraft.client.util.Window;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import spinnery.client.BaseScreen;
 import spinnery.widget.*;
@@ -30,7 +33,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class ScriptEditorScreen extends BaseScreen {
-    private LifeCycle lifeCycle;
+    private LifeCycle lifeCycle = LifeCycle.Instant;
     private InputUtil.KeyCode keyCode;
     private String event;
     private int time;
@@ -44,6 +47,11 @@ public class ScriptEditorScreen extends BaseScreen {
     private WTabHolder.WTab keyBindingsTab;
     private WTabHolder.WTab eventsTab;
     private WTabHolder.WTab durationTab;
+
+    public ScriptEditorScreen() {
+        super();
+        setupWidgets();
+    }
 
     public ScriptEditorScreen(ScriptContainer scriptContainer) {
         super();
@@ -209,15 +217,7 @@ public class ScriptEditorScreen extends BaseScreen {
         };
 
         timeText.setOnKeyPressed(parseTime);
-        try {
-            Field runnableOnCharTyped = timeText.getClass()
-                    .getSuperclass()
-                    .getDeclaredField("runnableOnCharTyped");
-            runnableOnCharTyped.setAccessible(true);
-            runnableOnCharTyped.set(timeText, parseTime);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        timeText.setOnCharTyped(parseTime);
 
         if (unit != null) {
             timeText.setText(Integer.toString(time));
@@ -263,15 +263,7 @@ public class ScriptEditorScreen extends BaseScreen {
         }
 
         scriptContent.setOnKeyPressed(() -> script = scriptContent.getText());
-        try {
-            Field runnableOnCharTyped = scriptContent.getClass()
-                    .getSuperclass()
-                    .getDeclaredField("runnableOnCharTyped");
-            runnableOnCharTyped.setAccessible(true);
-            runnableOnCharTyped.set(scriptContent, (Runnable)() -> script = scriptContent.getText());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        scriptContent.setOnCharTyped(() -> script = scriptContent.getText());
 
         return scriptContent;
     }
@@ -282,7 +274,6 @@ public class ScriptEditorScreen extends BaseScreen {
                 WSize.of(200, 30),
                 mainInterface
         );
-//        buttonBar.setHidden(true);
 
         WButton cancelButton = new WButton(
                 WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
@@ -308,26 +299,29 @@ public class ScriptEditorScreen extends BaseScreen {
 
     private void updateScriptContainer() {
         if (scriptContainer == null) {
-            scriptContainer = new ScriptContainer(null);
+            scriptContainer = new ScriptContainer();
+            Resolver.getInstance().resolve(Scripts.class).add(scriptContainer);
         }
 
         scriptContainer.setLifeCycle(lifeCycle);
         scriptContainer.setContent(script);
 
-        if (keyBindingsTab.getToggle().getToggleState()) {
+        if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
             scriptContainer.setTrigger(new BusTrigger(keyCode.getName()));
-        } else if (eventsTab.getToggle().getToggleState()) {
+        } else if (eventsTab.getToggle().getToggleState() && StringUtils.isNotBlank(event)) {
             scriptContainer.setTrigger(new BusTrigger(event));
-        } else if (durationTab.getToggle().getToggleState()) {
+        } else if (durationTab.getToggle().getToggleState() && unit != null) {
             scriptContainer.setTrigger(new ContinuousTrigger(Duration.of(time, unit)));
         }
+
+        ConfigCallback.EVENT.invoker().saveConfig(ScriptEditorScreen.class);
 
         onClose();
     }
 
     @Override
     public void onClose() {
-        this.minecraft.openScreen(new BindingScreen());
+        this.minecraft.openScreen(new ScriptsOverviewScreen());
     }
 
     @Override

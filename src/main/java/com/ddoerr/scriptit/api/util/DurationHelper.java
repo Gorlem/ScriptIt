@@ -19,7 +19,7 @@ public class DurationHelper {
         long seconds = duration.getSeconds();
         long nanos = duration.getNano();
 
-        if (nanos == 0) {
+        if (nanos == 0 && seconds != 0) {
             for (Map.Entry<ChronoUnit, Integer> unit : units.entrySet()) {
                 if (seconds % unit.getValue() == 0) {
                     return new Pair<>(unit.getKey(), seconds / unit.getValue());

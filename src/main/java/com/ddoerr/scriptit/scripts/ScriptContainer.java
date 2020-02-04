@@ -115,6 +115,26 @@ public class ScriptContainer {
 
     @Override
     public String toString() {
-        return "triggers " + Formatting.YELLOW + trigger.toString() + Formatting.WHITE + "; is " + Formatting.YELLOW + lifeCycle.toString() + Formatting.WHITE + "; " + StringUtils.abbreviate(content, 50);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (trigger != null) {
+            stringBuilder
+                    .append("triggers ")
+                    .append(Formatting.YELLOW)
+                    .append(trigger.toString());
+        } else {
+            stringBuilder.append("no activation trigger");
+        }
+
+        stringBuilder
+                .append(Formatting.RESET)
+                .append("; is ")
+                .append(Formatting.YELLOW)
+                .append(lifeCycle.toString())
+                .append(Formatting.RESET)
+                .append("; ")
+                .append(StringUtils.abbreviate(content, 50));
+
+        return  stringBuilder.toString();
     }
 }

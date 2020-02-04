@@ -11,6 +11,7 @@ import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.loader.LanguageLoader;
 import com.ddoerr.scriptit.loader.LibraryLoader;
 import com.ddoerr.scriptit.screens.BindingScreen;
+import com.ddoerr.scriptit.screens.ScriptsOverviewScreen;
 import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
@@ -21,6 +22,7 @@ import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.callbacks.RenderEntryListBackgroundCallback;
 import com.ddoerr.scriptit.callbacks.RenderHotbarCallback;
 import com.ddoerr.scriptit.callbacks.RenderInGameHudCallback;
+import com.ddoerr.scriptit.widgets.PlaneWidget;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
@@ -92,7 +94,7 @@ public class ScriptItMod implements ClientModInitializer {
 
 		ClientTickCallback.EVENT.register(mc -> {
 			if (openGuiKeyBinding.wasPressed()) {
-				mc.openScreen(new BindingScreen());
+				mc.openScreen(new ScriptsOverviewScreen());
 			}
 
 			if (mc.player != null) {
@@ -109,6 +111,7 @@ public class ScriptItMod implements ClientModInitializer {
 		RenderInGameHudCallback.EVENT.register(hudElementManager::renderAll);
 
 		WidgetRegistry.register(KeyBindingButtonWidget.class);
+		WidgetRegistry.register(PlaneWidget.class);
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 			@Override
 			public Identifier getFabricId() {
