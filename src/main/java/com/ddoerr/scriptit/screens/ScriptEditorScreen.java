@@ -12,6 +12,7 @@ import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
+import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
@@ -102,33 +103,13 @@ public class ScriptEditorScreen extends BaseScreen {
     }
 
     private WWidget setupLifeCycleWidget(WInterface mainInterface) {
-        WDropdown dropdown = new WDropdown(WPosition.of(WType.FREE, window.getScaledWidth() - 150, 20, 0), WSize.of(100, 20, 100, 43), mainInterface);
-        dropdown.setLabel(new LiteralText( lifeCycle.toString()));
-
-        WStaticText instantText = new WStaticText(
-                WPosition.of(WType.ANCHORED, 0, 0, 1, dropdown),
-                mainInterface,
-                new LiteralText(LifeCycle.Instant.toString()));
-        instantText.setOnMouseClicked(() -> {
-            lifeCycle = LifeCycle.Instant;
-
-            dropdown.setLabel(new LiteralText(lifeCycle.toString()));
-            dropdown.setState(false);
-        });
-
-        WStaticText threadedText = new WStaticText(
-                WPosition.of(WType.ANCHORED, 0, 0, 1, dropdown),
-                mainInterface,
-                new LiteralText(LifeCycle.Threaded.toString()));
-        threadedText.setOnMouseClicked(() -> {
-            lifeCycle = LifeCycle.Threaded;
-
-            dropdown.setLabel(new LiteralText(lifeCycle.toString()));
-            dropdown.setState(false);
-        });
-
-        dropdown.add(instantText);
-        dropdown.add(threadedText);
+        ValuesDropdownWidget<LifeCycle> dropdown = new ValuesDropdownWidget<>(
+                WPosition.of(WType.FREE, window.getScaledWidth() - 150, 20, 0),
+                WSize.of(100, 20),
+                mainInterface);
+        dropdown.selectValue(lifeCycle);
+        dropdown.addValues(LifeCycle.Instant, LifeCycle.Threaded);
+        dropdown.setOnChange(lifeCycle -> this.lifeCycle = lifeCycle);
 
         return dropdown;
     }
@@ -171,30 +152,18 @@ public class ScriptEditorScreen extends BaseScreen {
         List<String> eventsList = eventLoader.getEvents();
 
         eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new LiteralText("Events"));
-        WDropdown eventDropdown = new WDropdown(
+
+        ValuesDropdownWidget<String> eventDropdown = new ValuesDropdownWidget<>(
                 WPosition.of(WType.ANCHORED, 10, 30, 10, tabHolder),
-                WSize.of(100, 20, 100, 20 + eventsList.size() * 11),
+                WSize.of(100, 20),
                 mainInterface);
         if (event == null) {
             eventDropdown.setLabel(new LiteralText("Select an event:"));
         } else {
-            eventDropdown.setLabel(new LiteralText(event));
+            eventDropdown.selectValue(event);
         }
-
-        for (String name : eventsList) {
-            WStaticText eventText = new WStaticText(
-                    WPosition.of(WType.ANCHORED, 0, 0, 1, eventDropdown),
-                    mainInterface,
-                    new LiteralText(name));
-            eventText.setOnMouseClicked(() -> {
-                event = name;
-
-                eventDropdown.setLabel(new LiteralText(name));
-                eventDropdown.setState(false);
-            });
-
-            eventDropdown.add(eventText);
-        }
+        eventDropdown.addValues(eventsList);
+        eventDropdown.setOnChange(event -> this.event = event);
 
         eventsTab.add(eventDropdown);
     }
@@ -223,31 +192,21 @@ public class ScriptEditorScreen extends BaseScreen {
             timeText.setText(Integer.toString(time));
         }
 
-        WDropdown durationDropdown = new WDropdown(
+        ValuesDropdownWidget<ChronoUnit> durationDropdown = new ValuesDropdownWidget<>(
                 WPosition.of(WType.ANCHORED, 155, 30, 10, tabHolder),
-                WSize.of(135, 20, 135, 20 + units.size() * 11),
+                WSize.of(135, 20),
                 mainInterface);
+
+        durationDropdown.addValues(units);
 
         if (unit == null) {
             durationDropdown.setLabel(new LiteralText("Select a time unit:"));
         } else {
-            durationDropdown.setLabel(new LiteralText(unit.toString()));
+            durationDropdown.selectValue((ChronoUnit)unit);
         }
 
-        for (ChronoUnit unit : units) {
-            WStaticText unitText = new WStaticText(
-                    WPosition.of(WType.ANCHORED, 0, 0, 1, durationDropdown),
-                    mainInterface,
-                    new LiteralText(unit.toString()));
-            unitText.setOnMouseClicked(() -> {
-                this.unit = unit;
+        durationDropdown.setOnChange(unit -> this.unit = unit);
 
-                durationDropdown.setLabel(new LiteralText(unit.toString()));
-                durationDropdown.setState(false);
-            });
-
-            durationDropdown.add(unitText);
-        }
         durationTab.add(durationDropdown, timeText);
     }
 

@@ -23,6 +23,7 @@ import com.ddoerr.scriptit.callbacks.RenderEntryListBackgroundCallback;
 import com.ddoerr.scriptit.callbacks.RenderHotbarCallback;
 import com.ddoerr.scriptit.callbacks.RenderInGameHudCallback;
 import com.ddoerr.scriptit.widgets.PlaneWidget;
+import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
@@ -112,6 +113,7 @@ public class ScriptItMod implements ClientModInitializer {
 
 		WidgetRegistry.register(KeyBindingButtonWidget.class);
 		WidgetRegistry.register(PlaneWidget.class);
+		WidgetRegistry.register(ValuesDropdownWidget.class);
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 			@Override
 			public Identifier getFabricId() {

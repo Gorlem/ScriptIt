@@ -10,5 +10,12 @@
     "bottom_right_off": "0xff373737",
     "background_off": "0xff8b8b8b",
     "label": "0xffffff"
+  },
+  "com.ddoerr.scriptit.widgets.ValuesDropdownWidget": {
+    "shadow": "0xff555555",
+    "background": "0xffc6c6c6",
+    "highlight": "0xffffffff",
+    "outline": "0xff000000",
+    "label": "0xffffff"
   }
 }
