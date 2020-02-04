@@ -2,20 +2,24 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.api.util.DurationHelper;
 import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
+import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.loader.EventLoader;
 import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
+import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import spinnery.client.BaseScreen;
 import spinnery.widget.*;
@@ -30,7 +34,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class ScriptEditorScreen extends BaseScreen {
-    private LifeCycle lifeCycle;
+    private LifeCycle lifeCycle = LifeCycle.Instant;
     private InputUtil.KeyCode keyCode;
     private String event;
     private int time;
@@ -44,6 +48,11 @@ public class ScriptEditorScreen extends BaseScreen {
     private WTabHolder.WTab keyBindingsTab;
     private WTabHolder.WTab eventsTab;
     private WTabHolder.WTab durationTab;
+
+    public ScriptEditorScreen() {
+        super();
+        setupWidgets();
+    }
 
     public ScriptEditorScreen(ScriptContainer scriptContainer) {
         super();
@@ -94,33 +103,13 @@ public class ScriptEditorScreen extends BaseScreen {
     }
 
     private WWidget setupLifeCycleWidget(WInterface mainInterface) {
-        WDropdown dropdown = new WDropdown(WPosition.of(WType.FREE, window.getScaledWidth() - 150, 20, 0), WSize.of(100, 20, 100, 43), mainInterface);
-        dropdown.setLabel(new LiteralText( lifeCycle.toString()));
-
-        WStaticText instantText = new WStaticText(
-                WPosition.of(WType.ANCHORED, 0, 0, 1, dropdown),
-                mainInterface,
-                new LiteralText(LifeCycle.Instant.toString()));
-        instantText.setOnMouseClicked(() -> {
-            lifeCycle = LifeCycle.Instant;
-
-            dropdown.setLabel(new LiteralText(lifeCycle.toString()));
-            dropdown.setState(false);
-        });
-
-        WStaticText threadedText = new WStaticText(
-                WPosition.of(WType.ANCHORED, 0, 0, 1, dropdown),
-                mainInterface,
-                new LiteralText(LifeCycle.Threaded.toString()));
-        threadedText.setOnMouseClicked(() -> {
-            lifeCycle = LifeCycle.Threaded;
-
-            dropdown.setLabel(new LiteralText(lifeCycle.toString()));
-            dropdown.setState(false);
-        });
-
-        dropdown.add(instantText);
-        dropdown.add(threadedText);
+        ValuesDropdownWidget<LifeCycle> dropdown = new ValuesDropdownWidget<>(
+                WPosition.of(WType.FREE, window.getScaledWidth() - 150, 20, 0),
+                WSize.of(100, 20),
+                mainInterface);
+        dropdown.selectValue(lifeCycle);
+        dropdown.addValues(LifeCycle.Instant, LifeCycle.Threaded);
+        dropdown.setOnChange(lifeCycle -> this.lifeCycle = lifeCycle);
 
         return dropdown;
     }
@@ -163,30 +152,18 @@ public class ScriptEditorScreen extends BaseScreen {
         List<String> eventsList = eventLoader.getEvents();
 
         eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new LiteralText("Events"));
-        WDropdown eventDropdown = new WDropdown(
+
+        ValuesDropdownWidget<String> eventDropdown = new ValuesDropdownWidget<>(
                 WPosition.of(WType.ANCHORED, 10, 30, 10, tabHolder),
-                WSize.of(100, 20, 100, 20 + eventsList.size() * 11),
+                WSize.of(100, 20),
                 mainInterface);
         if (event == null) {
             eventDropdown.setLabel(new LiteralText("Select an event:"));
         } else {
-            eventDropdown.setLabel(new LiteralText(event));
+            eventDropdown.selectValue(event);
         }
-
-        for (String name : eventsList) {
-            WStaticText eventText = new WStaticText(
-                    WPosition.of(WType.ANCHORED, 0, 0, 1, eventDropdown),
-                    mainInterface,
-                    new LiteralText(name));
-            eventText.setOnMouseClicked(() -> {
-                event = name;
-
-                eventDropdown.setLabel(new LiteralText(name));
-                eventDropdown.setState(false);
-            });
-
-            eventDropdown.add(eventText);
-        }
+        eventDropdown.addValues(eventsList);
+        eventDropdown.setOnChange(event -> this.event = event);
 
         eventsTab.add(eventDropdown);
     }
@@ -209,45 +186,27 @@ public class ScriptEditorScreen extends BaseScreen {
         };
 
         timeText.setOnKeyPressed(parseTime);
-        try {
-            Field runnableOnCharTyped = timeText.getClass()
-                    .getSuperclass()
-                    .getDeclaredField("runnableOnCharTyped");
-            runnableOnCharTyped.setAccessible(true);
-            runnableOnCharTyped.set(timeText, parseTime);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        timeText.setOnCharTyped(parseTime);
 
         if (unit != null) {
             timeText.setText(Integer.toString(time));
         }
 
-        WDropdown durationDropdown = new WDropdown(
+        ValuesDropdownWidget<ChronoUnit> durationDropdown = new ValuesDropdownWidget<>(
                 WPosition.of(WType.ANCHORED, 155, 30, 10, tabHolder),
-                WSize.of(135, 20, 135, 20 + units.size() * 11),
+                WSize.of(135, 20),
                 mainInterface);
+
+        durationDropdown.addValues(units);
 
         if (unit == null) {
             durationDropdown.setLabel(new LiteralText("Select a time unit:"));
         } else {
-            durationDropdown.setLabel(new LiteralText(unit.toString()));
+            durationDropdown.selectValue((ChronoUnit)unit);
         }
 
-        for (ChronoUnit unit : units) {
-            WStaticText unitText = new WStaticText(
-                    WPosition.of(WType.ANCHORED, 0, 0, 1, durationDropdown),
-                    mainInterface,
-                    new LiteralText(unit.toString()));
-            unitText.setOnMouseClicked(() -> {
-                this.unit = unit;
+        durationDropdown.setOnChange(unit -> this.unit = unit);
 
-                durationDropdown.setLabel(new LiteralText(unit.toString()));
-                durationDropdown.setState(false);
-            });
-
-            durationDropdown.add(unitText);
-        }
         durationTab.add(durationDropdown, timeText);
     }
 
@@ -263,15 +222,7 @@ public class ScriptEditorScreen extends BaseScreen {
         }
 
         scriptContent.setOnKeyPressed(() -> script = scriptContent.getText());
-        try {
-            Field runnableOnCharTyped = scriptContent.getClass()
-                    .getSuperclass()
-                    .getDeclaredField("runnableOnCharTyped");
-            runnableOnCharTyped.setAccessible(true);
-            runnableOnCharTyped.set(scriptContent, (Runnable)() -> script = scriptContent.getText());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        scriptContent.setOnCharTyped(() -> script = scriptContent.getText());
 
         return scriptContent;
     }
@@ -282,7 +233,6 @@ public class ScriptEditorScreen extends BaseScreen {
                 WSize.of(200, 30),
                 mainInterface
         );
-//        buttonBar.setHidden(true);
 
         WButton cancelButton = new WButton(
                 WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
@@ -308,26 +258,29 @@ public class ScriptEditorScreen extends BaseScreen {
 
     private void updateScriptContainer() {
         if (scriptContainer == null) {
-            scriptContainer = new ScriptContainer(null);
+            scriptContainer = new ScriptContainer();
+            Resolver.getInstance().resolve(Scripts.class).add(scriptContainer);
         }
 
         scriptContainer.setLifeCycle(lifeCycle);
         scriptContainer.setContent(script);
 
-        if (keyBindingsTab.getToggle().getToggleState()) {
+        if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
             scriptContainer.setTrigger(new BusTrigger(keyCode.getName()));
-        } else if (eventsTab.getToggle().getToggleState()) {
+        } else if (eventsTab.getToggle().getToggleState() && StringUtils.isNotBlank(event)) {
             scriptContainer.setTrigger(new BusTrigger(event));
-        } else if (durationTab.getToggle().getToggleState()) {
+        } else if (durationTab.getToggle().getToggleState() && unit != null) {
             scriptContainer.setTrigger(new ContinuousTrigger(Duration.of(time, unit)));
         }
+
+        ConfigCallback.EVENT.invoker().saveConfig(ScriptEditorScreen.class);
 
         onClose();
     }
 
     @Override
     public void onClose() {
-        this.minecraft.openScreen(new BindingScreen());
+        this.minecraft.openScreen(new ScriptsOverviewScreen());
     }
 
     @Override
