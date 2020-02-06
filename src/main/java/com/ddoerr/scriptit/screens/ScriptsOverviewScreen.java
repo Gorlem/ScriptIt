@@ -128,7 +128,7 @@ public class ScriptsOverviewScreen extends BaseScreen {
         );
         saveButton.setLabel(new LiteralText("Open Designer"));
         saveButton.setOnMouseClicked(() -> {
-            minecraft.openScreen(new WidgetDesignerScreen());
+            minecraft.openScreen(new HudElementScreen());
         });
 
         buttonBar.add(saveButton);
