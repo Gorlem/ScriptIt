@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HudElement extends DrawableHelper implements Tickable, Element, Drawable {
+    public static final int DEFAULT_PADDING = 2;
+
     public static final String FORE_COLOR = "fore-color";
     public static final String BACK_COLOR = "back-color";
 
