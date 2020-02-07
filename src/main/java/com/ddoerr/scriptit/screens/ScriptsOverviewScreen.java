@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.screens;
 
+import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
@@ -7,6 +8,7 @@ import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.PlaneWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.text.LiteralText;
 import spinnery.client.BaseScreen;
 import spinnery.widget.*;
@@ -24,6 +26,12 @@ public class ScriptsOverviewScreen extends BaseScreen {
     private void setupWidgets() {
         WInterface mainInterface = new WInterface(WPosition.of(WType.FREE, 0, 0, 0));
         getInterfaceHolder().add(mainInterface);
+
+        mainInterface.add(new WStaticText(
+                WPosition.of(WType.FREE, 25, 25, 0),
+                mainInterface,
+                new LiteralText("HACK")
+        ));
 
         scriptsList = setupList(mainInterface);
         WWidget addScript = setupAddScriptButton(mainInterface);
@@ -134,5 +142,12 @@ public class ScriptsOverviewScreen extends BaseScreen {
         buttonBar.add(saveButton);
 
         return buttonBar;
+    }
+
+    @Override
+    public void render(int mouseX, int mouseY, float tick) {
+        super.render(mouseX, mouseY, tick);
+
+//        minecraft.textRenderer.draw("Hello", 50, 50, Color.BLACK.getValue());
     }
 }
