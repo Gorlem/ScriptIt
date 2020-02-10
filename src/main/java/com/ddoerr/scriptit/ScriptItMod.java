@@ -12,11 +12,12 @@ import com.ddoerr.scriptit.loader.EventLoader;
 import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.loader.LanguageLoader;
 import com.ddoerr.scriptit.loader.LibraryLoader;
+import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptsOverviewScreen;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
 import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
-import com.ddoerr.scriptit.widgets.PlaneWidget;
+import com.ddoerr.scriptit.widgets.PanelWidget;
 import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
@@ -46,6 +47,7 @@ public class ScriptItMod implements ClientModInitializer {
 	public void onInitializeClient() {
 		Resolver resolver = Resolver.getInstance();
 
+		resolver.add(new ScreenHistory());
 		resolver.add(new EventBus());
 		resolver.add(new KeyBindingBusExtension());
 		resolver.add(new ThreadLifetimeManager());
@@ -83,10 +85,11 @@ public class ScriptItMod implements ClientModInitializer {
 		}
 
 		Collection<Tickable> tickables = resolver.resolveAll(Tickable.class);
+		ScreenHistory history = resolver.resolve(ScreenHistory.class);
 
 		ClientTickCallback.EVENT.register(mc -> {
 			if (openGuiKeyBinding.wasPressed()) {
-				mc.openScreen(new ScriptsOverviewScreen());
+				history.open(ScriptsOverviewScreen::new);
 			}
 
 			if (mc.player != null) {
@@ -100,7 +103,7 @@ public class ScriptItMod implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(delta -> hudElementManager.renderAll(0, 0, 0));
 
 		WidgetRegistry.register(KeyBindingButtonWidget.class);
-		WidgetRegistry.register(PlaneWidget.class);
+		WidgetRegistry.register(PanelWidget.class);
 		WidgetRegistry.register(ValuesDropdownWidget.class);
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 			@Override

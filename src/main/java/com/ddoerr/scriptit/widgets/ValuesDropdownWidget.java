@@ -4,6 +4,7 @@ import net.minecraft.text.LiteralText;
 import spinnery.client.BaseRenderer;
 import spinnery.widget.*;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -11,6 +12,8 @@ public class ValuesDropdownWidget<T> extends WDropdown {
     T selectedValue;
     Consumer<T> onChange;
     DropdownDirection direction = DropdownDirection.Down;
+
+    Instant recentClick = Instant.now();
 
     public ValuesDropdownWidget(WPosition position, WSize size, WInterface linkedInterface) {
         super(position, WSize.of(size.getX(), size.getY(), size.getX(), 20), linkedInterface);
@@ -49,8 +52,8 @@ public class ValuesDropdownWidget<T> extends WDropdown {
     public void selectValue(T value) {
         selectedValue = value;
 
-        setLabel(new LiteralText(value.toString()));
         setState(false);
+        setLabel(new LiteralText(value.toString()));
 
         if (onChange != null) {
             onChange.accept(value);
@@ -134,6 +137,16 @@ public class ValuesDropdownWidget<T> extends WDropdown {
             }
             y += widgetA.get(0).getHeight() + 2;
         }
+    }
+
+    @Override
+    public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+        int diff = recentClick.compareTo(Instant.now());
+        if (diff != 0) {
+            super.onMouseClicked(mouseX, mouseY, mouseButton);
+        }
+
+        recentClick = Instant.now();
     }
 
     public enum DropdownDirection {
