@@ -1,32 +1,28 @@
 package com.ddoerr.scriptit;
 
+import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.bus.EventBus;
 import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.loader.EventLoader;
 import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.loader.LanguageLoader;
 import com.ddoerr.scriptit.loader.LibraryLoader;
-import com.ddoerr.scriptit.screens.BindingScreen;
+import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptsOverviewScreen;
-import com.ddoerr.scriptit.screens.WidgetDesignerScreen;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
 import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
-import com.ddoerr.scriptit.widgets.KeyBindingsListWidget;
-import com.ddoerr.scriptit.api.languages.LanguageImplementation;
-import com.ddoerr.scriptit.elements.HudElementManager;
-import com.ddoerr.scriptit.callbacks.RenderEntryListBackgroundCallback;
-import com.ddoerr.scriptit.callbacks.RenderHotbarCallback;
-import com.ddoerr.scriptit.callbacks.RenderInGameHudCallback;
-import com.ddoerr.scriptit.widgets.PlaneWidget;
+import com.ddoerr.scriptit.widgets.PanelWidget;
 import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -35,15 +31,11 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 import org.lwjgl.glfw.GLFW;
 import spinnery.registry.ResourceRegistry;
-import spinnery.registry.ThemeRegistry;
 import spinnery.registry.WidgetRegistry;
-import spinnery.util.ResourceListener;
-import spinnery.widget.WButton;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -55,6 +47,7 @@ public class ScriptItMod implements ClientModInitializer {
 	public void onInitializeClient() {
 		Resolver resolver = Resolver.getInstance();
 
+		resolver.add(new ScreenHistory());
 		resolver.add(new EventBus());
 		resolver.add(new KeyBindingBusExtension());
 		resolver.add(new ThreadLifetimeManager());
@@ -92,10 +85,11 @@ public class ScriptItMod implements ClientModInitializer {
 		}
 
 		Collection<Tickable> tickables = resolver.resolveAll(Tickable.class);
+		ScreenHistory history = resolver.resolve(ScreenHistory.class);
 
 		ClientTickCallback.EVENT.register(mc -> {
 			if (openGuiKeyBinding.wasPressed()) {
-				mc.openScreen(new ScriptsOverviewScreen());
+				history.open(ScriptsOverviewScreen::new);
 			}
 
 			if (mc.player != null) {
@@ -105,14 +99,11 @@ public class ScriptItMod implements ClientModInitializer {
 			}
 		});
 
-		RenderHotbarCallback.SHOULD_RENDER.register(() -> minecraft.currentScreen instanceof WidgetDesignerScreen ? ActionResult.FAIL : ActionResult.PASS);
-		RenderEntryListBackgroundCallback.SHOULD_RENDER.register((widget) -> widget instanceof KeyBindingsListWidget ? ActionResult.FAIL : ActionResult.PASS);
-
 		HudElementManager hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
-		RenderInGameHudCallback.EVENT.register(hudElementManager::renderAll);
+		HudRenderCallback.EVENT.register(delta -> hudElementManager.renderAll(0, 0, 0));
 
 		WidgetRegistry.register(KeyBindingButtonWidget.class);
-		WidgetRegistry.register(PlaneWidget.class);
+		WidgetRegistry.register(PanelWidget.class);
 		WidgetRegistry.register(ValuesDropdownWidget.class);
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 			@Override

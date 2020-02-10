@@ -8,19 +8,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class PlaneWidget extends WWidget implements WModifiableCollection, WClient {
+public class PanelWidget extends WWidget implements WModifiableCollection, WClient {
     List<WWidget> widgets = new ArrayList<>();
-
     WColor color;
 
-    public PlaneWidget(WPosition position, WSize size, WInterface linkedInterface) {
+
+    public PanelWidget(WPosition position, WSize size, WInterface linkedInterface) {
         setInterface(linkedInterface);
         setPosition(position);
         setSize(size);
         setTheme("light");
     }
 
-    public PlaneWidget(WPosition position, WSize size, WInterface linkedInterface, WColor color) {
+    public PanelWidget(WPosition position, WSize size, WInterface linkedInterface, WColor color) {
         setInterface(linkedInterface);
         setPosition(position);
         setSize(size);
@@ -28,7 +28,7 @@ public class PlaneWidget extends WWidget implements WModifiableCollection, WClie
         setTheme("light");
     }
 
-    public PlaneWidget setColor(WColor color) {
+    public PanelWidget setColor(WColor color) {
         this.color = color;
         return this;
     }
@@ -36,6 +36,9 @@ public class PlaneWidget extends WWidget implements WModifiableCollection, WClie
     @Override
     public void draw() {
         super.draw();
+
+        if (isHidden())
+            return;
 
         if (color != null && size != null) {
             BaseRenderer.drawRectangle(getX(), getY(), 0, getWidth(), getHeight(), color);

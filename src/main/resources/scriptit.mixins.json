@@ -8,8 +8,6 @@
     "KeyBindingAccessor",
     "PacketTextAccessor",
     "SendPacketTextAccessor",
-    "MixinInGameHud",
-    "MixinEntryListWidget",
     "MixinClientPlayerNetworkHandler",
     "MixinScreen",
     "MixinSleepingChatScreen"

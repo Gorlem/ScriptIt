@@ -5,7 +5,7 @@ import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.Trigger;
-import com.ddoerr.scriptit.widgets.PlaneWidget;
+import com.ddoerr.scriptit.widgets.PanelWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import spinnery.client.BaseScreen;
@@ -13,17 +13,41 @@ import spinnery.widget.*;
 
 public class ScriptsOverviewScreen extends BaseScreen {
     WVerticalList scriptsList;
+    ScreenHistory history;
 
     public ScriptsOverviewScreen() {
         super();
 
+        history = Resolver.getInstance().resolve(ScreenHistory.class);
         minecraft = MinecraftClient.getInstance();
         setupWidgets();
+    }
+
+    @Override
+    public void onClose() {
+        history.back();
+    }
+
+    @Override
+    public boolean keyPressed(int character, int keyCode, int keyModifier) {
+        this.getInterfaceHolder().keyPressed(character, keyCode, keyModifier);
+        if (character == 256) {
+            onClose();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void setupWidgets() {
         WInterface mainInterface = new WInterface(WPosition.of(WType.FREE, 0, 0, 0));
         getInterfaceHolder().add(mainInterface);
+
+        mainInterface.add(new WStaticText(
+                WPosition.of(WType.FREE, 25, 25, 0),
+                mainInterface,
+                new LiteralText("HACK")
+        ));
 
         scriptsList = setupList(mainInterface);
         WWidget addScript = setupAddScriptButton(mainInterface);
@@ -50,7 +74,7 @@ public class ScriptsOverviewScreen extends BaseScreen {
     }
 
     private WWidget setupListRow(WVerticalList parent, WInterface mainInterface, ScriptContainer scriptContainer) {
-        PlaneWidget entry = new PlaneWidget(
+        PanelWidget entry = new PanelWidget(
                 WPosition.of(WType.ANCHORED, 0, 0, 10, parent),
                 WSize.of(minecraft.getWindow().getScaledWidth() - 40, 20),
                 mainInterface
@@ -69,7 +93,10 @@ public class ScriptsOverviewScreen extends BaseScreen {
                 mainInterface
         );
         editButton.setLabel(new LiteralText("Edit"));
-        editButton.setOnMouseClicked(() -> minecraft.openScreen(new ScriptEditorScreen(scriptContainer)));
+        editButton.setOnMouseClicked(() -> {
+            history.open(() -> new ScriptEditorScreen(scriptContainer));
+            editButton.setOnMouseClicked(null);
+        });
         entry.add(editButton);
 
         WButton removeButton = new WButton(
@@ -99,17 +126,18 @@ public class ScriptsOverviewScreen extends BaseScreen {
                 mainInterface
         );
 
-        WButton saveButton = new WButton(
+        WButton addNewScript = new WButton(
                 WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
                 WSize.of(100, 20),
                 mainInterface
         );
-        saveButton.setLabel(new LiteralText("Add new Script"));
-        saveButton.setOnMouseClicked(() -> {
-            minecraft.openScreen(new ScriptEditorScreen());
+        addNewScript.setLabel(new LiteralText("Add new Script"));
+        addNewScript.setOnMouseClicked(() -> {
+            history.open(ScriptEditorScreen::new);
+            addNewScript.setOnMouseClicked(null);
         });
 
-        buttonBar.add(saveButton);
+        buttonBar.add(addNewScript);
 
         return buttonBar;
     }
@@ -128,11 +156,17 @@ public class ScriptsOverviewScreen extends BaseScreen {
         );
         saveButton.setLabel(new LiteralText("Open Designer"));
         saveButton.setOnMouseClicked(() -> {
-            minecraft.openScreen(new WidgetDesignerScreen());
+            history.open(HudElementScreen::new);
+            saveButton.setOnMouseClicked(null);
         });
 
         buttonBar.add(saveButton);
 
         return buttonBar;
+    }
+
+    @Override
+    public void render(int mouseX, int mouseY, float tick) {
+        super.render(mouseX, mouseY, tick);
     }
 }

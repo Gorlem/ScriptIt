@@ -14,6 +14,7 @@ import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
 import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.item.Items;
@@ -32,6 +33,7 @@ import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ScriptEditorScreen extends BaseScreen {
     private LifeCycle lifeCycle = LifeCycle.Instant;
@@ -49,13 +51,21 @@ public class ScriptEditorScreen extends BaseScreen {
     private WTabHolder.WTab eventsTab;
     private WTabHolder.WTab durationTab;
 
+    private Supplier<Screen> onCloseSupplier = () -> null;
+    private ScreenHistory history;
+
     public ScriptEditorScreen() {
         super();
+
+        history = Resolver.getInstance().resolve(ScreenHistory.class);
+
         setupWidgets();
     }
 
     public ScriptEditorScreen(ScriptContainer scriptContainer) {
         super();
+
+        history = Resolver.getInstance().resolve(ScreenHistory.class);
 
         this.scriptContainer = scriptContainer;
 
@@ -240,7 +250,10 @@ public class ScriptEditorScreen extends BaseScreen {
                 mainInterface
         );
         cancelButton.setLabel(new LiteralText("Cancel"));
-        cancelButton.setOnMouseClicked(this::onClose);
+        cancelButton.setOnMouseClicked(() -> {
+            onClose();
+            cancelButton.setOnMouseClicked(null);
+        });
 
         WButton saveButton = new WButton(
                 WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
@@ -248,7 +261,10 @@ public class ScriptEditorScreen extends BaseScreen {
                 mainInterface
         );
         saveButton.setLabel(new LiteralText("Save"));
-        saveButton.setOnMouseClicked(this::updateScriptContainer);
+        saveButton.setOnMouseClicked(() -> {
+            updateScriptContainer();
+            saveButton.setOnMouseClicked(null);
+        });
 
         buttonBar.add(cancelButton);
         buttonBar.add(saveButton);
@@ -280,7 +296,11 @@ public class ScriptEditorScreen extends BaseScreen {
 
     @Override
     public void onClose() {
-        this.minecraft.openScreen(new ScriptsOverviewScreen());
+        history.back();
+    }
+
+    public void setOnCloseScreen(Supplier<Screen> screenSupplier) {
+        onCloseSupplier = screenSupplier;
     }
 
     @Override

@@ -48,7 +48,6 @@ public class IconHudElement implements HudElementInitializer, HudElementProvider
     @Override
     public void setDefaults(HudElement hudElement) {
         hudElement.getScriptContainer().setContent("return \"grass_block\"");
-        hudElement.setOption(HudElement.FORE_COLOR, "WHITE");
         hudElement.setOption(HudElement.BACK_COLOR, "BLACK 50%");
     }
 }
