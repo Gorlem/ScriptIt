@@ -54,13 +54,17 @@ public class ScriptsOverviewScreen extends BaseScreen {
         WPanel panel = mainInterface.createChild(WPanel.class, Position.of(20, 20, 5), Size.of(mainInterface).add(-40, -70));
         WVerticalScrollableContainer list = panel.createChild(WVerticalScrollableContainer.class, panel.getPosition().add(4, 4, 0), panel.getSize().add(-8, -8));
 
+        WAbstractWidget lastRow = null;
+
         for (ScriptContainer scriptContainer : scripts.getAll()) {
-            setupListRow(list, scriptContainer);
+            lastRow = setupListRow(list, scriptContainer, lastRow);
         }
     }
 
-    private void setupListRow(WVerticalScrollableContainer list, ScriptContainer scriptContainer) {
-        PanelWidget row = list.createChild(PanelWidget.class, Position.of(list), Size.of(list.getWidth(), 20)).setColor(Color.of("000000"));
+    private WAbstractWidget setupListRow(WVerticalScrollableContainer list, ScriptContainer scriptContainer, WAbstractWidget lastRow) {
+        Position position = lastRow == null ? Position.of(list) : Position.ofBottomLeft(lastRow);
+
+        PanelWidget row = list.createChild(PanelWidget.class, position, Size.of(list.getWidth(), 20));
 
         row.createChild(WStaticText.class, Position.of(row, 5, 5))
                 .setText(scriptContainer.toString());
@@ -80,6 +84,7 @@ public class ScriptsOverviewScreen extends BaseScreen {
                     list.remove(row);
                     ConfigCallback.EVENT.invoker().saveConfig(ScriptsOverviewScreen.class);
                 });
+        return row;
     }
 
     private void setupAddScriptButton(WInterface mainInterface) {

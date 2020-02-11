@@ -198,8 +198,8 @@ public class ScriptEditorScreen extends BaseScreen {
             scriptContent.setText(script);
         }
 
-        scriptContent.setOnKeyPressed(() -> script = scriptContent.getText());
-        scriptContent.setOnCharTyped(() -> script = scriptContent.getText());
+        scriptContent.setOnKeyPressed((widget, keyPressed, character, keyModifier) -> script = scriptContent.getText());
+        scriptContent.setOnCharTyped((widget, character, keyCode) -> script = scriptContent.getText());
     }
 
     private void setupButtonBar(WInterface mainInterface) {
