@@ -76,7 +76,7 @@ public class HudElementScreen extends BaseScreen {
     }
 
     private void setupWidgets() {
-        WInterface mainInterface = getScreenInterface();
+        WInterface mainInterface = getInterface();
 
         setupDropdown(mainInterface);
     }
@@ -173,7 +173,7 @@ public class HudElementScreen extends BaseScreen {
     @Override
     public boolean keyPressed(int character, int keyCode, int keyModifier) {
         if (focusedHudElement == null) {
-            this.getScreenInterface().onKeyPressed(character, keyCode, keyModifier);
+            this.getInterface().onKeyPressed(character, keyCode, keyModifier);
             if (character == 256) {
                 onClose();
                 return true;
@@ -201,7 +201,7 @@ public class HudElementScreen extends BaseScreen {
             }
         }
 
-        this.getScreenInterface().onKeyPressed(character, keyCode, keyModifier);
+        this.getInterface().onKeyPressed(character, keyCode, keyModifier);
         if (character == 256) {
             onClose();
             return true;

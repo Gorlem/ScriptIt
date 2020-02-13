@@ -43,7 +43,7 @@ dependencies {
 
 	embed fileTree(dir: "lib", includes: ["*.jar"])
 
-	modImplementation "com.github.gorlem:Spinnery:32c3635"
+	modImplementation "com.github.gorlem:Spinnery:51ab172"
 }
 
 processResources {

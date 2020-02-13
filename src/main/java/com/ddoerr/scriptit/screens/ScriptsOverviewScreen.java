@@ -31,7 +31,7 @@ public class ScriptsOverviewScreen extends BaseScreen {
 
     @Override
     public boolean keyPressed(int character, int keyCode, int keyModifier) {
-        this.getScreenInterface().onKeyPressed(character, keyCode, keyModifier);
+        this.getInterface().onKeyPressed(character, keyCode, keyModifier);
         if (character == 256) {
             onClose();
             return true;
@@ -41,7 +41,7 @@ public class ScriptsOverviewScreen extends BaseScreen {
     }
 
     private void setupWidgets() {
-        WInterface mainInterface = getScreenInterface();
+        WInterface mainInterface = getInterface();
 
         setupList(mainInterface);
         setupAddScriptButton(mainInterface);
