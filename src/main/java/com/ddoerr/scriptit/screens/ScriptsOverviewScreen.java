@@ -13,7 +13,7 @@ import spinnery.widget.api.Color;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-public class ScriptsOverviewScreen extends BaseScreen {
+public class ScriptsOverviewScreen extends AbstractHistoryScreen {
     ScreenHistory history;
 
     public ScriptsOverviewScreen() {
@@ -22,22 +22,6 @@ public class ScriptsOverviewScreen extends BaseScreen {
         history = Resolver.getInstance().resolve(ScreenHistory.class);
         minecraft = MinecraftClient.getInstance();
         setupWidgets();
-    }
-
-    @Override
-    public void onClose() {
-        history.back();
-    }
-
-    @Override
-    public boolean keyPressed(int character, int keyCode, int keyModifier) {
-        this.getInterface().onKeyPressed(character, keyCode, keyModifier);
-        if (character == 256) {
-            onClose();
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private void setupWidgets() {

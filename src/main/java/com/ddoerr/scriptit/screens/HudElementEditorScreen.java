@@ -1,59 +1,43 @@
 package com.ddoerr.scriptit.screens;
 
+import com.ddoerr.scriptit.elements.HudElement;
 import spinnery.client.BaseScreen;
+import spinnery.widget.*;
+import spinnery.widget.api.Position;
+import spinnery.widget.api.Size;
 
-public class HudElementEditorScreen extends BaseScreen {
-//    private void showSetup(HudElement hudElement) {
-//        WInterface mainInterface = getInterfaceHolder().getInterfaces().get(0);
-//
-//        Window window = MinecraftClient.getInstance().getWindow();
-//
-//        WVerticalList list = new WVerticalList(
-//                WPosition.of(WType.FREE, window.getScaledWidth() / 2 - 100, window.getScaledHeight() / 2 - 100, 10),
-//                WSize.of(200, 200),
-//                mainInterface
-//        );
-//
-//        PanelWidget plane = new PanelWidget(
-//                WPosition.of(WType.ANCHORED, 0, 0, 0, list),
-//                WSize.of(190, 190),
-//                mainInterface
-//        );
-//
-//        list.add(plane);
-//
-//        WButton editScript = new WButton(
-//                WPosition.of(WType.ANCHORED, 5, 5, 15, plane),
-//                WSize.of(180, 20),
-//                mainInterface
-//        );
-//        editScript.setLabel(new LiteralText("Edit Script"));
-//        editScript.setOnMouseClicked(() -> {
-//            history.open(() -> new ScriptEditorScreen(hudElement.getScriptContainer()));
-//            editScript.setOnMouseClicked(null);
-//        });
-//        plane.add(editScript);
-//
-//        int y = 30;
-//
-//        for (Map.Entry<String, Object> entry : hudElement.getOptions().entrySet()) {
-//            WStaticText title = new WStaticText(
-//                    WPosition.of(WType.ANCHORED, 5, y, 15, plane),
-//                    mainInterface,
-//                    new LiteralText(entry.getKey())
-//            );
-//            WDynamicText text = new WDynamicText(
-//                    WPosition.of(WType.ANCHORED, 5, y + 10, 15, plane),
-//                    WSize.of(180, 16),
-//                    mainInterface
-//            );
-//
-//            text.setText(entry.getValue().toString());
-//
-//            plane.add(title, text);
-//            y += 35;
-//        }
-//
+import java.util.Map;
+
+public class HudElementEditorScreen extends AbstractHistoryScreen {
+    public HudElementEditorScreen(HudElement hudElement) {
+        super();
+
+        showSetup(hudElement);
+    }
+
+    private void showSetup(HudElement hudElement) {
+        WInterface mainInterface = getInterface();
+        WPanel panel = mainInterface.createChild(WPanel.class, Position.of(0, 0, 0), Size.of(200, 200));
+        panel.center();
+
+        panel.createChild(WButton.class, Position.of(panel, 10, 10), Size.of(180, 20))
+                .setOnMouseClicked((widget, mouseX, mouseY, mouseButton) -> {
+                    openScreen(() -> new ScriptEditorScreen(hudElement.getScriptContainer()));
+                })
+                .setLabel("Edit Script");
+
+
+        int y = 35;
+
+        for (Map.Entry<String, Object> entry : hudElement.getOptions().entrySet()) {
+            panel.createChild(WStaticText.class, Position.of(panel, 10, y))
+                    .setText(entry.getKey());
+
+            panel.createChild(WTextField.class, Position.of(panel, 10, y + 10), Size.of(180, 16))
+                    .setText(entry.getValue().toString());
+            y += 35;
+        }
+
 //        ValuesDropdownWidget<HudVerticalAnchor> vertical = new ValuesDropdownWidget<>(
 //                WPosition.of(WType.ANCHORED, 5, y, 15, plane),
 //                WSize.of(88, 20),
@@ -93,5 +77,5 @@ public class HudElementEditorScreen extends BaseScreen {
 //        plane.add(cancelButton);
 //
 //        mainInterface.add(list);
-//    }
+    }
 }

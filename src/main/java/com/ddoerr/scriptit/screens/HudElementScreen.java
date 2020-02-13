@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class HudElementScreen extends BaseScreen {
+public class HudElementScreen extends AbstractHistoryScreen {
     HudElementProvider currentlyAdding;
 
     HudElementManager hudElementManager;
@@ -70,11 +70,6 @@ public class HudElementScreen extends BaseScreen {
         setupWidgets();
     }
 
-    @Override
-    public void onClose() {
-        history.back();
-    }
-
     private void setupWidgets() {
         WInterface mainInterface = getInterface();
 
@@ -111,7 +106,7 @@ public class HudElementScreen extends BaseScreen {
             Duration duration = Duration.between(lastTimeClicked, timeClicked);
 
             if (duration.compareTo(durationBetweenClicks) < 0) {
-                history.open(HudElementEditorScreen::new);
+                history.open(() -> new HudElementEditorScreen(focusedHudElement));
             }
         }
 
@@ -173,13 +168,7 @@ public class HudElementScreen extends BaseScreen {
     @Override
     public boolean keyPressed(int character, int keyCode, int keyModifier) {
         if (focusedHudElement == null) {
-            this.getInterface().onKeyPressed(character, keyCode, keyModifier);
-            if (character == 256) {
-                onClose();
-                return true;
-            } else {
-                return false;
-            }
+            return super.keyPressed(character, keyCode, keyModifier);
         }
 
         InputUtil.KeyCode code = InputUtil.getKeyCode(character, keyCode);
@@ -201,13 +190,7 @@ public class HudElementScreen extends BaseScreen {
             }
         }
 
-        this.getInterface().onKeyPressed(character, keyCode, keyModifier);
-        if (character == 256) {
-            onClose();
-            return true;
-        } else {
-            return false;
-        }
+        return super.keyPressed(character, keyCode, keyModifier);
     }
 
     @Override

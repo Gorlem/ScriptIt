@@ -37,7 +37,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ScriptEditorScreen extends BaseScreen {
+public class ScriptEditorScreen extends AbstractHistoryScreen {
     private LifeCycle lifeCycle = LifeCycle.Instant;
     private InputUtil.KeyCode keyCode;
     private String event;
@@ -234,21 +234,5 @@ public class ScriptEditorScreen extends BaseScreen {
         ConfigCallback.EVENT.invoker().saveConfig(ScriptEditorScreen.class);
 
         onClose();
-    }
-
-    @Override
-    public void onClose() {
-        history.back();
-    }
-
-    @Override
-    public boolean keyPressed(int character, int keyCode, int keyModifier) {
-        this.getInterface().onKeyPressed(character, keyCode, keyModifier);
-        if (character == 256) {
-            onClose();
-            return true;
-        } else {
-            return false;
-        }
     }
 }
