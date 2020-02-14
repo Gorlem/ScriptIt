@@ -35,6 +35,11 @@ public class ValuesDropdownWidget<T> extends WDropdown {
 
     private void addChild(T value) {
         int y = widgets.size() * 11;
+
+        if (direction == DropdownDirection.Up) {
+            y -= getToggleHeight() - 2;
+        }
+
         createChild(WStaticText.class, Position.of(this, 5, y))
                 .setText(value.toString())
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> selectValue(value));
