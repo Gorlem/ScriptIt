@@ -17,36 +17,33 @@ public class ValuesDropdownWidget<T> extends WDropdown {
     Consumer<T> onChange;
     DropdownDirection direction = DropdownDirection.Down;
 
-    public void addValues(T... values) {
-        setDropdownSize(size.add(0, values.length * 11));
+    public ValuesDropdownWidget() {
+        setHideBehavior(HideBehavior.ANYWHERE);
+    }
 
+    public void addValues(T... values) {
         for (T value : values) {
             addChild(value);
         }
     }
 
     public void addValues(Collection<T> values) {
-        setDropdownSize(size.add(0, values.size() * 11));
-
         for (T value : values) {
             addChild(value);
         }
     }
 
     private void addChild(T value) {
-        WAbstractWidget child = createChild(WStaticText.class, Position.of(this, 0, 0))
+        int y = widgets.size() * 11;
+        createChild(WStaticText.class, Position.of(this, 5, y))
                 .setText(value.toString())
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> selectValue(value));
 
-        if (direction == DropdownDirection.Up) {
-//            child.getPosition().setOffsetY(-(getDropdownSize().getHeight() + getToggleHeight()));
-        }
+        setDropdownSize(Size.of(this.getWidth(), widgets.size() * 11 + 2));
     }
 
     public void selectValue(T value) {
         selectedValue = value;
-
-        setState(false);
         setLabel(new LiteralText(value.toString()));
 
         if (onChange != null) {

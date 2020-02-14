@@ -133,6 +133,14 @@ public class HudElementScreen extends AbstractHistoryScreen {
             int width = hudElement.getWidth();
             int height = hudElement.getHeight();
 
+            if (hudElement.equals(focusedHudElement)) {
+                Color color = Color.WHITE;
+                fill(x, y, x + width, y + 1, color.getValue());
+                fill(x, y, x + 1, y + height, color.getValue());
+                fill(x, y + height - 1, x + width, y + height,color.getValue());
+                fill(x + width - 1, y, x + width, y + height, color.getValue());
+            }
+
             switch (hudElement.getVerticalAnchor()) {
                 case MIDDLE:
                     y += height / 2;
@@ -149,14 +157,6 @@ public class HudElementScreen extends AbstractHistoryScreen {
                 case RIGHT:
                     x += width - 1;
                     break;
-            }
-
-            if (hudElement.equals(focusedHudElement)) {
-                Color color = Color.WHITE;
-                fill(x, y, x + width, y + 1, color.getValue());
-                fill(x, y, x + 1, y + height, color.getValue());
-                fill(x, y + height - 1, x + width, y + height,color.getValue());
-                fill(x + width - 1, y, x + width, y + height, color.getValue());
             }
 
             fill(x - 1, y - 1, x + 2, y + 2, Color.RED.getValue());
