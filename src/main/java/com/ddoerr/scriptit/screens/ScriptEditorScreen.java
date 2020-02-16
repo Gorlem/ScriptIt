@@ -13,29 +13,21 @@ import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
 import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Pair;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import spinnery.client.BaseScreen;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import java.lang.reflect.Field;
 import java.time.Duration;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.time.temporal.UnsupportedTemporalTypeException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.Arrays;
+import java.util.List;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
     private LifeCycle lifeCycle = LifeCycle.Instant;
@@ -47,26 +39,18 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
     private ScriptContainer scriptContainer;
 
-    private Window window;
-
     private WTabHolder.WTab keyBindingsTab;
     private WTabHolder.WTab eventsTab;
     private WTabHolder.WTab durationTab;
 
-    private ScreenHistory history;
-
     public ScriptEditorScreen() {
         super();
-
-        history = Resolver.getInstance().resolve(ScreenHistory.class);
 
         setupWidgets();
     }
 
     public ScriptEditorScreen(ScriptContainer scriptContainer) {
         super();
-
-        history = Resolver.getInstance().resolve(ScreenHistory.class);
 
         this.scriptContainer = scriptContainer;
 
@@ -205,11 +189,13 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private void setupButtonBar(WInterface mainInterface) {
         WPanel panel = mainInterface.createChild(WPanel.class, Position.ofBottomRight(mainInterface).add(-220, -40, 0), Size.of(200, 30));
 
-        mainInterface.createChild(WButton.class, Position.of(panel), Size.of(100, 20))
+        int size = (200 - 3 * 5) / 2;
+
+        mainInterface.createChild(WButton.class, Position.of(panel).add(5, 5, 1), Size.of(size, 20))
                 .setLabel("Cancel")
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> onClose());
 
-        mainInterface.createChild(WButton.class, Position.of(panel).add(100, 0, 0), Size.of(100, 20))
+        mainInterface.createChild(WButton.class, Position.of(panel).add(size + 10, 5, 1), Size.of(size, 20))
                 .setLabel("Save")
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> updateScriptContainer());
     }

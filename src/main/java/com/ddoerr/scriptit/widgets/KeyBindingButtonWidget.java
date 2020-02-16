@@ -10,12 +10,14 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import spinnery.client.BaseRenderer;
 import spinnery.widget.*;
+import spinnery.widget.api.WFocusedMouseListener;
 
 import java.text.Normalizer;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+@WFocusedMouseListener
 public class KeyBindingButtonWidget extends WButton {
     private InputUtil.KeyCode keyCode = InputUtil.UNKNOWN_KEYCODE;
 
