@@ -17,6 +17,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.LiteralText;
 import spinnery.client.BaseScreen;
+import spinnery.util.MouseUtilities;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
@@ -31,7 +32,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class HudElementScreen extends AbstractHistoryScreen {
-    HudElementProvider currentlyAdding;
+    HudElement currentlyAdding;
 
     HudElementManager hudElementManager;
     HudElementLoader hudElementLoader;
@@ -70,6 +71,16 @@ public class HudElementScreen extends AbstractHistoryScreen {
         setupWidgets();
     }
 
+    @Override
+    public void onClose() {
+        if (currentlyAdding != null) {
+            currentlyAdding = null;
+            dropdown.setLabel(new LiteralText("Add Hud Element"));
+        } else {
+            super.onClose();
+        }
+    }
+
     private void setupWidgets() {
         WInterface mainInterface = getInterface();
 
@@ -85,16 +96,17 @@ public class HudElementScreen extends AbstractHistoryScreen {
         dropdown.setDirection(ValuesDropdownWidget.DropdownDirection.Up);
         dropdown.addValues(providers.keySet());
         dropdown.setLabel("Add Hud Element");
-        dropdown.setOnChange(key -> currentlyAdding = providers.get(key));
+        dropdown.setOnChange(key -> {
+            HudElementProvider hudElementProvider = providers.get(key);
+            currentlyAdding = new HudElement(hudElementProvider, MouseUtilities.mouseX, MouseUtilities.mouseY);
+            currentlyAdding.tick();
+        });
     }
-
-
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         if (currentlyAdding != null) {
-            HudElement hudElement = new HudElement(currentlyAdding, mouseX, mouseY);
-            hudElementManager.add(hudElement);
+            hudElementManager.add(currentlyAdding);
 
             currentlyAdding = null;
             dropdown.setLabel(new LiteralText("Add Hud Element"));
@@ -125,6 +137,12 @@ public class HudElementScreen extends AbstractHistoryScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float tick) {
+        if (currentlyAdding != null) {
+            currentlyAdding.setRealPosition(new Point(mouseX, mouseY));
+            currentlyAdding.tick();
+            currentlyAdding.render(0, 0, 0);
+        }
+
         for (HudElement hudElement : hudElements) {
             Point point = hudElement.getRealPosition();
             int x = (int) point.getX();
