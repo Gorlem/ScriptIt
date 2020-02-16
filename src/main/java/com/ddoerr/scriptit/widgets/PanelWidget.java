@@ -3,11 +3,13 @@ package com.ddoerr.scriptit.widgets;
 import spinnery.client.BaseRenderer;
 import spinnery.widget.*;
 import spinnery.widget.api.Color;
+import spinnery.widget.api.WDelegatedEventListener;
+import spinnery.widget.api.WEventListener;
 import spinnery.widget.api.WModifiableCollection;
 
 import java.util.*;
 
-public class PanelWidget extends WAbstractWidget implements WModifiableCollection {
+public class PanelWidget extends WAbstractWidget implements WModifiableCollection, WDelegatedEventListener {
     Set<WAbstractWidget> widgets = new HashSet<>();
     Color color;
 
@@ -56,5 +58,10 @@ public class PanelWidget extends WAbstractWidget implements WModifiableCollectio
     public boolean updateFocus(int mouseX, int mouseY) {
         setFocus(isWithinBounds(mouseX, mouseY) && getWidgets().stream().noneMatch((WAbstractWidget::isFocused)));
         return isFocused();
+    }
+
+    @Override
+    public Collection<? extends WEventListener> getEventDelegates() {
+        return widgets;
     }
 }

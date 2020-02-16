@@ -35,7 +35,7 @@ public class ScriptsOverviewScreen extends AbstractHistoryScreen {
     private void setupList(WInterface mainInterface) {
         Scripts scripts = Resolver.getInstance().resolve(Scripts.class);
 
-        WPanel panel = mainInterface.createChild(WPanel.class, Position.of(20, 20, 5), Size.of(mainInterface).add(-40, -70));
+        WPanel panel = mainInterface.createChild(WPanel.class, Position.of(20, 20, 0), Size.of(mainInterface).add(-40, -70));
         WVerticalScrollableContainer list = panel.createChild(WVerticalScrollableContainer.class, panel.getPosition().add(4, 4, 0), panel.getSize().add(-8, -8));
 
         WAbstractWidget lastRow = null;
