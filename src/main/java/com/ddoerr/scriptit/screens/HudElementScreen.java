@@ -85,14 +85,20 @@ public class HudElementScreen extends AbstractHistoryScreen {
         WInterface mainInterface = getInterface();
 
         setupDropdown(mainInterface);
+
+        mainInterface.onAlign();
     }
 
     private void setupDropdown(WInterface mainInterface) {
         Map<String, HudElementProvider> providers = hudElementLoader.getProviders();
 
-        dropdown = mainInterface.createChild(ValuesDropdownWidget.class, Position.ofBottomLeft(mainInterface).add(0, -22, 0), Size.of(200, 20));
+        dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
+                .setSize(Size.of(200, 20))
+                .setOnAlign(w -> {
+                   w.setPosition(Position.ofBottomLeft(mainInterface).add(0, -22, 0))
+                        .centerX();
+                });
 
-        dropdown.centerX();
         dropdown.setDirection(ValuesDropdownWidget.DropdownDirection.Up);
         dropdown.addValues(providers.keySet());
         dropdown.setLabel("Add Hud Element");
