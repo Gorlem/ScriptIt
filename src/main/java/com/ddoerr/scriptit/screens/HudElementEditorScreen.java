@@ -35,8 +35,8 @@ public class HudElementEditorScreen extends AbstractHistoryScreen {
 
     private void showSetup(HudElement hudElement) {
         WInterface mainInterface = getInterface();
-        WPanel panel = mainInterface.createChild(WPanel.class, Position.of(0, 0, 0), Size.of(200, 200));
-        panel.center();
+        WPanel panel = mainInterface.createChild(WPanel.class, Position.of(0, 0, 0), Size.of(200, 200))
+                .setOnAlign(WAbstractWidget::center);
 
         panel.createChild(WButton.class, Position.of(panel, 10, 10), Size.of(180, 20))
                 .setOnMouseClicked((widget, mouseX, mouseY, mouseButton) -> {
@@ -78,6 +78,8 @@ public class HudElementEditorScreen extends AbstractHistoryScreen {
         panel.createChild(WButton.class, Position.ofBottomLeft(panel).add(10, -30, 0), Size.of(88, 20))
                 .setOnMouseClicked((widget, mouseX, mouseY, mouseButton) -> onClose())
                 .setLabel("Cancel");
+
+        mainInterface.onAlign();
     }
 
     private void updateHudElement() {
