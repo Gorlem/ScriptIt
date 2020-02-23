@@ -30,13 +30,20 @@ public class ScriptsOverviewScreen extends AbstractHistoryScreen {
         setupList(mainInterface);
         setupAddScriptButton(mainInterface);
         setupOpenDesignerButton(mainInterface);
+
+        mainInterface.onAlign();
     }
 
     private void setupList(WInterface mainInterface) {
         Scripts scripts = Resolver.getInstance().resolve(Scripts.class);
 
-        WPanel panel = mainInterface.createChild(WPanel.class, Position.of(20, 20, 0), Size.of(mainInterface).add(-40, -70));
-        WVerticalScrollableContainer list = panel.createChild(WVerticalScrollableContainer.class, panel.getPosition().add(4, 4, 0), panel.getSize().add(-8, -8));
+        WPanel panel = mainInterface.createChild(WPanel.class, Position.of(20, 20, 0));
+        panel.setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -70)));
+
+        WVerticalScrollableContainer list = panel.createChild(WVerticalScrollableContainer.class, panel.getPosition().add(4, 4, 0));
+        list.setOnAlign(w -> {
+            w.setSize(Size.of(panel).add(-8, -8));
+        });
 
         WAbstractWidget lastRow = null;
 
@@ -46,18 +53,24 @@ public class ScriptsOverviewScreen extends AbstractHistoryScreen {
     }
 
     private WAbstractWidget setupListRow(WVerticalScrollableContainer list, ScriptContainer scriptContainer, WAbstractWidget lastRow) {
-        Position position = lastRow == null ? Position.of(list) : Position.ofBottomLeft(lastRow);
+        PanelWidget row = list.createChild(PanelWidget.class);
+        row.setOnAlign(w -> {
+            w.setSize(Size.of(list.getWidth(), 20));
+            w.setPosition(lastRow == null ? Position.of(list) : Position.ofBottomLeft(lastRow));
+        });
 
-        PanelWidget row = list.createChild(PanelWidget.class, position, Size.of(list.getWidth(), 20));
+        row.createChild(WStaticText.class)
+                .setText(scriptContainer.toString())
+                .setOnAlign(w -> w.setPosition(Position.of(row, 5, 5)));
 
-        row.createChild(WStaticText.class, Position.of(row, 5, 5))
-                .setText(scriptContainer.toString());
-
-        row.createChild(WButton.class, Position.ofTopRight(row).add(-110, 0, 0), Size.of(45, 20))
+        row.createChild(WButton.class)
+                .setSize(Size.of(45, 20))
                 .setLabel("Edit")
-                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(() -> new ScriptEditorScreen(scriptContainer)));
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(() -> new ScriptEditorScreen(scriptContainer)))
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(-110, 0, 0)));
 
-        row.createChild(WButton.class, Position.ofTopRight(row).add(- 55, 0, 0), Size.of(45, 20))
+        row.createChild(WButton.class)
+                .setSize(Size.of(45, 20))
                 .setLabel("Remove")
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> {
                     Resolver.getInstance().resolve(Scripts.class).remove(scriptContainer);
@@ -67,26 +80,32 @@ public class ScriptsOverviewScreen extends AbstractHistoryScreen {
                     }
                     list.remove(row);
                     ConfigCallback.EVENT.invoker().saveConfig(ScriptsOverviewScreen.class);
-                });
+                })
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(- 55, 0, 0)));
         return row;
     }
 
     private void setupAddScriptButton(WInterface mainInterface) {
-        WPanel panel = mainInterface.createChild(WPanel.class, Position.ofBottomRight(mainInterface).add(-134, -40, 0), Size.of(114, 30));
-        panel.createChild(WButton.class, Position.of(panel, 4, 4), Size.of(100, 20))
+        WPanel panel = mainInterface.createChild(WPanel.class)
+                .setOnAlign(w -> w.setPosition(Position.ofBottomRight(mainInterface).add(-134, -40, 0)))
+                .setSize(Size.of(114, 30));
+
+        panel.createChild(WButton.class)
+                .setSize(Size.of(100, 20))
+                .setOnAlign(w -> w.setPosition(Position.of(panel, 4, 4)))
                 .setLabel("Add new Script")
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(ScriptEditorScreen::new));
     }
 
     private void setupOpenDesignerButton(WInterface mainInterface) {
-        WPanel panel = mainInterface.createChild(WPanel.class, Position.ofBottomLeft(mainInterface).add(20, -40, 0), Size.of(114, 30));
-        panel.createChild(WButton.class, Position.of(panel, 4, 4), Size.of(100, 20))
+        WPanel panel = mainInterface.createChild(WPanel.class)
+                .setOnAlign(w -> w.setPosition(Position.ofBottomLeft(mainInterface).add(20, -40, 0)))
+                .setSize(Size.of(114, 30));
+
+        panel.createChild(WButton.class)
+                .setSize(Size.of(100, 20))
+                .setOnAlign(w -> w.setPosition(Position.of(panel, 4, 4)))
                 .setLabel("Open Designer")
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(HudElementScreen::new));
-    }
-
-    @Override
-    public void render(int mouseX, int mouseY, float tick) {
-        super.render(mouseX, mouseY, tick);
     }
 }
