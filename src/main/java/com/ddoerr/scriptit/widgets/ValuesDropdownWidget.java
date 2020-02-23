@@ -2,7 +2,11 @@ package com.ddoerr.scriptit.widgets;
 
 import net.minecraft.text.LiteralText;
 import spinnery.client.BaseRenderer;
+import spinnery.client.TextRenderer;
 import spinnery.widget.*;
+import spinnery.widget.api.Position;
+import spinnery.widget.api.Size;
+import spinnery.widget.api.WLayoutElement;
 
 import java.time.Instant;
 import java.util.*;
@@ -13,46 +17,38 @@ public class ValuesDropdownWidget<T> extends WDropdown {
     Consumer<T> onChange;
     DropdownDirection direction = DropdownDirection.Down;
 
-    Instant recentClick = Instant.now();
-
-    public ValuesDropdownWidget(WPosition position, WSize size, WInterface linkedInterface) {
-        super(position, WSize.of(size.getX(), size.getY(), size.getX(), 20), linkedInterface);
-    }
-
-    public static WWidget.Theme of(Map<String, String> rawTheme) {
-        return WDropdown.of(rawTheme);
+    public ValuesDropdownWidget() {
+        setHideBehavior(HideBehavior.ANYWHERE);
     }
 
     public void addValues(T... values) {
         for (T value : values) {
             addChild(value);
         }
-
-        size.setY(1, 20 + dropdownWidgets.size() * 11);
     }
 
-    public void addValues(Iterable<T> values) {
+    public void addValues(Collection<T> values) {
         for (T value : values) {
             addChild(value);
         }
-
-        size.setY(1, 20 + dropdownWidgets.size() * 11);
     }
 
     private void addChild(T value) {
-        WStaticText textRow = new WStaticText(
-                WPosition.of(WType.ANCHORED, 0, 0, 1, this),
-                getInterface(),
-                new LiteralText(value.toString()));
-        textRow.setOnMouseClicked(() -> selectValue(value));
+        int y = widgets.size() * 11;
 
-        add(textRow);
+        if (direction == DropdownDirection.Up) {
+            y -= getToggleHeight() - 2;
+        }
+
+        createChild(WStaticText.class, Position.of(this, 5, y))
+                .setText(value.toString())
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> selectValue(value));
+
+        setDropdownSize(Size.of(this.getWidth(), widgets.size() * 11 + 2));
     }
 
     public void selectValue(T value) {
         selectedValue = value;
-
-        setState(false);
         setLabel(new LiteralText(value.toString()));
 
         if (onChange != null) {
@@ -78,75 +74,44 @@ public class ValuesDropdownWidget<T> extends WDropdown {
             return super.getY();
         }
 
-        return super.getY() - getHeight(1) + getHeight(0);
+        return super.getY() - getHeight() + size.getHeight();
     }
 
     @Override
     public void draw() {
-        if (isHidden()) {
-            return;
-        }
+        if (!this.isHidden()) {
+            int x = this.getX();
+            int y = this.getY();
+            int z = this.getZ();
+            int sX = this.getWidth();
+            int sY = this.getHeight();
 
-        int x = getX();
-        int y = getY();
-        int z = getZ();
+            int difference = direction == DropdownDirection.Down || !getState() ? 0 : getHeight() - size.getHeight();
 
-        int sX = getWidth();
-        int sY = getHeight();
+            BaseRenderer.drawPanel((double)x, (double)y, (double)z, (double)sX, (double)sY + 1.75D, this.getStyle().asColor("shadow"), this.getStyle().asColor("background"), this.getStyle().asColor("highlight"), this.getStyle().asColor("outline"));
+            if (this.hasLabel()) {
+                TextRenderer.pass().shadow(this.isLabelShadowed()).text(this.getLabel()).at(x + sX / 2 - TextRenderer.width(this.getLabel()) / 2, y + 6 + difference, z).color(this.getStyle().asColor("label.color")).shadowColor(this.getStyle().asColor("label.shadow_color")).render();
 
-        int difference = direction == DropdownDirection.Down || !getState() ? 0 : getHeight(1) - getHeight(0);
+                if (difference != 0) {
+                    difference -= 14;
+                }
 
-        BaseRenderer.drawPanel(getX(), getY(), getZ(), getWidth(), getHeight() + 1.75, getResourceAsColor(SHADOW), getResourceAsColor(BACKGROUND), getResourceAsColor(HIGHLIGHT), getResourceAsColor(OUTLINE));
-
-        if (hasLabel()) {
-            BaseRenderer.drawText(isLabelShadowed(), getLabel().asFormattedString(), x + sX / 2 - BaseRenderer.getTextRenderer().getStringWidth(getLabel().asFormattedString()) / 2, y + 6 + difference, getResourceAsColor(LABEL).RGB);
-
-            if (difference != 0) {
-                difference -= 13;
+                if (this.getState()) {
+                    BaseRenderer.drawRectangle((double)x, (double)(y + 16 + difference), (double)z, (double)sX, 1.0D, this.getStyle().asColor("outline"));
+                    BaseRenderer.drawRectangle((double)(x + 1), (double)(y + 17 + difference), (double)z, (double)(sX - 2), 0.75D, this.getStyle().asColor("shadow"));
+                }
             }
-            if (getState()) {
-                BaseRenderer.drawRectangle(x, y + 16 + difference, z, sX, 1, getResourceAsColor(OUTLINE));
-                BaseRenderer.drawRectangle(x + 1, y + 17 + difference, z, sX - 2, 0.75, getResourceAsColor(SHADOW));
-            }
-        }
 
-        if (getState()) {
-            for (List<WWidget> widgetB : getDropdownWidgets()) {
-                for (WWidget widgetC : widgetB) {
+            if (this.getState()) {
+                Iterator var6 = this.getOrderedWidgets().iterator();
+
+                while(var6.hasNext()) {
+                    WLayoutElement widgetC = (WLayoutElement)var6.next();
                     widgetC.draw();
                 }
             }
-        }
-    }
 
-    @Override
-    public void updatePositions() {
-        int y = 0;
-        if (direction == DropdownDirection.Down) {
-            y = getY() + (hasLabel() ? 20 : 8);
-        } else {
-            y = super.getY() - getHeight(1) + getHeight(0) + 5;
         }
-
-        for (List<WWidget> widgetA : getDropdownWidgets()) {
-            int x = getX() + 4;
-            for (WWidget widgetB : widgetA) {
-                widgetB.setX(x);
-                widgetB.setY(y);
-                x += widgetB.getWidth() + 2;
-            }
-            y += widgetA.get(0).getHeight() + 2;
-        }
-    }
-
-    @Override
-    public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
-        int diff = recentClick.compareTo(Instant.now());
-        if (diff != 0) {
-            super.onMouseClicked(mouseX, mouseY, mouseButton);
-        }
-
-        recentClick = Instant.now();
     }
 
     public enum DropdownDirection {

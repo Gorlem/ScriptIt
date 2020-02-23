@@ -13,29 +13,23 @@ import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
 import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Pair;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import spinnery.client.BaseScreen;
 import spinnery.widget.*;
+import spinnery.widget.api.Position;
+import spinnery.widget.api.Size;
 
-import java.lang.reflect.Field;
 import java.time.Duration;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.time.temporal.UnsupportedTemporalTypeException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.Arrays;
+import java.util.List;
 
-public class ScriptEditorScreen extends BaseScreen {
+public class ScriptEditorScreen extends AbstractHistoryScreen {
     private LifeCycle lifeCycle = LifeCycle.Instant;
     private InputUtil.KeyCode keyCode;
     private String event;
@@ -45,27 +39,18 @@ public class ScriptEditorScreen extends BaseScreen {
 
     private ScriptContainer scriptContainer;
 
-    private Window window;
-
     private WTabHolder.WTab keyBindingsTab;
     private WTabHolder.WTab eventsTab;
     private WTabHolder.WTab durationTab;
 
-    private Supplier<Screen> onCloseSupplier = () -> null;
-    private ScreenHistory history;
-
     public ScriptEditorScreen() {
         super();
-
-        history = Resolver.getInstance().resolve(ScreenHistory.class);
 
         setupWidgets();
     }
 
     public ScriptEditorScreen(ScriptContainer scriptContainer) {
         super();
-
-        history = Resolver.getInstance().resolve(ScreenHistory.class);
 
         this.scriptContainer = scriptContainer;
 
@@ -99,74 +84,57 @@ public class ScriptEditorScreen extends BaseScreen {
     }
 
     private void setupWidgets() {
-        window = MinecraftClient.getInstance().getWindow();
+        WInterface mainInterface = getInterface();
 
-        WInterface mainInterface = new WInterface(WPosition.of(WType.FREE, 0, 0, 0));
-        getInterfaceHolder().add(mainInterface);
+        setupLifeCycleWidget(mainInterface);
+        setupTriggerWidget(mainInterface);
+        setupScriptWidget(mainInterface);
+        setupButtonBar(mainInterface);
 
-        WWidget lifeCycleDropdown = setupLifeCycleWidget(mainInterface);
-        WWidget triggerTabHolder = setupTriggerWidget(mainInterface);
-        WWidget scriptContentWidget = setupScriptWidget(mainInterface);
-        WWidget buttonBarWidget = setupButtonBar(mainInterface);
-
-        mainInterface.add(lifeCycleDropdown, triggerTabHolder, scriptContentWidget, buttonBarWidget);
+        mainInterface.onAlign();
     }
 
-    private WWidget setupLifeCycleWidget(WInterface mainInterface) {
-        ValuesDropdownWidget<LifeCycle> dropdown = new ValuesDropdownWidget<>(
-                WPosition.of(WType.FREE, window.getScaledWidth() - 150, 20, 0),
-                WSize.of(100, 20),
-                mainInterface);
+    private void setupLifeCycleWidget(WInterface mainInterface) {
+        ValuesDropdownWidget<LifeCycle> dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(mainInterface).add(-150, 20, 0)))
+                .setSize(Size.of(100, 20));
         dropdown.selectValue(lifeCycle);
         dropdown.addValues(LifeCycle.Instant, LifeCycle.Threaded);
         dropdown.setOnChange(lifeCycle -> this.lifeCycle = lifeCycle);
-
-        return dropdown;
     }
 
-    private WWidget setupTriggerWidget(WInterface mainInterface) {
-        WTabHolder tabHolder = new WTabHolder(WPosition.of(WType.FREE, 20, 20, 10), WSize.of(300, 60), mainInterface);
+    private void setupTriggerWidget(WInterface mainInterface) {
+        WTabHolder tabHolder = mainInterface.createChild(WTabHolder.class, Position.of(20, 20, 0), Size.of(300, 60));
 
-        addKeyTriggerTab(tabHolder, mainInterface);
-        addEventTriggerTab(tabHolder, mainInterface);
-        addDurationTriggerTab(tabHolder, mainInterface);
+        addKeyTriggerTab(tabHolder);
+        addEventTriggerTab(tabHolder);
+        addDurationTriggerTab(tabHolder);
 
         int tabNumber = unit != null ? 3 : event != null ? 2 : 1;
         WTabHolder.WTab tab = tabNumber == 1 ? keyBindingsTab : tabNumber == 2 ? eventsTab : durationTab;
 
         tabHolder.selectTab(tabNumber);
         tab.getToggle().setToggleState(true);
-
-        return tabHolder;
     }
 
-    private void addKeyTriggerTab(WTabHolder tabHolder, WInterface mainInterface) {
+    private void addKeyTriggerTab(WTabHolder tabHolder) {
         keyBindingsTab = tabHolder.addTab(Items.TRIPWIRE_HOOK, new LiteralText("Key Bindings"));
 
-        KeyBindingButtonWidget keyBindingButtonWidget = new KeyBindingButtonWidget(
-                WPosition.of(WType.ANCHORED, 10, 30, 0, tabHolder),
-                WSize.of(100, 20),
-                mainInterface
-        );
+        KeyBindingButtonWidget keyBindingButtonWidget = keyBindingsTab.createChild(KeyBindingButtonWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
         keyBindingButtonWidget.setOnChange(keyCode -> this.keyCode = keyCode);
 
         if (keyCode != null) {
             keyBindingButtonWidget.setKeyCode(keyCode);
         }
-
-        keyBindingsTab.add(keyBindingButtonWidget);
     }
 
-    private void addEventTriggerTab(WTabHolder tabHolder, WInterface mainInterface) {
+    private void addEventTriggerTab(WTabHolder tabHolder) {
         EventLoader eventLoader = Resolver.getInstance().resolve(EventLoader.class);
         List<String> eventsList = eventLoader.getEvents();
 
         eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new LiteralText("Events"));
 
-        ValuesDropdownWidget<String> eventDropdown = new ValuesDropdownWidget<>(
-                WPosition.of(WType.ANCHORED, 10, 30, 10, tabHolder),
-                WSize.of(100, 20),
-                mainInterface);
+        ValuesDropdownWidget<String> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
         if (event == null) {
             eventDropdown.setLabel(new LiteralText("Select an event:"));
         } else {
@@ -174,20 +142,14 @@ public class ScriptEditorScreen extends BaseScreen {
         }
         eventDropdown.addValues(eventsList);
         eventDropdown.setOnChange(event -> this.event = event);
-
-        eventsTab.add(eventDropdown);
     }
 
-    private void addDurationTriggerTab(WTabHolder tabHolder, WInterface mainInterface) {
+    private void addDurationTriggerTab(WTabHolder tabHolder) {
         List<ChronoUnit> units = Arrays.asList(ChronoUnit.MILLIS, ChronoUnit.SECONDS, ChronoUnit.MINUTES, ChronoUnit.HOURS);
 
         durationTab = tabHolder.addTab(Items.CLOCK, new LiteralText("Duration"));
 
-        WDynamicText timeText = new WDynamicText(
-                WPosition.of(WType.ANCHORED, 10, 30, 0, tabHolder),
-                WSize.of(135, 20),
-                mainInterface
-        );
+        WTextField timeText = durationTab.createChild(WTextField.class, Position.of(tabHolder, 10, 30), Size.of(135, 20));
 
         Runnable parseTime = () -> {
             try {
@@ -195,17 +157,14 @@ public class ScriptEditorScreen extends BaseScreen {
             } catch (NumberFormatException ignored) { }
         };
 
-        timeText.setOnKeyPressed(parseTime);
-        timeText.setOnCharTyped(parseTime);
+        timeText.setOnKeyPressed((widget, keyPressed, character, keyModifier) -> parseTime.run());
+        timeText.setOnCharTyped((widget, character, keyCode) -> parseTime.run());
 
         if (unit != null) {
             timeText.setText(Integer.toString(time));
         }
 
-        ValuesDropdownWidget<ChronoUnit> durationDropdown = new ValuesDropdownWidget<>(
-                WPosition.of(WType.ANCHORED, 155, 30, 10, tabHolder),
-                WSize.of(135, 20),
-                mainInterface);
+        ValuesDropdownWidget<ChronoUnit> durationDropdown = durationTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 155, 30), Size.of(135, 20));
 
         durationDropdown.addValues(units);
 
@@ -220,56 +179,36 @@ public class ScriptEditorScreen extends BaseScreen {
         durationTab.add(durationDropdown, timeText);
     }
 
-    private WWidget setupScriptWidget(WInterface mainInterface) {
-        WDynamicText scriptContent = new WDynamicText(
-                WPosition.of(WType.FREE, 20, 100, 0),
-                WSize.of(window.getScaledWidth() - 40, window.getScaledHeight() - 150),
-                mainInterface
-        );
+    private void setupScriptWidget(WInterface mainInterface) {
+        WTextArea scriptContent = mainInterface.createChild(WTextArea.class, Position.of(20, 100, 0))
+                .setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -150)));
 
         if (script != null) {
             scriptContent.setText(script);
         }
 
-        scriptContent.setOnKeyPressed(() -> script = scriptContent.getText());
-        scriptContent.setOnCharTyped(() -> script = scriptContent.getText());
-
-        return scriptContent;
+        scriptContent.setOnKeyPressed((widget, keyPressed, character, keyModifier) -> script = scriptContent.getText());
+        scriptContent.setOnCharTyped((widget, character, keyCode) -> script = scriptContent.getText());
     }
 
-    private WWidget setupButtonBar(WInterface mainInterface) {
-        WHorizontalList buttonBar = new WHorizontalList(
-                WPosition.of(WType.FREE, window.getScaledWidth() - 220, window.getScaledHeight() - 40, 5),
-                WSize.of(200, 30),
-                mainInterface
-        );
+    private void setupButtonBar(WInterface mainInterface) {
+        WPanel panel = mainInterface.createChild(WPanel.class)
+                .setSize(Size.of(200, 30))
+                .setOnAlign(w -> w.setPosition(Position.ofBottomRight(mainInterface).add(-220, -40, 0)));
 
-        WButton cancelButton = new WButton(
-                WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
-                WSize.of(100, 20),
-                mainInterface
-        );
-        cancelButton.setLabel(new LiteralText("Cancel"));
-        cancelButton.setOnMouseClicked(() -> {
-            onClose();
-            cancelButton.setOnMouseClicked(null);
-        });
+        int size = (200 - 3 * 5) / 2;
 
-        WButton saveButton = new WButton(
-                WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
-                WSize.of(100, 20),
-                mainInterface
-        );
-        saveButton.setLabel(new LiteralText("Save"));
-        saveButton.setOnMouseClicked(() -> {
-            updateScriptContainer();
-            saveButton.setOnMouseClicked(null);
-        });
+        mainInterface.createChild(WButton.class)
+                .setSize(Size.of(size, 20))
+                .setOnAlign(w -> w.setPosition(Position.of(panel).add(5, 5, 1)))
+                .setLabel("Cancel")
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> onClose());
 
-        buttonBar.add(cancelButton);
-        buttonBar.add(saveButton);
-
-        return buttonBar;
+        mainInterface.createChild(WButton.class)
+                .setSize(Size.of(size, 20))
+                .setOnAlign(w -> w.setPosition(Position.of(panel).add(size + 10, 5, 1)))
+                .setLabel("Save")
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> updateScriptContainer());
     }
 
     private void updateScriptContainer() {
@@ -292,25 +231,5 @@ public class ScriptEditorScreen extends BaseScreen {
         ConfigCallback.EVENT.invoker().saveConfig(ScriptEditorScreen.class);
 
         onClose();
-    }
-
-    @Override
-    public void onClose() {
-        history.back();
-    }
-
-    public void setOnCloseScreen(Supplier<Screen> screenSupplier) {
-        onCloseSupplier = screenSupplier;
-    }
-
-    @Override
-    public boolean keyPressed(int character, int keyCode, int keyModifier) {
-        this.getInterfaceHolder().keyPressed(character, keyCode, keyModifier);
-        if (character == 256) {
-            onClose();
-            return true;
-        } else {
-            return false;
-        }
     }
 }

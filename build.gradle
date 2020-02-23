@@ -16,8 +16,8 @@ repositories {
 		url = "http://server.bbkr.space:8081/artifactory/libs-release/"
 	}
 	maven {
-		name = "JitPack"
-		url = "https://jitpack.io"
+		name = "Spinnery"
+		url = "https://dl.bintray.com/spinnery/Spinnery"
 	}
 }
 
@@ -43,7 +43,7 @@ dependencies {
 
 	embed fileTree(dir: "lib", includes: ["*.jar"])
 
-	modImplementation "com.github.vini2003:Spinnery:6cdb7c4"
+	modImplementation "com.github.vini2003:spinnery:2.0.18+fabric-1.15"
 }
 
 processResources {

@@ -2,33 +2,18 @@ package com.ddoerr.scriptit.widgets;
 
 import spinnery.client.BaseRenderer;
 import spinnery.widget.*;
+import spinnery.widget.api.Color;
+import spinnery.widget.api.WDelegatedEventListener;
+import spinnery.widget.api.WEventListener;
+import spinnery.widget.api.WModifiableCollection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class PanelWidget extends WWidget implements WModifiableCollection, WClient {
-    List<WWidget> widgets = new ArrayList<>();
-    WColor color;
+public class PanelWidget extends WAbstractWidget implements WModifiableCollection, WDelegatedEventListener {
+    Set<WAbstractWidget> widgets = new HashSet<>();
+    Color color;
 
-
-    public PanelWidget(WPosition position, WSize size, WInterface linkedInterface) {
-        setInterface(linkedInterface);
-        setPosition(position);
-        setSize(size);
-        setTheme("light");
-    }
-
-    public PanelWidget(WPosition position, WSize size, WInterface linkedInterface, WColor color) {
-        setInterface(linkedInterface);
-        setPosition(position);
-        setSize(size);
-        setColor(color);
-        setTheme("light");
-    }
-
-    public PanelWidget setColor(WColor color) {
+    public PanelWidget setColor(Color color) {
         this.color = color;
         return this;
     }
@@ -44,52 +29,39 @@ public class PanelWidget extends WWidget implements WModifiableCollection, WClie
             BaseRenderer.drawRectangle(getX(), getY(), 0, getWidth(), getHeight(), color);
         }
 
-        for (WWidget widget : getWidgets()) {
+        for (WAbstractWidget widget : getWidgets()) {
             widget.draw();
         }
     }
 
     @Override
-    public void add(WWidget... wWidgets) {
+    public void add(WAbstractWidget... wWidgets) {
         widgets.addAll(Arrays.asList(wWidgets));
     }
 
     @Override
-    public void remove(WWidget... wWidgets) {
+    public void remove(WAbstractWidget... wWidgets) {
         widgets.removeAll(Arrays.asList(wWidgets));
     }
 
     @Override
-    public List<WWidget> getWidgets() {
-        return Collections.unmodifiableList(widgets);
+    public Set<WAbstractWidget> getWidgets() {
+        return Collections.unmodifiableSet(widgets);
     }
 
     @Override
-    public boolean contains(WWidget... wWidgets) {
+    public boolean contains(WAbstractWidget... wWidgets) {
         return widgets.containsAll(Arrays.asList(wWidgets));
     }
 
     @Override
     public boolean updateFocus(int mouseX, int mouseY) {
-        this.setFocus(this.isWithinBounds(mouseX, mouseY) && this.getWidgets().stream().noneMatch(WWidget::getFocus));
-        return this.getFocus();
+        setFocus(isWithinBounds(mouseX, mouseY) && getWidgets().stream().noneMatch((WAbstractWidget::isFocused)));
+        return isFocused();
     }
 
     @Override
-    public void setX(int x) {
-        super.setX(x);
-
-        for (WWidget widget : widgets) {
-            widget.align();
-        }
-    }
-
-    @Override
-    public void setY(int y) {
-        super.setY(y);
-
-        for (WWidget widget : widgets) {
-            widget.align();
-        }
+    public Collection<? extends WEventListener> getEventDelegates() {
+        return widgets;
     }
 }

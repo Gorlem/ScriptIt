@@ -7,12 +7,13 @@ import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.PanelWidget;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.LiteralText;
 import spinnery.client.BaseScreen;
 import spinnery.widget.*;
+import spinnery.widget.api.Color;
+import spinnery.widget.api.Position;
+import spinnery.widget.api.Size;
 
-public class ScriptsOverviewScreen extends BaseScreen {
-    WVerticalList scriptsList;
+public class ScriptsOverviewScreen extends AbstractHistoryScreen {
     ScreenHistory history;
 
     public ScriptsOverviewScreen() {
@@ -23,150 +24,88 @@ public class ScriptsOverviewScreen extends BaseScreen {
         setupWidgets();
     }
 
-    @Override
-    public void onClose() {
-        history.back();
-    }
-
-    @Override
-    public boolean keyPressed(int character, int keyCode, int keyModifier) {
-        this.getInterfaceHolder().keyPressed(character, keyCode, keyModifier);
-        if (character == 256) {
-            onClose();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private void setupWidgets() {
-        WInterface mainInterface = new WInterface(WPosition.of(WType.FREE, 0, 0, 0));
-        getInterfaceHolder().add(mainInterface);
+        WInterface mainInterface = getInterface();
 
-        mainInterface.add(new WStaticText(
-                WPosition.of(WType.FREE, 25, 25, 0),
-                mainInterface,
-                new LiteralText("HACK")
-        ));
+        setupList(mainInterface);
+        setupAddScriptButton(mainInterface);
+        setupOpenDesignerButton(mainInterface);
 
-        scriptsList = setupList(mainInterface);
-        WWidget addScript = setupAddScriptButton(mainInterface);
-        WWidget openDesigner = setupOpenDesignerButton(mainInterface);
-
-        mainInterface.add(scriptsList, addScript, openDesigner);
+        mainInterface.onAlign();
     }
 
-    private WVerticalList setupList(WInterface mainInterface) {
+    private void setupList(WInterface mainInterface) {
         Scripts scripts = Resolver.getInstance().resolve(Scripts.class);
 
-        WVerticalList scriptsList = new WVerticalList(
-                WPosition.of(WType.FREE, 20, 20, 5),
-                WSize.of(minecraft.getWindow().getScaledWidth() - 40, minecraft.getWindow().getScaledHeight() - 70),
-                mainInterface
-        );
+        WPanel panel = mainInterface.createChild(WPanel.class, Position.of(20, 20, 0));
+        panel.setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -70)));
+
+        WVerticalScrollableContainer list = panel.createChild(WVerticalScrollableContainer.class, panel.getPosition().add(4, 4, 0));
+        list.setOnAlign(w -> {
+            w.setSize(Size.of(panel).add(-8, -8));
+        });
+
+        WAbstractWidget lastRow = null;
 
         for (ScriptContainer scriptContainer : scripts.getAll()) {
-            WWidget row = setupListRow(scriptsList, mainInterface, scriptContainer);
-            scriptsList.add(row);
+            lastRow = setupListRow(list, scriptContainer, lastRow);
         }
-
-        return scriptsList;
     }
 
-    private WWidget setupListRow(WVerticalList parent, WInterface mainInterface, ScriptContainer scriptContainer) {
-        PanelWidget entry = new PanelWidget(
-                WPosition.of(WType.ANCHORED, 0, 0, 10, parent),
-                WSize.of(minecraft.getWindow().getScaledWidth() - 40, 20),
-                mainInterface
-        );
-
-        WStaticText description = new WStaticText(
-                WPosition.of(WType.ANCHORED, 5, 5, 15, entry),
-                mainInterface,
-                new LiteralText(scriptContainer.toString())
-        );
-        entry.add(description);
-
-        WButton editButton = new WButton(
-                WPosition.of(WType.ANCHORED, entry.getWidth() - 110, 0, 15, entry),
-                WSize.of(45, 20),
-                mainInterface
-        );
-        editButton.setLabel(new LiteralText("Edit"));
-        editButton.setOnMouseClicked(() -> {
-            history.open(() -> new ScriptEditorScreen(scriptContainer));
-            editButton.setOnMouseClicked(null);
+    private WAbstractWidget setupListRow(WVerticalScrollableContainer list, ScriptContainer scriptContainer, WAbstractWidget lastRow) {
+        PanelWidget row = list.createChild(PanelWidget.class);
+        row.setOnAlign(w -> {
+            w.setSize(Size.of(list.getWidth(), 20));
+            w.setPosition(lastRow == null ? Position.of(list) : Position.ofBottomLeft(lastRow));
         });
-        entry.add(editButton);
 
-        WButton removeButton = new WButton(
-                WPosition.of(WType.ANCHORED, entry.getWidth() - 55, 0, 15, entry),
-                WSize.of(45, 20),
-                mainInterface
-        );
-        removeButton.setLabel(new LiteralText("Remove"));
-        removeButton.setOnMouseClicked(() -> {
-            Resolver.getInstance().resolve(Scripts.class).remove(scriptContainer);
-            Trigger trigger = scriptContainer.getTrigger();
-            if (trigger != null) {
-                trigger.close();
-            }
-            parent.remove(entry);
-            ConfigCallback.EVENT.invoker().saveConfig(ScriptsOverviewScreen.class);
-        });
-        entry.add(removeButton);
+        row.createChild(WStaticText.class)
+                .setText(scriptContainer.toString())
+                .setOnAlign(w -> w.setPosition(Position.of(row, 5, 5)));
 
-        return entry;
+        row.createChild(WButton.class)
+                .setSize(Size.of(45, 20))
+                .setLabel("Edit")
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(() -> new ScriptEditorScreen(scriptContainer)))
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(-110, 0, 0)));
+
+        row.createChild(WButton.class)
+                .setSize(Size.of(45, 20))
+                .setLabel("Remove")
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> {
+                    Resolver.getInstance().resolve(Scripts.class).remove(scriptContainer);
+                    Trigger trigger = scriptContainer.getTrigger();
+                    if (trigger != null) {
+                        trigger.close();
+                    }
+                    list.remove(row);
+                    ConfigCallback.EVENT.invoker().saveConfig(ScriptsOverviewScreen.class);
+                })
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(- 55, 0, 0)));
+        return row;
     }
 
-    private WWidget setupAddScriptButton(WInterface mainInterface) {
-        WHorizontalList buttonBar = new WHorizontalList(
-                WPosition.of(WType.FREE, minecraft.getWindow().getScaledWidth() - 134, minecraft.getWindow().getScaledHeight() - 40, 5),
-                WSize.of(114, 30),
-                mainInterface
-        );
+    private void setupAddScriptButton(WInterface mainInterface) {
+        WPanel panel = mainInterface.createChild(WPanel.class)
+                .setOnAlign(w -> w.setPosition(Position.ofBottomRight(mainInterface).add(-134, -40, 0)))
+                .setSize(Size.of(114, 30));
 
-        WButton addNewScript = new WButton(
-                WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
-                WSize.of(100, 20),
-                mainInterface
-        );
-        addNewScript.setLabel(new LiteralText("Add new Script"));
-        addNewScript.setOnMouseClicked(() -> {
-            history.open(ScriptEditorScreen::new);
-            addNewScript.setOnMouseClicked(null);
-        });
-
-        buttonBar.add(addNewScript);
-
-        return buttonBar;
+        panel.createChild(WButton.class)
+                .setSize(Size.of(100, 20))
+                .setOnAlign(w -> w.setPosition(Position.of(panel, 4, 4)))
+                .setLabel("Add new Script")
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(ScriptEditorScreen::new));
     }
 
-    private WWidget setupOpenDesignerButton(WInterface mainInterface) {
-        WHorizontalList buttonBar = new WHorizontalList(
-                WPosition.of(WType.FREE, 20, minecraft.getWindow().getScaledHeight() - 40, 5),
-                WSize.of(114, 30),
-                mainInterface
-        );
+    private void setupOpenDesignerButton(WInterface mainInterface) {
+        WPanel panel = mainInterface.createChild(WPanel.class)
+                .setOnAlign(w -> w.setPosition(Position.ofBottomLeft(mainInterface).add(20, -40, 0)))
+                .setSize(Size.of(114, 30));
 
-        WButton saveButton = new WButton(
-                WPosition.of(WType.ANCHORED, 0, 0, 10, buttonBar),
-                WSize.of(100, 20),
-                mainInterface
-        );
-        saveButton.setLabel(new LiteralText("Open Designer"));
-        saveButton.setOnMouseClicked(() -> {
-            history.open(HudElementScreen::new);
-            saveButton.setOnMouseClicked(null);
-        });
-
-        buttonBar.add(saveButton);
-
-        return buttonBar;
-    }
-
-    @Override
-    public void render(int mouseX, int mouseY, float tick) {
-        super.render(mouseX, mouseY, tick);
+        panel.createChild(WButton.class)
+                .setSize(Size.of(100, 20))
+                .setOnAlign(w -> w.setPosition(Position.of(panel, 4, 4)))
+                .setLabel("Open Designer")
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(HudElementScreen::new));
     }
 }

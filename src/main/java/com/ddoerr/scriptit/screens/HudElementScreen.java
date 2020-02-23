@@ -17,7 +17,10 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.LiteralText;
 import spinnery.client.BaseScreen;
+import spinnery.util.MouseUtilities;
 import spinnery.widget.*;
+import spinnery.widget.api.Position;
+import spinnery.widget.api.Size;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
@@ -28,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class HudElementScreen extends BaseScreen {
-    HudElementProvider currentlyAdding;
+public class HudElementScreen extends AbstractHistoryScreen {
+    HudElement currentlyAdding;
 
     HudElementManager hudElementManager;
     HudElementLoader hudElementLoader;
@@ -52,7 +55,7 @@ public class HudElementScreen extends BaseScreen {
         removalKeys.add(InputUtil.fromName("key.keyboard.delete"));
     }
 
-    WWidget dropdown;
+    ValuesDropdownWidget<String> dropdown;
 
     ScreenHistory history;
 
@@ -68,140 +71,48 @@ public class HudElementScreen extends BaseScreen {
         setupWidgets();
     }
 
-    public HudElementScreen(HudElement hudElement) {
-        this();
-
-        showSetup(hudElement);
-    }
-
     @Override
     public void onClose() {
-        history.back();
+        if (currentlyAdding != null) {
+            currentlyAdding = null;
+            dropdown.setLabel(new LiteralText("Add Hud Element"));
+        } else {
+            super.onClose();
+        }
     }
 
     private void setupWidgets() {
-        WInterface mainInterface = new WInterface(WPosition.of(WType.FREE, 0, 0, 0));
-        getInterfaceHolder().add(mainInterface);
+        WInterface mainInterface = getInterface();
 
-        dropdown = setupDropdown(mainInterface);
+        setupDropdown(mainInterface);
 
-        mainInterface.add(dropdown);
+        mainInterface.onAlign();
     }
 
-    private WWidget setupDropdown(WInterface mainInterface) {
-        Window window = MinecraftClient.getInstance().getWindow();
+    private void setupDropdown(WInterface mainInterface) {
         Map<String, HudElementProvider> providers = hudElementLoader.getProviders();
 
-        ValuesDropdownWidget<String> up = new ValuesDropdownWidget<>(
-                WPosition.of(WType.FREE, window.getScaledWidth() / 2 - 100, window.getScaledHeight() - 22, 0),
-                WSize.of(200, 20),
-                mainInterface
-        );
-        up.setDirection(ValuesDropdownWidget.DropdownDirection.Up);
-        up.addValues(providers.keySet());
-        up.setLabel(new LiteralText("Add Hud Element"));
-        up.setOnChange(key -> currentlyAdding = providers.get(key));
+        dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
+                .setSize(Size.of(200, 20))
+                .setOnAlign(w -> {
+                   w.setPosition(Position.ofBottomLeft(mainInterface).add(0, -22, 0))
+                        .centerX();
+                });
 
-        return up;
-    }
-
-    private void showSetup(HudElement hudElement) {
-        WInterface mainInterface = getInterfaceHolder().getInterfaces().get(0);
-
-        Window window = MinecraftClient.getInstance().getWindow();
-
-        WVerticalList list = new WVerticalList(
-                WPosition.of(WType.FREE, window.getScaledWidth() / 2 - 100, window.getScaledHeight() / 2 - 100, 10),
-                WSize.of(200, 200),
-                mainInterface
-        );
-
-        PanelWidget plane = new PanelWidget(
-                WPosition.of(WType.ANCHORED, 0, 0, 0, list),
-                WSize.of(190, 190),
-                mainInterface
-        );
-
-        list.add(plane);
-
-        WButton editScript = new WButton(
-                WPosition.of(WType.ANCHORED, 5, 5, 15, plane),
-                WSize.of(180, 20),
-                mainInterface
-        );
-        editScript.setLabel(new LiteralText("Edit Script"));
-        editScript.setOnMouseClicked(() -> {
-            history.open(() -> new ScriptEditorScreen(hudElement.getScriptContainer()));
-            editScript.setOnMouseClicked(null);
+        dropdown.setDirection(ValuesDropdownWidget.DropdownDirection.Up);
+        dropdown.addValues(providers.keySet());
+        dropdown.setLabel("Add Hud Element");
+        dropdown.setOnChange(key -> {
+            HudElementProvider hudElementProvider = providers.get(key);
+            currentlyAdding = new HudElement(hudElementProvider, MouseUtilities.mouseX, MouseUtilities.mouseY);
+            currentlyAdding.tick();
         });
-        plane.add(editScript);
-
-        int y = 30;
-
-        for (Map.Entry<String, Object> entry : hudElement.getOptions().entrySet()) {
-            WStaticText title = new WStaticText(
-                    WPosition.of(WType.ANCHORED, 5, y, 15, plane),
-                    mainInterface,
-                    new LiteralText(entry.getKey())
-            );
-            WDynamicText text = new WDynamicText(
-                    WPosition.of(WType.ANCHORED, 5, y + 10, 15, plane),
-                    WSize.of(180, 16),
-                    mainInterface
-            );
-
-            text.setText(entry.getValue().toString());
-
-            plane.add(title, text);
-            y += 35;
-        }
-
-        ValuesDropdownWidget<HudVerticalAnchor> vertical = new ValuesDropdownWidget<>(
-                WPosition.of(WType.ANCHORED, 5, y, 15, plane),
-                WSize.of(88, 20),
-                mainInterface
-        );
-        plane.add(vertical);
-        vertical.addValues(HudVerticalAnchor.values());
-        vertical.selectValue(HudVerticalAnchor.TOP);
-
-        ValuesDropdownWidget<HudHorizontalAnchor> horizontal = new ValuesDropdownWidget<>(
-                WPosition.of(WType.ANCHORED, plane.getWidth() - 90, y, 15, plane),
-                WSize.of(88, 20),
-                mainInterface
-        );
-        plane.add(horizontal);
-        horizontal.addValues(HudHorizontalAnchor.values());
-        horizontal.selectValue(HudHorizontalAnchor.LEFT);
-
-        WButton saveButton = new WButton(
-                WPosition.of(WType.ANCHORED, plane.getWidth() - 90, plane.getHeight() - 25, 15, plane),
-                WSize.of(88, 20),
-                mainInterface
-        );
-        saveButton.setLabel(new LiteralText("Save"));
-        plane.add(saveButton);
-
-        WButton cancelButton = new WButton(
-                WPosition.of(WType.ANCHORED, 5, plane.getHeight() - 25, 15, plane),
-                WSize.of(88, 20),
-                mainInterface
-        );
-        cancelButton.setLabel(new LiteralText("Cancel"));
-        cancelButton.setOnMouseClicked(() -> {
-            history.back();
-            cancelButton.setOnMouseClicked(null);
-        });
-        plane.add(cancelButton);
-
-        mainInterface.add(list);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         if (currentlyAdding != null) {
-            HudElement hudElement = new HudElement(currentlyAdding, mouseX, mouseY);
-            hudElementManager.add(hudElement);
+            hudElementManager.add(currentlyAdding);
 
             currentlyAdding = null;
             dropdown.setLabel(new LiteralText("Add Hud Element"));
@@ -213,9 +124,7 @@ public class HudElementScreen extends BaseScreen {
             Duration duration = Duration.between(lastTimeClicked, timeClicked);
 
             if (duration.compareTo(durationBetweenClicks) < 0) {
-                showSetup(focusedHudElement);
-                HudElement hudElement = focusedHudElement;
-                history.push(() -> new HudElementScreen(hudElement));
+                history.open(() -> new HudElementEditorScreen(focusedHudElement));
             }
         }
 
@@ -234,6 +143,12 @@ public class HudElementScreen extends BaseScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float tick) {
+        if (currentlyAdding != null) {
+            currentlyAdding.setRealPosition(new Point(mouseX, mouseY));
+            currentlyAdding.tick();
+            currentlyAdding.render(0, 0, 0);
+        }
+
         for (HudElement hudElement : hudElements) {
             Point point = hudElement.getRealPosition();
             int x = (int) point.getX();
@@ -241,6 +156,14 @@ public class HudElementScreen extends BaseScreen {
 
             int width = hudElement.getWidth();
             int height = hudElement.getHeight();
+
+            if (hudElement.equals(focusedHudElement)) {
+                Color color = Color.WHITE;
+                fill(x, y, x + width, y + 1, color.getValue());
+                fill(x, y, x + 1, y + height, color.getValue());
+                fill(x, y + height - 1, x + width, y + height,color.getValue());
+                fill(x + width - 1, y, x + width, y + height, color.getValue());
+            }
 
             switch (hudElement.getVerticalAnchor()) {
                 case MIDDLE:
@@ -260,14 +183,6 @@ public class HudElementScreen extends BaseScreen {
                     break;
             }
 
-            if (hudElement.equals(focusedHudElement)) {
-                Color color = Color.WHITE;
-                fill(x, y, x + width, y + 1, color.getValue());
-                fill(x, y, x + 1, y + height, color.getValue());
-                fill(x, y + height - 1, x + width, y + height,color.getValue());
-                fill(x + width - 1, y, x + width, y + height, color.getValue());
-            }
-
             fill(x - 1, y - 1, x + 2, y + 2, Color.RED.getValue());
         }
 
@@ -277,13 +192,7 @@ public class HudElementScreen extends BaseScreen {
     @Override
     public boolean keyPressed(int character, int keyCode, int keyModifier) {
         if (focusedHudElement == null) {
-            this.getInterfaceHolder().keyPressed(character, keyCode, keyModifier);
-            if (character == 256) {
-                onClose();
-                return true;
-            } else {
-                return false;
-            }
+            return super.keyPressed(character, keyCode, keyModifier);
         }
 
         InputUtil.KeyCode code = InputUtil.getKeyCode(character, keyCode);
@@ -305,13 +214,7 @@ public class HudElementScreen extends BaseScreen {
             }
         }
 
-        this.getInterfaceHolder().keyPressed(character, keyCode, keyModifier);
-        if (character == 256) {
-            onClose();
-            return true;
-        } else {
-            return false;
-        }
+        return super.keyPressed(character, keyCode, keyModifier);
     }
 
     @Override
