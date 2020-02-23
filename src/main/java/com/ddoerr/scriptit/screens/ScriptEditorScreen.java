@@ -90,10 +90,14 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         setupTriggerWidget(mainInterface);
         setupScriptWidget(mainInterface);
         setupButtonBar(mainInterface);
+
+        mainInterface.onAlign();
     }
 
     private void setupLifeCycleWidget(WInterface mainInterface) {
-        ValuesDropdownWidget<LifeCycle> dropdown = mainInterface.createChild(ValuesDropdownWidget.class, Position.ofTopRight(mainInterface).add(-150, 20, 0), Size.of(100, 20));
+        ValuesDropdownWidget<LifeCycle> dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(mainInterface).add(-150, 20, 0)))
+                .setSize(Size.of(100, 20));
         dropdown.selectValue(lifeCycle);
         dropdown.addValues(LifeCycle.Instant, LifeCycle.Threaded);
         dropdown.setOnChange(lifeCycle -> this.lifeCycle = lifeCycle);
@@ -176,7 +180,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     }
 
     private void setupScriptWidget(WInterface mainInterface) {
-        WTextArea scriptContent = mainInterface.createChild(WTextArea.class, Position.of(20, 100, 0), Size.of(mainInterface).add(-40, -150));
+        WTextArea scriptContent = mainInterface.createChild(WTextArea.class, Position.of(20, 100, 0))
+                .setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -150)));
 
         if (script != null) {
             scriptContent.setText(script);
@@ -187,15 +192,21 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     }
 
     private void setupButtonBar(WInterface mainInterface) {
-        WPanel panel = mainInterface.createChild(WPanel.class, Position.ofBottomRight(mainInterface).add(-220, -40, 0), Size.of(200, 30));
+        WPanel panel = mainInterface.createChild(WPanel.class)
+                .setSize(Size.of(200, 30))
+                .setOnAlign(w -> w.setPosition(Position.ofBottomRight(mainInterface).add(-220, -40, 0)));
 
         int size = (200 - 3 * 5) / 2;
 
-        mainInterface.createChild(WButton.class, Position.of(panel).add(5, 5, 1), Size.of(size, 20))
+        mainInterface.createChild(WButton.class)
+                .setSize(Size.of(size, 20))
+                .setOnAlign(w -> w.setPosition(Position.of(panel).add(5, 5, 1)))
                 .setLabel("Cancel")
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> onClose());
 
-        mainInterface.createChild(WButton.class, Position.of(panel).add(size + 10, 5, 1), Size.of(size, 20))
+        mainInterface.createChild(WButton.class)
+                .setSize(Size.of(size, 20))
+                .setOnAlign(w -> w.setPosition(Position.of(panel).add(size + 10, 5, 1)))
                 .setLabel("Save")
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> updateScriptContainer());
     }
