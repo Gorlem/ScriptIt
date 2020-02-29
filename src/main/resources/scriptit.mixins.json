@@ -12,7 +12,8 @@
     "MixinScreen",
     "MixinSleepingChatScreen",
     "MessagesAccessor",
-    "FpsAccessor"
+    "FpsAccessor",
+    "ActiveMouseButtonAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
