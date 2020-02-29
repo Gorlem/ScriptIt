@@ -10,7 +10,8 @@
     "SendPacketTextAccessor",
     "MixinClientPlayerNetworkHandler",
     "MixinScreen",
-    "MixinSleepingChatScreen"
+    "MixinSleepingChatScreen",
+    "MessagesAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
