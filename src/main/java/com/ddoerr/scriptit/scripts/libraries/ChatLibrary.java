@@ -79,6 +79,8 @@ public class ChatLibrary implements LibraryInitializer {
             }
 
             text = new LiteralText(message.toString());
+        } else {
+            text = new LiteralText(arguments[0].toString());
         }
 
         if (minecraft.player != null) {
