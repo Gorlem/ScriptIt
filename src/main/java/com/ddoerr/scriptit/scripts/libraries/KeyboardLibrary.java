@@ -3,6 +3,7 @@ package com.ddoerr.scriptit.scripts.libraries;
 import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.mixin.ActiveMouseButtonAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.KeyBinding;
@@ -22,6 +23,7 @@ public class KeyboardLibrary implements LibraryInitializer, Tickable {
         NamespaceRegistry namespace = registry.registerLibrary("keyboard");
         namespace.registerFunction("toggle", this::toggle);
         namespace.registerFunction("once", this::once);
+        namespace.registerFunction("iskeypressed", this::isKeyDown);
 
         namespace.registerVariable("control", (name, minecraft) -> Screen.hasControlDown());
         namespace.registerVariable("shift", (name, minecraft) -> Screen.hasShiftDown());
@@ -91,5 +93,21 @@ public class KeyboardLibrary implements LibraryInitializer, Tickable {
         keyCodes.add(keyCode);
 
         return true;
+    }
+
+    private Object isKeyDown(String name, MinecraftClient minecraft, Object... arguments) {
+        if (arguments[0] instanceof Number) {
+            return InputUtil.isKeyPressed(minecraft.getWindow().getHandle(), ((Number)arguments[0]).intValue());
+        } else if (arguments[0] instanceof String) {
+            InputUtil.KeyCode code = InputUtil.fromName(arguments[0].toString());
+
+            if (code.getCategory() == InputUtil.Type.KEYSYM) {
+                return InputUtil.isKeyPressed(minecraft.getWindow().getHandle(), code.getKeyCode());
+            } else if (code.getCategory() == InputUtil.Type.MOUSE) {
+                return ((ActiveMouseButtonAccessor)minecraft.mouse).getActiveButton() == code.getKeyCode();
+            }
+        }
+
+        return false;
     }
 }
