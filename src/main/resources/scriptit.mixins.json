@@ -11,7 +11,8 @@
     "MixinClientPlayerNetworkHandler",
     "MixinScreen",
     "MixinSleepingChatScreen",
-    "MessagesAccessor"
+    "MessagesAccessor",
+    "FpsAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
