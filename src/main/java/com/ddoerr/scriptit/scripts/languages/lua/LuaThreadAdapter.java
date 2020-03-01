@@ -30,7 +30,7 @@ public class LuaThreadAdapter implements ScriptThread {
             e.printStackTrace();
         }
 
-        if (result.isstring(2)) {
+        if (thread.state.status > 1 && result.isstring(2)) {
             MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new LiteralText(result.tojstring(2)));
         }
 
