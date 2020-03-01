@@ -56,14 +56,22 @@ public class GuiLibrary implements LibraryInitializer {
             ids = Lists.newArrayList(Integer.parseInt(arguments[0].toString()));
         }
 
-        int button = (int)arguments[1];
+        SlotActionType actionType = SlotActionType.PICKUP;
+        if (arguments.length > 1) {
+            String type = arguments[1].toString();
+            actionType = SlotActionType.valueOf(type);
+        }
 
-        String type = arguments[2].toString();
-        SlotActionType actionType = SlotActionType.valueOf(type);
+        int button = 0;
+        if (arguments.length > 2 && arguments[2] instanceof Integer) {
+            button = (int)arguments[2];
+        }
+
+        int progress = 0;
 
         if (actionType == SlotActionType.QUICK_CRAFT) {
-            ((ContainerAccessor)containerScreen).invokeOnMouseClick(null, -999, Container.packClickData(0, button), actionType);
-            button = Container.packClickData(1, button);
+            ((ContainerAccessor)containerScreen).invokeOnMouseClick(null, -999, Container.packClickData(progress, button), actionType);
+            button = Container.packClickData(++progress, button);
         }
 
         for (int id : ids) {
@@ -72,7 +80,7 @@ public class GuiLibrary implements LibraryInitializer {
         }
 
         if (actionType == SlotActionType.QUICK_CRAFT) {
-            ((ContainerAccessor)containerScreen).invokeOnMouseClick(null, -999, Container.packClickData(2, button), actionType);
+            ((ContainerAccessor)containerScreen).invokeOnMouseClick(null, -999, Container.packClickData(++progress, button), actionType);
         }
 
         return true;
