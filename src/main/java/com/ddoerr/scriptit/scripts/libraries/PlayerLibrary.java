@@ -53,62 +53,7 @@ public class PlayerLibrary implements LibraryInitializer {
         armor.registerVariable("leggings", this::armor);
         armor.registerVariable("boots", this::armor);
 
-        namespace.registerVariable("biome", (name, minecraft) -> convertBiome(minecraft.world.getBiome(minecraft.player.getBlockPos())));
-    }
-
-    private static Map<String, Object> convertBiome(Biome biome) {
-        Map<String, Object> table = new HashMap<>();
-
-        table.put("id", Registry.BIOME.getId(biome));
-        table.put("name", biome.getName().getString());
-        table.put("category", biome.getCategory());
-
-        return table;
-    }
-
-    private static Map<String, Object> convertItemStack(ItemStack stack) {
-        Map<String, Object> table = new HashMap<>();
-
-        table.put("amount", stack.getCount());
-        table.put("maxamount", stack.getMaxCount());
-        table.put("cooldown", stack.getCooldown());
-        table.put("damage", stack.getDamage());
-        table.put("maxdamage", stack.getMaxDamage());
-        table.put("repaircost", stack.getRepairCost());
-        table.put("maxusetime", stack.getMaxUseTime());
-        table.put("rarity", stack.getRarity().toString());
-        table.put("enchantments", convertEnchantments(stack));
-        table.put("name", stack.getName().getString());
-        table.put("isenchantable", stack.isEnchantable());
-        table.put("isfood", stack.isFood());
-        table.put("isdamageable", stack.isDamageable());
-        table.put("isstackable", stack.isStackable());
-        table.put("id", stack.getItem().toString());
-
-        return table;
-    }
-
-    private static List<Map<String, Object>> convertEnchantments(ItemStack stack) {
-        List<Map<String, Object>> enchantments = new ArrayList<>();
-
-        Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
-
-        for (Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
-            Enchantment enchantment = entry.getKey();
-            int level = entry.getValue();
-
-            Map<String, Object> table = new HashMap<>();
-            table.put("name", enchantment.getName(level).getString());
-            table.put("level", level);
-            table.put("minlevel", enchantment.getMinimumLevel());
-            table.put("maxlevel", enchantment.getMaximumLevel());
-            table.put("iscursed", enchantment.isCursed());
-            table.put("istreasure", enchantment.isTreasure());
-
-            enchantments.add(table);
-        }
-
-        return enchantments;
+        namespace.registerVariable("biome", (name, minecraft) -> ObjectConverter.convert(minecraft.world.getBiome(minecraft.player.getBlockPos())));
     }
 
     Object armor(String name, MinecraftClient minecraft) {
@@ -129,36 +74,31 @@ public class PlayerLibrary implements LibraryInitializer {
         }
 
         ItemStack itemStack = ((List<ItemStack>) minecraft.player.getArmorItems()).get(index);
-        return convertItemStack(itemStack);
+        return ObjectConverter.convert(itemStack);
     }
 
     Object hit(String name, MinecraftClient minecraft, Object... arguments) {
         Map<String, Object> map = new HashMap<>();
 
-        if (minecraft.crosshairTarget.getType() == HitResult.Type.BLOCK) {
-            BlockPos blockPos = ((BlockHitResult)minecraft.crosshairTarget).getBlockPos();
+        HitResult target = minecraft.crosshairTarget;
+
+        if (target == null) {
+            return null;
+        }
+
+        if (target.getType() == HitResult.Type.BLOCK && target instanceof BlockHitResult) {
+            BlockPos blockPos = ((BlockHitResult) target).getBlockPos();
             BlockState blockState = minecraft.world.getBlockState(blockPos);
-            Block block = blockState.getBlock();
-            Item item = block.asItem();
-            map.put("item", convertItemStack(item.getStackForRender()));
-
-            Collection<Property<?>> properties = blockState.getProperties();
-            Map<String, String> props = new HashMap<>();
-
-            for (Property property : properties) {
-                Comparable comparable = blockState.get(property);
-                props.put(property.getName(), comparable.toString());
-            }
-            map.put("properties", props);
+            map.put("block", ObjectConverter.convert(blockState));
         }
 
-        if (minecraft.crosshairTarget.getType() == HitResult.Type.ENTITY) {
-            Entity entity = ((EntityHitResult)minecraft.crosshairTarget).getEntity();
-
-            Map<String, String> names = new HashMap<>();
-            names.put("name", entity.getEntityName());
-            map.put("entity", names);
+        if (target.getType() == HitResult.Type.ENTITY &&  target instanceof EntityHitResult) {
+            Entity entity = ((EntityHitResult) target).getEntity();
+            map.put("entity", ObjectConverter.convert(entity));
         }
+
+        map.put("position", ObjectConverter.convert(target.getPos()));
+        map.put("type", target.getType().toString());
 
         return map;
     }
@@ -176,6 +116,6 @@ public class PlayerLibrary implements LibraryInitializer {
             hand = Hand.OFF_HAND;
         }
 
-        return convertItemStack(minecraft.player.getStackInHand(hand));
+        return ObjectConverter.convert(minecraft.player.getStackInHand(hand));
     }
 }
