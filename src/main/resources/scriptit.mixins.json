@@ -14,7 +14,8 @@
     "MessagesAccessor",
     "FpsAccessor",
     "ActiveMouseButtonAccessor",
-    "ContainerAccessor"
+    "ContainerAccessor",
+    "MixinContainerScreen"
   ],
   "injectors": {
     "defaultRequire": 1
