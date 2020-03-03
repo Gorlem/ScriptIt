@@ -44,8 +44,8 @@ public class PlayerLibrary implements LibraryInitializer {
         namespace.registerFunction("hit", this::hit);
         namespace.registerFunction("look", this::look);
 
-        namespace.registerVariable("mainhand", this::hand);
-        namespace.registerVariable("offhand", this::hand);
+        namespace.registerVariable(Hand.MAIN_HAND.toString().toLowerCase(), this::hand);
+        namespace.registerVariable(Hand.OFF_HAND.toString().toLowerCase(), this::hand);
 
         NamespaceRegistry armor = namespace.registerNamespace("armor");
         armor.registerVariable("helmet", this::armor);
@@ -112,7 +112,7 @@ public class PlayerLibrary implements LibraryInitializer {
 
     Object hand(String name, MinecraftClient minecraft) {
         Hand hand = Hand.MAIN_HAND;
-        if (name == "offhand") {
+        if (name.equalsIgnoreCase(Hand.OFF_HAND.toString())) {
             hand = Hand.OFF_HAND;
         }
 

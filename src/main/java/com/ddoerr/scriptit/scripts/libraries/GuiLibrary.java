@@ -19,7 +19,7 @@ public class GuiLibrary implements LibraryInitializer {
     public void onInitialize(LibraryRegistry registry) {
         NamespaceRegistry gui = registry.registerLibrary("gui");
 
-        gui.registerFunction("clickslot", this::clickSlot);
+        gui.registerFunction("click_slot", this::clickSlot);
 
         gui.registerVariable("screen", (name, mc) -> {
             if (mc.currentScreen != null) {
@@ -28,7 +28,7 @@ public class GuiLibrary implements LibraryInitializer {
             return null;
         });
 
-        gui.registerVariable("activestack", (name, mc) -> {
+        gui.registerVariable("active_stack", (name, mc) -> {
             if (mc.currentScreen instanceof ContainerScreen && mc.player.inventory.getCursorStack() != null) {
                 return ObjectConverter.convert(mc.player.inventory.getCursorStack());
             }

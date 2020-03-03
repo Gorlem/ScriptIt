@@ -29,19 +29,19 @@ public class ObjectConverter {
         Map<String, Object> map = new HashMap<>();
 
         map.put("amount", stack.getCount());
-        map.put("maxamount", stack.getMaxCount());
+        map.put("max_amount", stack.getMaxCount());
         map.put("cooldown", stack.getCooldown());
         map.put("damage", stack.getDamage());
-        map.put("maxdamage", stack.getMaxDamage());
-        map.put("repaircost", stack.getRepairCost());
-        map.put("maxusetime", stack.getMaxUseTime());
+        map.put("max_damage", stack.getMaxDamage());
+        map.put("repair_cost", stack.getRepairCost());
+        map.put("max_usetime", stack.getMaxUseTime());
         map.put("rarity", stack.getRarity().toString());
         map.put("enchantments", convert(EnchantmentHelper.getEnchantments(stack)));
         map.put("name", stack.getName().getString());
-        map.put("isenchantable", stack.isEnchantable());
-        map.put("isfood", stack.isFood());
-        map.put("isdamageable", stack.isDamageable());
-        map.put("isstackable", stack.isStackable());
+        map.put("is_enchantable", stack.isEnchantable());
+        map.put("is_food", stack.isFood());
+        map.put("is_damageable", stack.isDamageable());
+        map.put("is_stackable", stack.isStackable());
         map.put("id", stack.getItem().toString());
 
         return map;
@@ -57,10 +57,10 @@ public class ObjectConverter {
             Map<String, Object> table = new HashMap<>();
             table.put("name", enchantment.getName(level).getString());
             table.put("level", level);
-            table.put("minlevel", enchantment.getMinimumLevel());
-            table.put("maxlevel", enchantment.getMaximumLevel());
-            table.put("iscursed", enchantment.isCursed());
-            table.put("istreasure", enchantment.isTreasure());
+            table.put("min_level", enchantment.getMinimumLevel());
+            table.put("max_level", enchantment.getMaximumLevel());
+            table.put("is_cursed", enchantment.isCursed());
+            table.put("is_treasure", enchantment.isTreasure());
 
             list.add(table);
         }

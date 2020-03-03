@@ -23,7 +23,7 @@ public class KeyboardLibrary implements LibraryInitializer, Tickable {
         NamespaceRegistry namespace = registry.registerLibrary("keyboard");
         namespace.registerFunction("toggle", this::toggle);
         namespace.registerFunction("once", this::once);
-        namespace.registerFunction("iskeypressed", this::isKeyDown);
+        namespace.registerFunction("is_key_pressed", this::isKeyDown);
 
         namespace.registerVariable("control", (name, minecraft) -> Screen.hasControlDown());
         namespace.registerVariable("shift", (name, minecraft) -> Screen.hasShiftDown());
