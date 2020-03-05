@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.widgets;
 
-import com.ddoerr.scriptit.api.util.Color;
+import com.ddoerr.scriptit.util.Color;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;

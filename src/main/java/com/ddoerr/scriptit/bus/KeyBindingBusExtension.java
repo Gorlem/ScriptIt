@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.bus;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.util.KeyBindingHelper;
+import com.ddoerr.scriptit.util.KeyBindingHelper;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;

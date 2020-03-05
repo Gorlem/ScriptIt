@@ -1,11 +1,9 @@
 package com.ddoerr.scriptit.widgets;
 
-import com.ddoerr.scriptit.api.util.Color;
+import com.ddoerr.scriptit.util.Color;
 import com.ddoerr.scriptit.screens.ScriptEditorScreen;
-import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.Scripts;
-import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.google.common.collect.ImmutableList;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import net.minecraft.client.MinecraftClient;
@@ -13,7 +11,6 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resource.language.I18n;
 
 import java.util.List;

@@ -1,7 +1,6 @@
-package com.ddoerr.scriptit.api.util;
+package com.ddoerr.scriptit.util;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;

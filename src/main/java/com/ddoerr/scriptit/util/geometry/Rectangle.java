@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.api.util.geometry;
+package com.ddoerr.scriptit.util.geometry;
 
 public class Rectangle {
     int x;

@@ -6,7 +6,11 @@ import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
 import com.google.common.collect.Lists;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
+import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.gui.widget.AbstractPressableButtonWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
@@ -20,12 +24,30 @@ public class GuiLibrary implements LibraryInitializer {
         NamespaceRegistry gui = registry.registerLibrary("gui");
 
         gui.registerFunction("click_slot", this::clickSlot);
+        gui.registerFunction("click_button", this::clickButton);
 
         gui.registerVariable("screen", (name, mc) -> {
             if (mc.currentScreen != null) {
                 return mc.currentScreen.getClass().getSimpleName();
             }
             return null;
+        });
+
+        gui.registerVariable("slot_count", (name, mc) -> {
+            if (mc.currentScreen instanceof ContainerScreen) {
+                return ((ContainerScreen<?>)mc.currentScreen).getContainer().slots.size();
+            }
+            return 0;
+        });
+
+        gui.registerVariable("button_count", (name, mc) -> {
+            if (mc.currentScreen == null) {
+                return 0;
+            }
+            return (int)mc.currentScreen.children()
+                    .stream()
+                    .filter(AbstractPressableButtonWidget.class::isInstance)
+                    .count();
         });
 
         gui.registerVariable("active_stack", (name, mc) -> {
@@ -75,6 +97,10 @@ public class GuiLibrary implements LibraryInitializer {
         }
 
         for (int id : ids) {
+            if (id >= containerScreen.getContainer().slots.size() || id < 0) {
+                continue;
+            }
+
             Slot slot = containerScreen.getContainer().getSlot(id);
             ((ContainerAccessor)containerScreen).invokeOnMouseClick(slot, id, button, actionType);
         }
@@ -84,5 +110,38 @@ public class GuiLibrary implements LibraryInitializer {
         }
 
         return true;
+    }
+
+    private Object clickButton(String name, MinecraftClient minecraft, Object... arguments) {
+        List<AbstractPressableButtonWidget> buttons = minecraft.currentScreen.children()
+                .stream()
+                .filter(AbstractPressableButtonWidget.class::isInstance)
+                .map(AbstractPressableButtonWidget.class::cast)
+                .collect(Collectors.toList());
+
+        List<Integer> ids;
+
+        if (arguments[0] instanceof List) {
+            ids = ((List<?>)arguments[0])
+                    .stream()
+                    .map(obj -> Integer.parseInt(obj.toString()))
+                    .collect(Collectors.toList());
+        } else if (arguments[0] instanceof Integer) {
+            ids = Lists.newArrayList((int)arguments[0]);
+        } else {
+            ids = Lists.newArrayList(Integer.parseInt(arguments[0].toString()));
+        }
+
+        for (int id : ids) {
+            if (id < 0 || id >= buttons.size()) {
+                continue;
+            }
+
+            MinecraftClient.getInstance().submit(() -> {
+                buttons.get(id).onPress();
+            });
+        }
+
+        return null;
     }
 }

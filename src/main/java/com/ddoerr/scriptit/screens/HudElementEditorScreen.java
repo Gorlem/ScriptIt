@@ -2,16 +2,14 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
-import com.ddoerr.scriptit.api.util.geometry.Point;
+import com.ddoerr.scriptit.util.geometry.Point;
 import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import com.google.common.collect.Maps;
-import spinnery.client.BaseScreen;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class HudElementEditorScreen extends AbstractHistoryScreen {

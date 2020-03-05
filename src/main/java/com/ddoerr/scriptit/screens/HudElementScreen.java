@@ -1,35 +1,27 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
-import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
-import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
-import com.ddoerr.scriptit.api.util.Color;
-import com.ddoerr.scriptit.api.util.geometry.Point;
+import com.ddoerr.scriptit.util.Color;
+import com.ddoerr.scriptit.util.geometry.Point;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.loader.HudElementLoader;
-import com.ddoerr.scriptit.widgets.PanelWidget;
 import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.Window;
 import net.minecraft.text.LiteralText;
-import spinnery.client.BaseScreen;
 import spinnery.util.MouseUtilities;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class HudElementScreen extends AbstractHistoryScreen {
     HudElement currentlyAdding;
