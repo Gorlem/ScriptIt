@@ -15,7 +15,8 @@
     "FpsAccessor",
     "ActiveMouseButtonAccessor",
     "ContainerAccessor",
-    "DeleteItemSlotAccessor"
+    "DeleteItemSlotAccessor",
+    "MixinGameRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

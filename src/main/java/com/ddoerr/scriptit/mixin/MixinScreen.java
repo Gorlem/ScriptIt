@@ -21,12 +21,6 @@ import java.util.stream.Collectors;
 
 @Mixin(Screen.class)
 public abstract class MixinScreen {
-    @Shadow
-    List<Element> children;
-
-    ButtonHelper buttonHelper = new ButtonHelper();
-    SlotHelper slotHelper = new SlotHelper();
-
     @ModifyVariable(method = "sendMessage(Ljava/lang/String;Z)V", at = @At(value = "LOAD", ordinal = 1))
     private String modifyMessage(String message) {
         TypedActionResult<String> result = SendChatMessageCallback.EVENT.invoker().onSendChatMessage(message);
@@ -43,14 +37,5 @@ public abstract class MixinScreen {
         if (message == null) {
             info.cancel();
         }
-    }
-
-    @Shadow
-    abstract void renderTooltip(String text, int x, int y);
-
-    @Inject(method = "render", at = @At("RETURN"))
-    private void onRender(int mouseX, int mouseY, float delta, CallbackInfo info) {
-        buttonHelper.renderTooltip((Screen)(Object)this, mouseX, mouseY);
-        slotHelper.renderTooltip((Screen)(Object)this, mouseX, mouseY);
     }
 }
