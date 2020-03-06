@@ -53,6 +53,7 @@ public class CreativeSlotProvider implements SlotProvider {
             return ItemStack.EMPTY;
         }
 
+        ((CreativeInventoryAccessor)screen).invokeSetSelectedTab(ItemGroup.INVENTORY);
         return ((ContainerScreen<?>)screen).getContainer().getSlot(index).getStack();
     }
 
