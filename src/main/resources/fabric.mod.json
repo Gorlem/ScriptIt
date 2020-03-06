@@ -27,7 +27,8 @@
       "com.ddoerr.scriptit.scripts.libraries.PlayerLibrary",
       "com.ddoerr.scriptit.scripts.libraries.KeyboardLibrary",
       "com.ddoerr.scriptit.scripts.libraries.JsonLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.GuiLibrary"
+      "com.ddoerr.scriptit.scripts.libraries.GuiLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.ScoreboardLibrary"
     ],
     "scriptit:language": [
       "com.ddoerr.scriptit.scripts.languages.lua.LuaLanguage"

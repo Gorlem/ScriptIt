@@ -7,12 +7,16 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.scoreboard.ScoreboardObjective;
+import net.minecraft.scoreboard.ScoreboardPlayerScore;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ObjectConverter {
     public static Map<String, Object> convert(Biome biome) {
@@ -103,6 +107,40 @@ public class ObjectConverter {
         map.put("x", vector.getX());
         map.put("y", vector.getY());
         map.put("z", vector.getZ());
+
+        return map;
+    }
+
+    public static Map<String, Object> convert(ScoreboardObjective objective) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("id", objective.getName());
+        map.put("name", objective.getDisplayName().asFormattedString());
+        map.put("criterion", objective.getCriterion().getName());
+        map.put("render_type", objective.getRenderType().getName());
+        map.put("scores", objective.getScoreboard().getAllPlayerScores(objective).stream().map(ObjectConverter::convert).collect(Collectors.toList()));
+
+        return map;
+    }
+
+    public static Map<String, Object> convert(ScoreboardPlayerScore playerScore) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("player", playerScore.getPlayerName());
+        map.put("score", playerScore.getScore());
+
+        return map;
+    }
+
+    public static Map<String, Object> convert(Team team) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("id", team.getName());
+        map.put("name", team.getDisplayName().asFormattedString());
+        map.put("prefix", team.getPrefix().asFormattedString());
+        map.put("suffix", team.getSuffix().asFormattedString());
+        map.put("color", team.getColor().getName());
+        map.put("players", team.getPlayerList());
 
         return map;
     }
