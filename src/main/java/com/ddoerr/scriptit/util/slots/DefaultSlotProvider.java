@@ -9,6 +9,8 @@ import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public class DefaultSlotProvider implements SlotProvider {
     private MinecraftClient minecraft = MinecraftClient.getInstance();
@@ -21,6 +23,22 @@ public class DefaultSlotProvider implements SlotProvider {
 
         Slot slot = index == -999 ? null : ((ContainerScreen<?>)screen).getContainer().getSlot(index);
         ((ContainerAccessor)screen).invokeOnMouseClick(slot, index, button, actionType);
+    }
+
+    @Override
+    public int findSlot(Screen screen, String id) {
+        return ((ContainerScreen<?>)screen).getContainer().slots
+                .stream()
+                .filter(s -> {
+                    if (!s.hasStack()) {
+                        return false;
+                    }
+                    Identifier identifier = Registry.ITEM.getId(s.getStack().getItem());
+                    return identifier.toString().equalsIgnoreCase(id) || identifier.getPath().equalsIgnoreCase(id);
+                })
+                .findFirst()
+                .map(s -> s.id)
+                .orElse(-1);
     }
 
     @Override

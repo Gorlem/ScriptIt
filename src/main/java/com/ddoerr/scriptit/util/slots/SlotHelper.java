@@ -17,4 +17,12 @@ public class SlotHelper extends ClickablesHelper<SlotProvider> {
                 .findFirst()
                 .ifPresent(p -> p.click(screen, index, button, actionType));
     }
+
+    public int findSlot(Screen screen, String id) {
+        return provider.stream()
+                .filter(p -> p.matches(screen))
+                .findFirst()
+                .map(p -> p.findSlot(screen, id))
+                .orElse(-1);
+    }
 }

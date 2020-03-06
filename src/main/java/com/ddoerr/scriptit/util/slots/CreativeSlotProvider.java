@@ -10,6 +10,7 @@ import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.item.ItemGroup;
 
+// TODO: Implement virtual inventory, for accessing search or survival inventory
 public class CreativeSlotProvider implements SlotProvider {
     private MinecraftClient minecraft = MinecraftClient.getInstance();
 
@@ -21,6 +22,11 @@ public class CreativeSlotProvider implements SlotProvider {
 
         Slot slot = index == -999 ? null : ((ContainerScreen<?>)screen).getContainer().getSlot(index);
         ((ContainerAccessor)screen).invokeOnMouseClick(slot, index, button, actionType);
+    }
+
+    @Override
+    public int findSlot(Screen screen, String id) {
+        return -1;
     }
 
     @Override

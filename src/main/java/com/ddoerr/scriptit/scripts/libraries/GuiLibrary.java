@@ -30,6 +30,7 @@ public class GuiLibrary implements LibraryInitializer {
 
         gui.registerFunction("click_slot", this::clickSlot);
         gui.registerFunction("click_button", this::clickButton);
+        gui.registerFunction("find_slot", this::findSlot);
 
         gui.registerVariable("screen", (name, mc) -> {
             if (mc.currentScreen != null) {
@@ -111,5 +112,11 @@ public class GuiLibrary implements LibraryInitializer {
         }
 
         return null;
+    }
+
+    private Object findSlot(String name, MinecraftClient minecraft, Object... arguments) {
+        String id = arguments[0].toString();
+
+        return slotHelper.findSlot(minecraft.currentScreen, id);
     }
 }

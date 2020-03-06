@@ -6,4 +6,5 @@ import net.minecraft.container.SlotActionType;
 
 public interface SlotProvider extends ClickablesProvider {
     void click(Screen screen, int index, int button, SlotActionType actionType);
+    int findSlot(Screen screen, String id);
 }
