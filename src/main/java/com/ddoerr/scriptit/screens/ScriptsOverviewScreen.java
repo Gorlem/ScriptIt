@@ -27,9 +27,9 @@ public class ScriptsOverviewScreen extends AbstractHistoryScreen {
     private void setupWidgets() {
         WInterface mainInterface = getInterface();
 
-        setupList(mainInterface);
-        setupAddScriptButton(mainInterface);
         setupOpenDesignerButton(mainInterface);
+        setupAddScriptButton(mainInterface);
+        setupList(mainInterface);
 
         mainInterface.onAlign();
     }
@@ -50,6 +50,8 @@ public class ScriptsOverviewScreen extends AbstractHistoryScreen {
         for (ScriptContainer scriptContainer : scripts.getAll()) {
             lastRow = setupListRow(list, scriptContainer, lastRow);
         }
+
+        list.onAlign();
     }
 
     private WAbstractWidget setupListRow(WVerticalScrollableContainer list, ScriptContainer scriptContainer, WAbstractWidget lastRow) {
