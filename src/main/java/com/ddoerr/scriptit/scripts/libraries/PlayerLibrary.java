@@ -34,9 +34,7 @@ public class PlayerLibrary implements LibraryInitializer {
         namespace.registerVariable("breath", (name, minecraft) -> minecraft.player.getAir());
         namespace.registerVariable("gamemode", (name, minecraft) -> minecraft.getNetworkHandler().getPlayerListEntry(minecraft.player.getUuid()).getGameMode().getName());
 
-        namespace.registerVariable("x", (name, minecraft) -> minecraft.player.getX());
-        namespace.registerVariable("y", (name, minecraft) -> minecraft.player.getY());
-        namespace.registerVariable("z", (name, minecraft) -> minecraft.player.getZ());
+        namespace.registerVariable("position", (name, minecraft) -> ObjectConverter.convert(minecraft.player.getPos()));
 
         namespace.registerVariable("yaw", (name, minecraft) -> minecraft.player.yaw % 360);
         namespace.registerVariable("pitch", (name, minecraft) -> minecraft.player.pitch);
@@ -54,6 +52,10 @@ public class PlayerLibrary implements LibraryInitializer {
         armor.registerVariable("boots", this::armor);
 
         namespace.registerVariable("biome", (name, minecraft) -> ObjectConverter.convert(minecraft.world.getBiome(minecraft.player.getBlockPos())));
+
+        namespace.registerVariable("total_experience", (name, minecraft) -> minecraft.player.totalExperience);
+        namespace.registerVariable("experience_progress", (name, minecraft) -> minecraft.player.experienceProgress);
+        namespace.registerVariable("experience_level", (name, minecraft) -> minecraft.player.experienceLevel);
     }
 
     Object armor(String name, MinecraftClient minecraft) {
