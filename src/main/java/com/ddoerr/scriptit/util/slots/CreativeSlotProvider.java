@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.util.slots;
 
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
-import com.ddoerr.scriptit.mixin.DeleteItemSlotAccessor;
+import com.ddoerr.scriptit.mixin.CreativeInventoryAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
@@ -9,8 +9,10 @@ import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
-// TODO: Implement virtual inventory, for accessing search or survival inventory
+// TODO: Implement virtual inventory, for accessing search
 public class CreativeSlotProvider implements SlotProvider {
     private MinecraftClient minecraft = MinecraftClient.getInstance();
 
@@ -20,18 +22,33 @@ public class CreativeSlotProvider implements SlotProvider {
             return;
         }
 
+        ((CreativeInventoryAccessor)screen).invokeSetSelectedTab(ItemGroup.INVENTORY);
+
         Slot slot = index == -999 ? null : ((ContainerScreen<?>)screen).getContainer().getSlot(index);
         ((ContainerAccessor)screen).invokeOnMouseClick(slot, index, button, actionType);
     }
 
     @Override
     public int findSlot(Screen screen, String id) {
-        return -1;
+        ((CreativeInventoryAccessor)screen).invokeSetSelectedTab(ItemGroup.INVENTORY);
+
+        return ((ContainerScreen<?>)screen).getContainer().slots
+                .stream()
+                .filter(s -> {
+                    if (!s.hasStack()) {
+                        return false;
+                    }
+                    Identifier identifier = Registry.ITEM.getId(s.getStack().getItem());
+                    return identifier.toString().equalsIgnoreCase(id) || identifier.getPath().equalsIgnoreCase(id);
+                })
+                .findFirst()
+                .map(s -> ((CreativeInventoryScreen)screen).getContainer().slots.indexOf(s))
+                .orElse(-1);
     }
 
     @Override
     public int getAmount(Screen screen) {
-        return -1;
+        return 46;
     }
 
     @Override
@@ -52,7 +69,7 @@ public class CreativeSlotProvider implements SlotProvider {
             slotId = ((CreativeInventoryScreen)screen).getContainer().slots.indexOf(focusedSlot);
         }
 
-        Slot deleteItemSlot = ((DeleteItemSlotAccessor)screen).getDeleteItemSlot();
+        Slot deleteItemSlot = ((CreativeInventoryAccessor)screen).getDeleteItemSlot();
         if ((minecraft.player.inventory.getCursorStack().isEmpty() && focusedSlot.hasStack()) || focusedSlot == deleteItemSlot) {
             mouseY -= 18;
         }

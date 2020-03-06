@@ -1,14 +1,11 @@
 package com.ddoerr.scriptit.util.slots;
 
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
-import com.ddoerr.scriptit.mixin.DeleteItemSlotAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
