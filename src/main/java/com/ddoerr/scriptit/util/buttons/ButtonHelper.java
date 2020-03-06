@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screen.Screen;
 
 public class ButtonHelper extends ClickablesHelper<ButtonProvider> {
     public ButtonHelper() {
+        provider.add(new SpinneryButtonProvider());
         provider.add(new EnchantingButtonProvider());
         provider.add(new DefaultButtonProvider());
     }

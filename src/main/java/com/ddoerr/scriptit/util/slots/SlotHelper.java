@@ -6,6 +6,7 @@ import net.minecraft.container.SlotActionType;
 
 public class SlotHelper extends ClickablesHelper<SlotProvider> {
     public SlotHelper() {
+        provider.add(new SpinnerySlotProvider());
         provider.add(new CreativeSlotProvider());
         provider.add(new DefaultSlotProvider());
     }
