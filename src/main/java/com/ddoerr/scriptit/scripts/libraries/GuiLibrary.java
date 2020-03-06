@@ -4,6 +4,8 @@ import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
+import com.ddoerr.scriptit.util.buttons.ButtonHelper;
+import com.ddoerr.scriptit.util.slots.SlotHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
@@ -19,6 +21,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GuiLibrary implements LibraryInitializer {
+    private ButtonHelper buttonHelper = new ButtonHelper();
+    private SlotHelper slotHelper = new SlotHelper();
+
     @Override
     public void onInitialize(LibraryRegistry registry) {
         NamespaceRegistry gui = registry.registerLibrary("gui");
@@ -33,22 +38,8 @@ public class GuiLibrary implements LibraryInitializer {
             return null;
         });
 
-        gui.registerVariable("slot_count", (name, mc) -> {
-            if (mc.currentScreen instanceof ContainerScreen) {
-                return ((ContainerScreen<?>)mc.currentScreen).getContainer().slots.size();
-            }
-            return 0;
-        });
-
-        gui.registerVariable("button_count", (name, mc) -> {
-            if (mc.currentScreen == null) {
-                return 0;
-            }
-            return (int)mc.currentScreen.children()
-                    .stream()
-                    .filter(AbstractPressableButtonWidget.class::isInstance)
-                    .count();
-        });
+        gui.registerVariable("slot_count", (name, mc) -> slotHelper.getAmount(mc.currentScreen));
+        gui.registerVariable("button_count", (name, mc) -> buttonHelper.getAmount(mc.currentScreen));
 
         gui.registerVariable("active_stack", (name, mc) -> {
             if (mc.currentScreen instanceof ContainerScreen && mc.player.inventory.getCursorStack() != null) {
@@ -59,12 +50,6 @@ public class GuiLibrary implements LibraryInitializer {
     }
 
     private Object clickSlot(String name, MinecraftClient minecraft, Object... arguments) {
-        if (!(minecraft.currentScreen instanceof ContainerScreen)) {
-            return false;
-        }
-
-        ContainerScreen<?> containerScreen = (ContainerScreen<?>) minecraft.currentScreen;
-
         List<Integer> ids;
 
         if (arguments[0] instanceof List) {
@@ -92,33 +77,22 @@ public class GuiLibrary implements LibraryInitializer {
         int progress = 0;
 
         if (actionType == SlotActionType.QUICK_CRAFT) {
-            ((ContainerAccessor)containerScreen).invokeOnMouseClick(null, -999, Container.packClickData(progress, button), actionType);
+            slotHelper.click(minecraft.currentScreen, -999, Container.packClickData(progress, button), actionType);
             button = Container.packClickData(++progress, button);
         }
 
         for (int id : ids) {
-            if (id >= containerScreen.getContainer().slots.size() || id < 0) {
-                continue;
-            }
-
-            Slot slot = containerScreen.getContainer().getSlot(id);
-            ((ContainerAccessor)containerScreen).invokeOnMouseClick(slot, id, button, actionType);
+            slotHelper.click(minecraft.currentScreen, id, button, actionType);
         }
 
         if (actionType == SlotActionType.QUICK_CRAFT) {
-            ((ContainerAccessor)containerScreen).invokeOnMouseClick(null, -999, Container.packClickData(++progress, button), actionType);
+            slotHelper.click(minecraft.currentScreen, -999, Container.packClickData(++progress, button), actionType);
         }
 
         return true;
     }
 
     private Object clickButton(String name, MinecraftClient minecraft, Object... arguments) {
-        List<AbstractPressableButtonWidget> buttons = minecraft.currentScreen.children()
-                .stream()
-                .filter(AbstractPressableButtonWidget.class::isInstance)
-                .map(AbstractPressableButtonWidget.class::cast)
-                .collect(Collectors.toList());
-
         List<Integer> ids;
 
         if (arguments[0] instanceof List) {
@@ -133,13 +107,7 @@ public class GuiLibrary implements LibraryInitializer {
         }
 
         for (int id : ids) {
-            if (id < 0 || id >= buttons.size()) {
-                continue;
-            }
-
-            MinecraftClient.getInstance().submit(() -> {
-                buttons.get(id).onPress();
-            });
+            buttonHelper.click(minecraft.currentScreen, id);
         }
 
         return null;

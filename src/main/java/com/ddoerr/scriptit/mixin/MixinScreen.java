@@ -1,6 +1,8 @@
 package com.ddoerr.scriptit.mixin;
 
 import com.ddoerr.scriptit.callbacks.SendChatMessageCallback;
+import com.ddoerr.scriptit.util.buttons.ButtonHelper;
+import com.ddoerr.scriptit.util.slots.SlotHelper;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.BeaconScreen;
@@ -21,6 +23,9 @@ import java.util.stream.Collectors;
 public abstract class MixinScreen {
     @Shadow
     List<Element> children;
+
+    ButtonHelper buttonHelper = new ButtonHelper();
+    SlotHelper slotHelper = new SlotHelper();
 
     @ModifyVariable(method = "sendMessage(Ljava/lang/String;Z)V", at = @At(value = "LOAD", ordinal = 1))
     private String modifyMessage(String message) {
@@ -45,21 +50,7 @@ public abstract class MixinScreen {
 
     @Inject(method = "render", at = @At("RETURN"))
     private void onRender(int mouseX, int mouseY, float delta, CallbackInfo info) {
-        List<AbstractPressableButtonWidget> buttons = children
-                .stream()
-                .filter(AbstractPressableButtonWidget.class::isInstance)
-                .map(AbstractPressableButtonWidget.class::cast)
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < buttons.size(); i++) {
-            AbstractPressableButtonWidget button = buttons.get(i);
-            if (button.visible && button.isHovered()) {
-
-                if ((Object) this instanceof BeaconScreen) {
-                    mouseY -= 18;
-                }
-                renderTooltip("Button " + i, mouseX, mouseY);
-            }
-        }
+        buttonHelper.renderTooltip((Screen)(Object)this, mouseX, mouseY);
+        slotHelper.renderTooltip((Screen)(Object)this, mouseX, mouseY);
     }
 }
