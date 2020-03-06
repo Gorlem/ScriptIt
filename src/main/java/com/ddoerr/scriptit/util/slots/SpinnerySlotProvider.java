@@ -3,6 +3,7 @@ package com.ddoerr.scriptit.util.slots;
 import com.ddoerr.scriptit.util.AbstractSpinneryClickablesProvider;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.container.SlotActionType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import spinnery.client.BaseScreen;
@@ -44,5 +45,16 @@ public class SpinnerySlotProvider extends AbstractSpinneryClickablesProvider<WSl
                 .findFirst()
                 .map(WSlot::getSlotNumber)
                 .orElse(-1);
+    }
+
+    @Override
+    public ItemStack getSlotContent(Screen screen, int index) {
+        List<WSlot> slots = getWidgets((BaseScreen)screen);
+
+        if (index < 0 || index >= slots.size()) {
+            return ItemStack.EMPTY;
+        }
+
+        return slots.get(index).getStack();
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -36,6 +37,15 @@ public class DefaultSlotProvider implements SlotProvider {
                 .findFirst()
                 .map(s -> s.id)
                 .orElse(-1);
+    }
+
+    @Override
+    public ItemStack getSlotContent(Screen screen, int index) {
+        if (index >= getAmount(screen) || index < 0) {
+            return ItemStack.EMPTY;
+        }
+
+        return ((ContainerScreen<?>)screen).getContainer().getSlot(index).getStack();
     }
 
     @Override

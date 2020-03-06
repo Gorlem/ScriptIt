@@ -3,6 +3,7 @@ package com.ddoerr.scriptit.util.slots;
 import com.ddoerr.scriptit.util.ClickablesHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.container.SlotActionType;
+import net.minecraft.item.ItemStack;
 
 public class SlotHelper extends ClickablesHelper<SlotProvider> {
     public SlotHelper() {
@@ -12,17 +13,14 @@ public class SlotHelper extends ClickablesHelper<SlotProvider> {
     }
 
     public void click(Screen screen, int index, int button, SlotActionType actionType) {
-        provider.stream()
-                .filter(p -> p.matches(screen))
-                .findFirst()
-                .ifPresent(p -> p.click(screen, index, button, actionType));
+        getProvider(screen).ifPresent(p -> p.click(screen, index, button, actionType));
     }
 
     public int findSlot(Screen screen, String id) {
-        return provider.stream()
-                .filter(p -> p.matches(screen))
-                .findFirst()
-                .map(p -> p.findSlot(screen, id))
-                .orElse(-1);
+        return getProvider(screen).map(p -> p.findSlot(screen, id)).orElse(-1);
+    }
+
+    public ItemStack getSlotContent(Screen screen, int index) {
+        return getProvider(screen).map(p -> p.getSlotContent(screen, index)).orElse(ItemStack.EMPTY);
     }
 }

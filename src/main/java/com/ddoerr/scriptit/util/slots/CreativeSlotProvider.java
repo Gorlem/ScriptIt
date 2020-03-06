@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -44,6 +45,15 @@ public class CreativeSlotProvider implements SlotProvider {
                 .findFirst()
                 .map(s -> ((CreativeInventoryScreen)screen).getContainer().slots.indexOf(s))
                 .orElse(-1);
+    }
+
+    @Override
+    public ItemStack getSlotContent(Screen screen, int index) {
+        if (index >= getAmount(screen) || index < 0) {
+            return ItemStack.EMPTY;
+        }
+
+        return ((ContainerScreen<?>)screen).getContainer().getSlot(index).getStack();
     }
 
     @Override

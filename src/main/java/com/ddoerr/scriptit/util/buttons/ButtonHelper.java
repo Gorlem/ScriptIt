@@ -11,9 +11,6 @@ public class ButtonHelper extends ClickablesHelper<ButtonProvider> {
     }
 
     public void click(Screen screen, int index) {
-        provider.stream()
-                .filter(p -> p.matches(screen))
-                .findFirst()
-                .ifPresent(p -> p.click(screen, index));
+        getProvider(screen).ifPresent(p -> p.click(screen, index));
     }
 }
