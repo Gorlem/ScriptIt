@@ -3,22 +3,15 @@ package com.ddoerr.scriptit.scripts.libraries;
 import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
 
 import java.util.*;
 
@@ -39,7 +32,7 @@ public class PlayerLibrary implements LibraryInitializer {
         namespace.registerVariable("yaw", (name, minecraft) -> minecraft.player.yaw % 360);
         namespace.registerVariable("pitch", (name, minecraft) -> minecraft.player.pitch);
 
-        namespace.registerFunction("hit", this::hit);
+        namespace.registerFunction("target", this::target);
         namespace.registerFunction("look", this::look);
 
         namespace.registerVariable(Hand.MAIN_HAND.toString().toLowerCase(), this::hand);
@@ -79,7 +72,7 @@ public class PlayerLibrary implements LibraryInitializer {
         return ObjectConverter.convert(itemStack);
     }
 
-    Object hit(String name, MinecraftClient minecraft, Object... arguments) {
+    Object target(String name, MinecraftClient minecraft, Object... arguments) {
         Map<String, Object> map = new HashMap<>();
 
         HitResult target = minecraft.crosshairTarget;
