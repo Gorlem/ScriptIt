@@ -2,6 +2,7 @@ package com.ddoerr.scriptit.scripts.libraries;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -14,6 +15,7 @@ import net.minecraft.state.property.Property;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -141,6 +143,18 @@ public class ObjectConverter {
         map.put("suffix", team.getSuffix().asFormattedString());
         map.put("color", team.getColor().getName());
         map.put("players", team.getPlayerList());
+
+        return map;
+    }
+
+    public static Map<String, Object> convert(PlayerListEntry player) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("uuid", player.getProfile().getId().toString());
+        map.put("name", player.getProfile().getName());
+        map.put("formatted", player.getDisplayName() != null ? player.getDisplayName().asFormattedString() : StringUtils.EMPTY);
+        map.put("team", player.getScoreboardTeam() != null ? player.getScoreboardTeam().getName() : StringUtils.EMPTY);
+        map.put("gamemode", player.getGameMode().getName());
 
         return map;
     }

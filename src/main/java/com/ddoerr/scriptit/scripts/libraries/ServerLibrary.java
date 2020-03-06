@@ -60,7 +60,7 @@ public class ServerLibrary implements LibraryInitializer {
 
     private Object players(String name, MinecraftClient minecraft, Object... arguments) {
         return minecraft.getNetworkHandler().getPlayerList()
-                .stream().map(entry -> entry.getProfile().getName())
+                .stream().map(ObjectConverter::convert)
                 .collect(Collectors.toList());
     }
 }
