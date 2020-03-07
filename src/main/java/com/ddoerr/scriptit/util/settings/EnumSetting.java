@@ -14,6 +14,11 @@ public class EnumSetting<T extends Enum<T>> extends AbstractSetting<T> {
     }
 
     @Override
+    public Object get() {
+        return super.get().toString();
+    }
+
+    @Override
     public void set(Object object) {
         setter.accept(ObjectConverter.toEnum(enumClass, object));
     }

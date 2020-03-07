@@ -27,6 +27,6 @@ public class IntegerSetting extends AbstractNumberSetting<Integer> {
 
     @Override
     public void set(Object object) {
-        setter.accept(ObjectConverter.toInteger(object));
+        setter.accept(clamp(ObjectConverter.toInteger(object)));
     }
 }
