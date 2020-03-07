@@ -7,6 +7,7 @@ import com.ddoerr.scriptit.util.ObjectConverter;
 import com.ddoerr.scriptit.util.settings.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.*;
+import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.client.tutorial.TutorialStep;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.util.Arm;
@@ -19,6 +20,8 @@ public class OptionsLibrary implements LibraryInitializer {
     private List<Setting> settings = new ArrayList<>();
     private GameOptions options;
     private MinecraftClient minecraft = MinecraftClient.getInstance();
+
+    private StringSetting languageSetting;
 
     @Override
     public void onInitialize(LibraryRegistry registry) {
@@ -37,6 +40,7 @@ public class OptionsLibrary implements LibraryInitializer {
     private void ensureOptionsNotNull() {
         if (options == null) {
             options = minecraft.options;
+            languageSetting.setWhitelist(minecraft.getLanguageManager().getAllLanguages().stream().map(LanguageDefinition::getCode).collect(Collectors.toList()));
         }
     }
 
@@ -154,6 +158,6 @@ public class OptionsLibrary implements LibraryInitializer {
         }, 0, 2));
 
         settings.add(new StringSetting("lastServer", () -> options.lastServer, lastServer -> options.lastServer = lastServer));
-        settings.add(new StringSetting("lang", () -> options.language, language -> options.language = language));
+        settings.add(languageSetting = new StringSetting("lang", () -> options.language, language -> options.language = language));
     }
 }
