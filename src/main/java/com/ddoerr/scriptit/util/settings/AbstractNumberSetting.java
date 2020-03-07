@@ -30,6 +30,6 @@ public abstract class AbstractNumberSetting<T extends Number> extends AbstractSe
 
     @Override
     public String getPossibleValues() {
-        return minimum.toString() + " - " + maximum.toString();
+        return minimum.toString() + " - " + maximum.toString() + "; step = " + step.toString();
     }
 }
