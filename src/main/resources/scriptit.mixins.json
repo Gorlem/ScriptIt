@@ -16,7 +16,8 @@
     "ActiveMouseButtonAccessor",
     "ContainerAccessor",
     "CreativeInventoryAccessor",
-    "MixinGameRenderer"
+    "MixinGameRenderer",
+    "OptionKeyAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
