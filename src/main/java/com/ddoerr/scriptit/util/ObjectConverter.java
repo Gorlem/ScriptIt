@@ -189,8 +189,8 @@ public class ObjectConverter {
     public static boolean toBoolean(Object object) {
         if (object instanceof Boolean) {
             return (boolean)object;
-        } else if (object instanceof Integer) {
-            return (int)object > 0;
+        } else if (object instanceof Number) {
+            return ((Number)object).intValue() > 0;
         } else if (object instanceof String) {
             return ((String)object).equalsIgnoreCase("true");
         }
@@ -202,6 +202,10 @@ public class ObjectConverter {
     }
 
     public static <T extends Enum<T>> T toEnum(Class<T> enumClass, Object object) {
+        if (object instanceof Number) {
+            GenericEnumHelper.getValue(enumClass, ((Number)object).intValue());
+        }
+
         return Enum.valueOf(enumClass, toString(object));
     }
 }
