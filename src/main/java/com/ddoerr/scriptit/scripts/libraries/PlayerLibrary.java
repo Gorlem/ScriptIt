@@ -100,8 +100,8 @@ public class PlayerLibrary implements LibraryInitializer {
     }
 
     Object look(String name, MinecraftClient minecraft, Object... arguments) {
-        minecraft.player.yaw = (float)arguments[0];
-        minecraft.player.pitch = (float)arguments[0];
+        minecraft.player.yaw = ObjectConverter.toFloat(arguments[0]);
+        minecraft.player.pitch =  ObjectConverter.toFloat(arguments[1]);
 
         return null;
     }

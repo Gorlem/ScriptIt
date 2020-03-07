@@ -52,23 +52,20 @@ public class GuiLibrary implements LibraryInitializer {
         if (arguments[0] instanceof List) {
             ids = ((List<?>)arguments[0])
                     .stream()
-                    .map(obj -> Integer.parseInt(obj.toString()))
+                    .map(ObjectConverter::toInteger)
                     .collect(Collectors.toList());
-        } else if (arguments[0] instanceof Integer) {
-            ids = Lists.newArrayList((int)arguments[0]);
         } else {
-            ids = Lists.newArrayList(Integer.parseInt(arguments[0].toString()));
+            ids = Lists.newArrayList(ObjectConverter.toInteger(arguments[0]));
         }
 
         SlotActionType actionType = SlotActionType.PICKUP;
         if (arguments.length > 1) {
-            String type = arguments[1].toString();
-            actionType = SlotActionType.valueOf(type);
+            actionType = ObjectConverter.toEnum(SlotActionType.class, arguments[1]);
         }
 
         int button = 0;
-        if (arguments.length > 2 && arguments[2] instanceof Integer) {
-            button = (int)arguments[2];
+        if (arguments.length > 2) {
+            button = ObjectConverter.toInteger(arguments[2]);
         }
 
         int progress = 0;
@@ -95,12 +92,10 @@ public class GuiLibrary implements LibraryInitializer {
         if (arguments[0] instanceof List) {
             ids = ((List<?>)arguments[0])
                     .stream()
-                    .map(obj -> Integer.parseInt(obj.toString()))
+                    .map(ObjectConverter::toInteger)
                     .collect(Collectors.toList());
-        } else if (arguments[0] instanceof Integer) {
-            ids = Lists.newArrayList((int)arguments[0]);
         } else {
-            ids = Lists.newArrayList(Integer.parseInt(arguments[0].toString()));
+            ids = Lists.newArrayList(ObjectConverter.toInteger(arguments[0]));
         }
 
         for (int id : ids) {
@@ -111,12 +106,12 @@ public class GuiLibrary implements LibraryInitializer {
     }
 
     private Object findSlot(String name, MinecraftClient minecraft, Object... arguments) {
-        String id = arguments[0].toString();
+        String id = ObjectConverter.toString(arguments[0]);
         return slotHelper.findSlot(minecraft.currentScreen, id);
     }
 
     private Object getSlotContent(String name, MinecraftClient minecraft, Object... arguments) {
-        int index = Integer.parseInt(arguments[0].toString());
+        int index = ObjectConverter.toInteger(arguments[0]);
         return ObjectConverter.convert(slotHelper.getSlotContent(minecraft.currentScreen, index));
     }
 }

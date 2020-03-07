@@ -4,6 +4,7 @@ import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
 import com.ddoerr.scriptit.mixin.MessagesAccessor;
+import com.ddoerr.scriptit.util.ObjectConverter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
@@ -35,7 +36,7 @@ public class ChatLibrary implements LibraryInitializer {
     }
 
     Object send(String name, MinecraftClient minecraft, Object... arguments) {
-        String message = (String)arguments[0];
+        String message = ObjectConverter.toString(arguments[0]);
         if (minecraft.player != null) {
             minecraft.player.sendChatMessage(message);
         }
@@ -44,7 +45,7 @@ public class ChatLibrary implements LibraryInitializer {
     }
 
     Object log(String name, MinecraftClient minecraft, Object... arguments) {
-        Text text = new LiteralText("");
+        Text text;
         if (arguments[0] instanceof String) {
             String message = (String)arguments[0];
 
@@ -80,7 +81,7 @@ public class ChatLibrary implements LibraryInitializer {
 
             text = new LiteralText(message.toString());
         } else {
-            text = new LiteralText(arguments[0].toString());
+            text = new LiteralText(ObjectConverter.toString(arguments[0]));
         }
 
         if (minecraft.player != null) {

@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.scripts.libraries;
 
+import com.ddoerr.scriptit.util.ObjectConverter;
 import com.google.gson.Gson;
 import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
@@ -22,6 +23,6 @@ public class JsonLibrary implements LibraryInitializer {
     }
 
     private Object decode(String name, MinecraftClient minecraft, Object... arguments) {
-        return gson.fromJson((String)arguments[0], Object.class);
+        return gson.fromJson(ObjectConverter.toString(arguments[0]), Object.class);
     }
 }

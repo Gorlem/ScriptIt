@@ -4,6 +4,7 @@ import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.mixin.ActiveMouseButtonAccessor;
+import com.ddoerr.scriptit.util.ObjectConverter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.KeyBinding;
@@ -53,7 +54,7 @@ public class KeyboardLibrary implements LibraryInitializer, Tickable {
     }
 
     private Object toggle(String name, MinecraftClient minecraft, Object... arguments) {
-        String bindingName = (String)arguments[0];
+        String bindingName = ObjectConverter.toString(arguments[0]);
         KeyBinding keyBinding = getKeyBind(bindingName);
 
         if (keyBinding == null)
@@ -63,9 +64,8 @@ public class KeyboardLibrary implements LibraryInitializer, Tickable {
 
         if (arguments.length == 1) {
             toggleDown = !keyBinding.isPressed();
-        }
-        else if (arguments[1] instanceof Boolean) {
-            toggleDown = (boolean)arguments[1];
+        } else {
+            toggleDown = ObjectConverter.toBoolean(arguments[1]);
         }
 
         InputUtil.KeyCode keyCode = InputUtil.fromName(keyBinding.getName());
@@ -79,7 +79,7 @@ public class KeyboardLibrary implements LibraryInitializer, Tickable {
     }
 
     private Object once(String name, MinecraftClient minecraft, Object... arguments) {
-        String bindingName = (String)arguments[0];
+        String bindingName = ObjectConverter.toString(arguments[0]);
         KeyBinding keyBinding = getKeyBind(bindingName);
 
         if (keyBinding == null)
@@ -97,9 +97,9 @@ public class KeyboardLibrary implements LibraryInitializer, Tickable {
 
     private Object isKeyDown(String name, MinecraftClient minecraft, Object... arguments) {
         if (arguments[0] instanceof Number) {
-            return InputUtil.isKeyPressed(minecraft.getWindow().getHandle(), ((Number)arguments[0]).intValue());
+            return InputUtil.isKeyPressed(minecraft.getWindow().getHandle(), ObjectConverter.toInteger(arguments[0]));
         } else if (arguments[0] instanceof String) {
-            InputUtil.KeyCode code = InputUtil.fromName(arguments[0].toString());
+            InputUtil.KeyCode code = InputUtil.fromName(ObjectConverter.toString(arguments[0]));
 
             if (code.getCategory() == InputUtil.Type.KEYSYM) {
                 return InputUtil.isKeyPressed(minecraft.getWindow().getHandle(), code.getKeyCode());
