@@ -158,4 +158,50 @@ public class ObjectConverter {
 
         return map;
     }
+
+    public static int toInteger(Object object) {
+        if (object instanceof Number) {
+            return ((Number) object).intValue();
+        } else if (object instanceof Boolean) {
+            return (boolean)object ? 1 : 0;
+        }
+        return Integer.parseInt(toString(object));
+    }
+
+    public static float toFloat(Object object) {
+        if (object instanceof Number) {
+            return ((Number) object).floatValue();
+        } else if (object instanceof Boolean) {
+            return (boolean)object ? 1 : 0;
+        }
+        return Float.parseFloat(toString(object));
+    }
+
+    public static double toDouble(Object object) {
+        if (object instanceof Number) {
+            return ((Number) object).doubleValue();
+        } else if (object instanceof Boolean) {
+            return (boolean)object ? 1 : 0;
+        }
+        return Double.parseDouble(toString(object));
+    }
+
+    public static boolean toBoolean(Object object) {
+        if (object instanceof Boolean) {
+            return (boolean)object;
+        } else if (object instanceof Integer) {
+            return (int)object > 0;
+        } else if (object instanceof String) {
+            return ((String)object).equalsIgnoreCase("true");
+        }
+        return false;
+    }
+
+    public static String toString(Object object) {
+        return object == null ? StringUtils.EMPTY : object.toString();
+    }
+
+    public static <T extends Enum<T>> T toEnum(Class<T> enumClass, Object object) {
+        return Enum.valueOf(enumClass, toString(object));
+    }
 }
