@@ -17,7 +17,8 @@
     "ContainerAccessor",
     "CreativeInventoryAccessor",
     "MixinGameRenderer",
-    "OptionKeyAccessor"
+    "OptionKeyAccessor",
+    "StepAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
