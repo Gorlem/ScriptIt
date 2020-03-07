@@ -158,6 +158,10 @@ public class OptionsLibrary implements LibraryInitializer {
         }, 0, 2));
 
         settings.add(new StringSetting("lastServer", () -> options.lastServer, lastServer -> options.lastServer = lastServer));
-        settings.add(languageSetting = new StringSetting("lang", () -> options.language, language -> options.language = language));
+        settings.add(languageSetting = new StringSetting("lang", () -> options.language, language -> {
+            options.language = language;
+            minecraft.getLanguageManager().setLanguage(minecraft.getLanguageManager().getLanguage(language));
+            minecraft.reloadResources();
+        }));
     }
 }
