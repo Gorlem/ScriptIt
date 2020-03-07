@@ -24,9 +24,9 @@ public class ObjectConverter {
     public static Map<String, Object> convert(Biome biome) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("id", Registry.BIOME.getId(biome));
+        map.put("id", Registry.BIOME.getId(biome).toString());
         map.put("name", biome.getName().getString());
-        map.put("category", biome.getCategory());
+        map.put("category", biome.getCategory().getName());
 
         return map;
     }
