@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.scripts.libraries;
+package com.ddoerr.scriptit.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

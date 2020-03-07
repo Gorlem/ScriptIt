@@ -3,6 +3,7 @@ package com.ddoerr.scriptit.scripts.libraries;
 import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
+import com.ddoerr.scriptit.util.ObjectConverter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import java.util.stream.Collectors;
