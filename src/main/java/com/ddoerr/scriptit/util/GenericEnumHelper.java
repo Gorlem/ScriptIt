@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class GenericEnumHelper{
-    private static <T extends Enum<T>> T[] getValues(Class<T> enumClass) {
+    public static <T extends Enum<T>> T[] getValues(Class<T> enumClass) {
         try {
             Method values = enumClass.getDeclaredMethod("values");
             Object object = values.invoke(null);

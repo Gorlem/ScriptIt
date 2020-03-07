@@ -202,8 +202,10 @@ public class ObjectConverter {
     }
 
     public static <T extends Enum<T>> T toEnum(Class<T> enumClass, Object object) {
-        if (object instanceof Number) {
-            GenericEnumHelper.getValue(enumClass, ((Number)object).intValue());
+        if (enumClass.isInstance(object)) {
+            return (T)object;
+        } else if (object instanceof Number) {
+            return GenericEnumHelper.getValue(enumClass, ((Number)object).intValue());
         }
 
         return Enum.valueOf(enumClass, toString(object));

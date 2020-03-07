@@ -1,19 +1,20 @@
 package com.ddoerr.scriptit.util.settings;
 
-import io.netty.util.internal.MathUtil;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class AbstractNumberSetting<T extends Number> extends AbstractSetting<T> {
+public abstract class AbstractNumberSetting<T extends Number> extends AbstractSetting<T> implements ToggleableSetting {
     protected T minimum;
     protected T maximum;
+    protected T step;
 
-    public AbstractNumberSetting(String name, Supplier<T> getter, Consumer<T> setter, T minimum, T maximum) {
+    public AbstractNumberSetting(String name, Supplier<T> getter, Consumer<T> setter, T minimum, T maximum, T step) {
         super(name, getter, setter);
         this.minimum = minimum;
         this.maximum = maximum;
+        this.step = step;
     }
 
     protected T clamp(T value) {
@@ -25,5 +26,10 @@ public abstract class AbstractNumberSetting<T extends Number> extends AbstractSe
             return (T)(Number)MathHelper.clamp(value.floatValue(), minimum.floatValue(), maximum.floatValue());
         }
         return (T)(Number)0;
+    }
+
+    @Override
+    public String getPossibleValues() {
+        return minimum.toString() + " - " + maximum.toString();
     }
 }

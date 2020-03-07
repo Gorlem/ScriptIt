@@ -8,7 +8,7 @@ import net.minecraft.client.options.BooleanOption;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class BooleanSetting extends AbstractSetting<Boolean> {
+public class BooleanSetting extends AbstractSetting<Boolean> implements ToggleableSetting {
     public BooleanSetting(String name, Supplier<Boolean> getter, Consumer<Boolean> setter) {
         super(name, getter, setter);
     }
@@ -25,5 +25,17 @@ public class BooleanSetting extends AbstractSetting<Boolean> {
     @Override
     public void set(Object object) {
         setter.accept(ObjectConverter.toBoolean(object));
+    }
+
+    @Override
+    public String getPossibleValues() {
+        return "true, false";
+    }
+
+    @Override
+    public Object toggle() {
+        boolean value = getter.get();
+        setter.accept(!value);
+        return !value;
     }
 }
