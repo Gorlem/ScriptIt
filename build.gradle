@@ -43,7 +43,8 @@ dependencies {
 
 	embed fileTree(dir: "lib", includes: ["*.jar"])
 
-	modImplementation "com.github.vini2003:spinnery:2.0.18+fabric-1.15"
+	modCompile "com.github.vini2003:spinnery:2.0.18+fabric-1.15"
+	include "com.github.vini2003:spinnery:2.0.18+fabric-1.15"
 }
 
 processResources {
