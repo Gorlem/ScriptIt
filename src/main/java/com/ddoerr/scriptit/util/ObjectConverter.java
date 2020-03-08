@@ -2,6 +2,7 @@ package com.ddoerr.scriptit.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -12,6 +13,10 @@ import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.state.property.Property;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
@@ -155,6 +160,30 @@ public class ObjectConverter {
         map.put("formatted", player.getDisplayName() != null ? player.getDisplayName().asFormattedString() : StringUtils.EMPTY);
         map.put("team", player.getScoreboardTeam() != null ? player.getScoreboardTeam().getName() : StringUtils.EMPTY);
         map.put("gamemode", player.getGameMode().getName());
+
+        return map;
+    }
+
+    public static Map<String, Object> convert(HitResult target) {
+        Map<String, Object> map = new HashMap<>();
+
+        if (target == null) {
+            return map;
+        }
+
+        if (target.getType() == HitResult.Type.BLOCK && target instanceof BlockHitResult) {
+            BlockPos blockPos = ((BlockHitResult) target).getBlockPos();
+            BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockPos);
+            map.put("block", ObjectConverter.convert(blockState));
+        }
+
+        if (target.getType() == HitResult.Type.ENTITY &&  target instanceof EntityHitResult) {
+            Entity entity = ((EntityHitResult) target).getEntity();
+            map.put("entity", ObjectConverter.convert(entity));
+        }
+
+        map.put("position", ObjectConverter.convert(target.getPos()));
+        map.put("type", target.getType().toString());
 
         return map;
     }

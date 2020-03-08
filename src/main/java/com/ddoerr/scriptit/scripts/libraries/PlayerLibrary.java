@@ -74,29 +74,7 @@ public class PlayerLibrary implements LibraryInitializer {
     }
 
     Object target(String name, MinecraftClient minecraft, Object... arguments) {
-        Map<String, Object> map = new HashMap<>();
-
-        HitResult target = minecraft.crosshairTarget;
-
-        if (target == null) {
-            return null;
-        }
-
-        if (target.getType() == HitResult.Type.BLOCK && target instanceof BlockHitResult) {
-            BlockPos blockPos = ((BlockHitResult) target).getBlockPos();
-            BlockState blockState = minecraft.world.getBlockState(blockPos);
-            map.put("block", ObjectConverter.convert(blockState));
-        }
-
-        if (target.getType() == HitResult.Type.ENTITY &&  target instanceof EntityHitResult) {
-            Entity entity = ((EntityHitResult) target).getEntity();
-            map.put("entity", ObjectConverter.convert(entity));
-        }
-
-        map.put("position", ObjectConverter.convert(target.getPos()));
-        map.put("type", target.getType().toString());
-
-        return map;
+        return ObjectConverter.convert(minecraft.crosshairTarget);
     }
 
     Object look(String name, MinecraftClient minecraft, Object... arguments) {
