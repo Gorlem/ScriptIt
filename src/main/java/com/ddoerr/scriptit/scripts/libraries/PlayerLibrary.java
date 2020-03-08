@@ -24,7 +24,6 @@ public class PlayerLibrary implements LibraryInitializer {
         namespace.registerVariable("health", (name, minecraft) -> minecraft.player.getHealth());
         namespace.registerVariable("hunger", (name, minecraft) -> minecraft.player.getHungerManager().getFoodLevel());
         namespace.registerVariable("saturation", (name, minecraft) -> minecraft.player.getHungerManager().getSaturationLevel());
-        namespace.registerVariable("armor", (name, minecraft) -> minecraft.player.getArmor());
         namespace.registerVariable("breath", (name, minecraft) -> minecraft.player.getAir());
         namespace.registerVariable("gamemode", (name, minecraft) -> minecraft.getNetworkHandler().getPlayerListEntry(minecraft.player.getUuid()).getGameMode().getName());
 
@@ -40,6 +39,7 @@ public class PlayerLibrary implements LibraryInitializer {
         namespace.registerVariable(Hand.OFF_HAND.toString().toLowerCase(), this::hand);
 
         NamespaceRegistry armor = namespace.registerNamespace("armor");
+        armor.registerVariable("value",(name, minecraft) -> minecraft.player.getArmor());
         armor.registerVariable("helmet", this::armor);
         armor.registerVariable("chestplate", this::armor);
         armor.registerVariable("leggings", this::armor);
