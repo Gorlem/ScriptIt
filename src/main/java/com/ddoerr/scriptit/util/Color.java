@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.api.util;
+package com.ddoerr.scriptit.util;
 
 import com.google.common.base.Splitter;
 

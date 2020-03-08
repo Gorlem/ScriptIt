@@ -6,19 +6,18 @@ import com.ddoerr.scriptit.api.events.EventRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.loader.NamespaceRegistryContainer;
 import com.ddoerr.scriptit.callbacks.ChatMessageCallback;
-import com.ddoerr.scriptit.events.ChatEventDispatcher.ChatMessage;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 
-public class ChatEventDispatcher implements EventInitializer, ChatMessageCallback {
+public class ReceivedChatEventDispatcher implements EventInitializer, ChatMessageCallback {
     Event event;
 
     @Override
     public void onInitialize(EventRegistry registry) {
-        event = registry.registerEvent("chat");
+        event = registry.registerEvent("receivedChat");
 
         ChatMessageCallback.EVENT.register(this);
     }

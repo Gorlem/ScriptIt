@@ -1,20 +1,12 @@
 package com.ddoerr.scriptit.widgets;
 
-import com.ddoerr.scriptit.api.util.KeyBindingHelper;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
-import net.minecraft.client.gui.widget.AbstractPressableButtonWidget;
-import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.resource.language.I18n;
+import com.ddoerr.scriptit.util.KeyBindingHelper;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
-import spinnery.client.BaseRenderer;
 import spinnery.widget.*;
 import spinnery.widget.api.WFocusedMouseListener;
 
-import java.text.Normalizer;
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 @WFocusedMouseListener

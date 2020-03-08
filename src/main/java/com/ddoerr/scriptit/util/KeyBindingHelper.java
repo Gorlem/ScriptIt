@@ -1,10 +1,6 @@
-package com.ddoerr.scriptit.api.util;
+package com.ddoerr.scriptit.util;
 
-import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
-import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.mixin.KeyBindingAccessor;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
-import com.ddoerr.scriptit.triggers.BusTrigger;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.mixin.client.keybinding.KeyCodeAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -12,7 +8,6 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 

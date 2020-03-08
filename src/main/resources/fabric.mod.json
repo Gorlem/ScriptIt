@@ -26,7 +26,10 @@
       "com.ddoerr.scriptit.scripts.libraries.GameLibrary",
       "com.ddoerr.scriptit.scripts.libraries.PlayerLibrary",
       "com.ddoerr.scriptit.scripts.libraries.KeyboardLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.JsonLibrary"
+      "com.ddoerr.scriptit.scripts.libraries.JsonLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.GuiLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.ScoreboardLibrary",
+      "com.ddoerr.scriptit.scripts.libraries.OptionsLibrary"
     ],
     "scriptit:language": [
       "com.ddoerr.scriptit.scripts.languages.lua.LuaLanguage"
@@ -36,8 +39,8 @@
       "com.ddoerr.scriptit.elements.TextHudElement"
     ],
     "scriptit:event": [
-      "com.ddoerr.scriptit.events.ChatEventDispatcher",
-      "com.ddoerr.scriptit.events.SendChatEventDispatcher",
+      "com.ddoerr.scriptit.events.ReceivedChatEventDispatcher",
+      "com.ddoerr.scriptit.events.SentChatEventDispatcher",
       "com.ddoerr.scriptit.events.GameJoinEventDispatcher"
     ]
   },

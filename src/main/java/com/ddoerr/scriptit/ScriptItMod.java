@@ -101,22 +101,5 @@ public class ScriptItMod implements ClientModInitializer {
 
 		HudElementManager hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
 		HudRenderCallback.EVENT.register(delta -> hudElementManager.renderAll(0, 0, 0));
-
-//		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-//			@Override
-//			public Identifier getFabricId() {
-//				return new Identifier("scriptit", "reload_listener");
-//			}
-//
-//			@Override
-//			public void apply(ResourceManager manager) {
-//				try {
-//					Resource resource = manager.getResource(new Identifier("scriptit", "themes/light.json"));
-//					ResourceRegistry.register(resource.getInputStream());
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
 	}
 }

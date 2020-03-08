@@ -10,7 +10,15 @@
     "SendPacketTextAccessor",
     "MixinClientPlayerNetworkHandler",
     "MixinScreen",
-    "MixinSleepingChatScreen"
+    "MixinSleepingChatScreen",
+    "MessagesAccessor",
+    "FpsAccessor",
+    "ActiveMouseButtonAccessor",
+    "ContainerAccessor",
+    "CreativeInventoryAccessor",
+    "MixinGameRenderer",
+    "OptionKeyAccessor",
+    "StepAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.triggers;
 
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.api.util.DurationHelper;
+import com.ddoerr.scriptit.util.DurationHelper;
 import net.minecraft.util.Pair;
 
 import java.time.Duration;

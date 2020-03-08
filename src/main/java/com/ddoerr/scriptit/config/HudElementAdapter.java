@@ -4,10 +4,9 @@ import com.ddoerr.scriptit.api.hud.*;
 import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.google.gson.*;
-import com.ddoerr.scriptit.api.util.geometry.Point;
+import com.ddoerr.scriptit.util.geometry.Point;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.loader.HudElementLoader;
-import org.apache.commons.lang3.EnumUtils;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

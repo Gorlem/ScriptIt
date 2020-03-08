@@ -5,17 +5,16 @@ import com.ddoerr.scriptit.api.events.EventInitializer;
 import com.ddoerr.scriptit.api.events.EventRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.callbacks.SendChatMessageCallback;
-import com.ddoerr.scriptit.events.SendChatEventDispatcher.ChatMessage;
 import com.ddoerr.scriptit.loader.NamespaceRegistryContainer;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 
-public class SendChatEventDispatcher implements EventInitializer, SendChatMessageCallback {
+public class SentChatEventDispatcher implements EventInitializer, SendChatMessageCallback {
     Event event;
 
     @Override
     public void onInitialize(EventRegistry registry) {
-        event = registry.registerEvent("sendChat");
+        event = registry.registerEvent("sentChat");
 
         SendChatMessageCallback.EVENT.register(this);
     }

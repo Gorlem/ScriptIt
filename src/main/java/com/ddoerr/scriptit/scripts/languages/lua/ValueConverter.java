@@ -52,10 +52,6 @@ public class ValueConverter {
     }
 
     public static Object toObject(LuaValue value) {
-        if (value.isstring()) {
-            return value.tojstring();
-        }
-
         if (value.isint()) {
             return value.toint();
         }
@@ -68,10 +64,14 @@ public class ValueConverter {
             return value.tofloat();
         }
 
+        if (value.isstring()) {
+            return value.tojstring();
+        }
+
         if (value.istable()) {
             LuaValue[] keys = value.checktable().keys();
 
-            boolean allIntKeys = Arrays.stream(keys).allMatch(lua -> lua.isint());
+            boolean allIntKeys = Arrays.stream(keys).allMatch(LuaValue::isint);
 
             if (allIntKeys && keys.length > 0) {
                 List<Object> list = new ArrayList<>(value.len().toint());
