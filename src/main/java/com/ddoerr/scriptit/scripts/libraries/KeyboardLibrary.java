@@ -60,7 +60,7 @@ public class KeyboardLibrary implements LibraryInitializer, Tickable {
         if (keyBinding == null)
             return null;
 
-        boolean toggleDown = true;
+        boolean toggleDown;
 
         if (arguments.length == 1) {
             toggleDown = !keyBinding.isPressed();

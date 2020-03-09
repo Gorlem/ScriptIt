@@ -39,7 +39,7 @@ public class GuiLibrary implements LibraryInitializer {
         gui.registerVariable("button_count", (name, mc) -> buttonHelper.getAmount(mc.currentScreen));
 
         gui.registerVariable("active_stack", (name, mc) -> {
-            if (mc.currentScreen instanceof ContainerScreen && mc.player.inventory.getCursorStack() != null) {
+            if (mc.currentScreen instanceof ContainerScreen && mc.player != null && mc.player.inventory.getCursorStack() != null) {
                 return ObjectConverter.convert(mc.player.inventory.getCursorStack());
             }
             return null;

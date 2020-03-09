@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 public class OptionsLibrary implements LibraryInitializer {
     private List<Setting> settings = new ArrayList<>();
+    private Setting noopSetting = new NoopSetting();
     private GameOptions options;
     private MinecraftClient minecraft = MinecraftClient.getInstance();
 
@@ -80,7 +81,7 @@ public class OptionsLibrary implements LibraryInitializer {
         return settings.stream()
                 .filter(o -> o.getName().equalsIgnoreCase(name))
                 .findFirst()
-                .get();
+                .orElse(noopSetting);
     }
 
     private void addSettings() {
