@@ -167,10 +167,6 @@ public class ObjectConverter {
     public static Map<String, Object> convert(HitResult target) {
         Map<String, Object> map = new HashMap<>();
 
-        if (target == null) {
-            return map;
-        }
-
         if (target.getType() == HitResult.Type.BLOCK && target instanceof BlockHitResult) {
             BlockPos blockPos = ((BlockHitResult) target).getBlockPos();
             BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockPos);

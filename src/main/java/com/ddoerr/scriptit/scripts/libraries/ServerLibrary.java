@@ -26,7 +26,7 @@ public class ServerLibrary implements LibraryInitializer {
             return currentServerEntry.name;
         }
 
-        if (minecraft.isInSingleplayer() && minecraft.isIntegratedServerRunning()) {
+        if (minecraft.isInSingleplayer() && minecraft.isIntegratedServerRunning() && minecraft.getServer() != null) {
             return minecraft.getServer().getLevelName();
         }
 
@@ -52,7 +52,7 @@ public class ServerLibrary implements LibraryInitializer {
             return currentServerEntry.label;
         }
 
-        if (minecraft.isInSingleplayer() && minecraft.isIntegratedServerRunning()) {
+        if (minecraft.isInSingleplayer() && minecraft.isIntegratedServerRunning() && minecraft.getServer() != null) {
             return minecraft.getServer().getServerMotd();
         }
 
@@ -60,6 +60,10 @@ public class ServerLibrary implements LibraryInitializer {
     }
 
     private Object players(String name, MinecraftClient minecraft, Object... arguments) {
+        if (minecraft.getNetworkHandler() == null) {
+            return null;
+        }
+
         return minecraft.getNetworkHandler().getPlayerList()
                 .stream().map(ObjectConverter::convert)
                 .collect(Collectors.toList());
