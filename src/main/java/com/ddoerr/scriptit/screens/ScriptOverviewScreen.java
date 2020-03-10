@@ -67,13 +67,13 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
                 .setOnAlign(w -> w.setPosition(Position.of(row, 5, 5)));
 
         row.createChild(WButton.class)
-                .setSize(Size.of(45, 20))
+                .setSize(Size.of(80, 20))
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.edit").toString()))
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(() -> new ScriptEditorScreen(scriptContainer)))
-                .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(-110, 0, 0)));
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(-175, 0, 0)));
 
         row.createChild(WButton.class)
-                .setSize(Size.of(45, 20))
+                .setSize(Size.of(80, 20))
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.remove").toString()))
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> {
                     Resolver.getInstance().resolve(Scripts.class).remove(scriptContainer);
@@ -84,7 +84,7 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
                     list.remove(row);
                     ConfigCallback.EVENT.invoker().saveConfig(ScriptOverviewScreen.class);
                 })
-                .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(- 55, 0, 0)));
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(-90, 0, 0)));
         return row;
     }
 
@@ -108,7 +108,7 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
         panel.createChild(WButton.class)
                 .setSize(Size.of(100, 20))
                 .setOnAlign(w -> w.setPosition(Position.of(panel, 4, 4)))
-                .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.edit").toString()))
+                .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.open").toString()))
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(HudElementOverviewScreen::new));
     }
 }
