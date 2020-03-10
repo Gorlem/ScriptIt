@@ -1,10 +1,10 @@
 package com.ddoerr.scriptit.triggers;
 
-import com.ddoerr.scriptit.util.KeyBindingHelper;
-import com.ddoerr.scriptit.bus.Bus;
-import com.ddoerr.scriptit.bus.EventBus;
+import com.ddoerr.scriptit.api.util.KeyBindingHelper;
+import com.ddoerr.scriptit.api.bus.Bus;
+import com.ddoerr.scriptit.api.bus.EventBus;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
+import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import net.minecraft.client.util.InputUtil;
 

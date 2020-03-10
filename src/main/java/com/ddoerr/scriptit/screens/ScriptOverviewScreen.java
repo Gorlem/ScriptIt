@@ -6,7 +6,7 @@ import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.Trigger;
-import com.ddoerr.scriptit.widgets.PanelWidget;
+import com.ddoerr.scriptit.screens.widgets.PanelWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;

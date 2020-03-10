@@ -2,8 +2,8 @@ package com.ddoerr.scriptit;
 
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.bus.EventBus;
-import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
+import com.ddoerr.scriptit.api.bus.EventBus;
+import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.dependencies.Resolver;

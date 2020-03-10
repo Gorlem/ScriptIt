@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.util.Debouncer;
+import com.ddoerr.scriptit.api.util.Debouncer;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.dependencies.Resolver;

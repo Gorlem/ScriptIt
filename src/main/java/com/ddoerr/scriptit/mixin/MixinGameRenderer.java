@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.mixin;
 
-import com.ddoerr.scriptit.util.buttons.ButtonHelper;
-import com.ddoerr.scriptit.util.slots.SlotHelper;
+import com.ddoerr.scriptit.libraries.clickables.buttons.ButtonHelper;
+import com.ddoerr.scriptit.libraries.clickables.slots.SlotHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;

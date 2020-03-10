@@ -1,8 +1,8 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.util.DurationHelper;
-import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
+import com.ddoerr.scriptit.api.util.DurationHelper;
+import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.dependencies.Resolver;
 import com.ddoerr.scriptit.loader.EventLoader;
@@ -12,11 +12,10 @@ import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
-import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
-import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
+import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
+import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
