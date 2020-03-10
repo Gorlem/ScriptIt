@@ -15,5 +15,10 @@
 
   "scriptit:elements.open": "Open Hud Designer",
   "scriptit:elements.add": "Add a Hud Element",
-  "scriptit:elements.edit.script": "Edit Script"
+  "scriptit:elements.edit.script": "Edit Script",
+
+  "scriptit:keybinding.default": "§f%s",
+  "scriptit:keybinding.conflict": "§c%s",
+  "scriptit:keybinding.active": "§f> §e%s §f<",
+  "scriptit:keybinding.unknown": "§4???"
 }

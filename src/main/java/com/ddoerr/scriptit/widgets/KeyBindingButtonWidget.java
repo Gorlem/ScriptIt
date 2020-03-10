@@ -1,9 +1,13 @@
 package com.ddoerr.scriptit.widgets;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.util.KeyBindingHelper;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import spinnery.widget.*;
 import spinnery.widget.api.WFocusedMouseListener;
 
@@ -17,7 +21,7 @@ public class KeyBindingButtonWidget extends WButton {
 
     public void setKeyCode(InputUtil.KeyCode keyCode) {
         this.keyCode = keyCode;
-        setLabel(new LiteralText(getFormattedKey()));
+        setLabel(getFormattedKey(keyCode));
     }
 
     public void setOnChange(Consumer<InputUtil.KeyCode> onChange) {
@@ -37,7 +41,7 @@ public class KeyBindingButtonWidget extends WButton {
             super.onMouseClicked(mouseX, mouseY, mouseButton);
         }
 
-        setLabel(new LiteralText(getFormattedKey()));
+        setLabel(getFormattedKey(keyCode));
     }
 
     @Override
@@ -53,7 +57,7 @@ public class KeyBindingButtonWidget extends WButton {
             keyCode = InputUtil.getKeyCode(keyPressed, character);
 
             setLowered(false);
-            setLabel(new LiteralText(getFormattedKey()));
+            setLabel(getFormattedKey(keyCode));
 
             if (onChange != null) {
                 onChange.accept(keyCode);
@@ -61,20 +65,22 @@ public class KeyBindingButtonWidget extends WButton {
         }
     }
 
-    public String getFormattedKey() {
+    public Text getFormattedKey(InputUtil.KeyCode keyCode) {
         if (keyCode == null) {
-            return Formatting.DARK_RED + "???";
+            return new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "keybinding.unknown").toString());
         }
+
+        String translationKey;
 
         if (isLowered()) {
-            return Formatting.WHITE + "> " + Formatting.YELLOW + KeyBindingHelper.getKeyCodeName(keyCode) + Formatting.WHITE + " <";
+            translationKey = "keybinding.active";
+        } else if (KeyBindingHelper.hasConflict(keyCode)) {
+            translationKey = "keybinding.conflict";
+        } else {
+            translationKey = "keybinding.default";
         }
 
-        if (KeyBindingHelper.hasConflict(keyCode)) {
-            return Formatting.RED + KeyBindingHelper.getKeyCodeName(keyCode);
-        }
-
-        return KeyBindingHelper.getKeyCodeName(keyCode);
+        return new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, translationKey).toString(), KeyBindingHelper.getKeyCodeName(keyCode));
     }
 }
 
