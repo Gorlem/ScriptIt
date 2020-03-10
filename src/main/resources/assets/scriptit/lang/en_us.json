@@ -13,5 +13,6 @@
   "scriptit:scripts.triggers.duration": "Duration",
   "scriptit:scripts.triggers.duration.select": "Select a Time Unit",
 
-  "scriptit:elements.open": "Open Hud Designer"
+  "scriptit:elements.open": "Open Hud Designer",
+  "scriptit:elements.add": "Add a Hud Element"
 }

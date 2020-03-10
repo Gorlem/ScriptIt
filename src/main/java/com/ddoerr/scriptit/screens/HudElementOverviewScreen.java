@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.screens;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.util.Color;
 import com.ddoerr.scriptit.util.geometry.Point;
@@ -11,6 +12,8 @@ import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 import spinnery.util.MouseUtilities;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
@@ -67,7 +70,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
     public void onClose() {
         if (currentlyAdding != null) {
             currentlyAdding = null;
-            dropdown.setLabel(new LiteralText("Add Hud Element"));
+            dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
         } else {
             super.onClose();
         }
@@ -93,7 +96,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
 
         dropdown.setDirection(ValuesDropdownWidget.DropdownDirection.Up);
         dropdown.addValues(providers.keySet());
-        dropdown.setLabel("Add Hud Element");
+        dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
         dropdown.setOnChange(key -> {
             HudElementProvider hudElementProvider = providers.get(key);
             currentlyAdding = new HudElement(hudElementProvider, MouseUtilities.mouseX, MouseUtilities.mouseY);
@@ -107,7 +110,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
             hudElementManager.add(currentlyAdding);
 
             currentlyAdding = null;
-            dropdown.setLabel(new LiteralText("Add Hud Element"));
+            dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
             return true;
         }
 
