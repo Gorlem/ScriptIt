@@ -44,10 +44,6 @@ public class KeyBindingBusExtension implements Tickable{
         keyBindings.remove(id);
     }
 
-    public Collection<KeyBinding> getKeyBindings() {
-        return keyBindings.values();
-    }
-
     @Override
     public void tick() {
         for (Map.Entry<String, KeyBinding> entry : keyBindings.entrySet()) {
