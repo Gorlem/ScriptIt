@@ -5,6 +5,7 @@ import com.ddoerr.scriptit.mixin.StepAccessor;
 import com.ddoerr.scriptit.util.ObjectConverter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.DoubleOption;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -28,7 +29,7 @@ public class DoubleSetting extends AbstractNumberSetting<Double> {
 
     @Override
     public void set(Object object) {
-        setter.accept(clamp(ObjectConverter.toDouble(object)));
+        setter.accept(MathHelper.clamp(ObjectConverter.toDouble(object), minimum, maximum));
     }
 
     @Override

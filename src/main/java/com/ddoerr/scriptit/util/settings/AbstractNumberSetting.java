@@ -17,17 +17,6 @@ public abstract class AbstractNumberSetting<T extends Number> extends AbstractSe
         this.step = step;
     }
 
-    protected T clamp(T value) {
-        if (value instanceof Integer) {
-            return (T)(Number)MathHelper.clamp(value.intValue(), minimum.intValue(), maximum.intValue());
-        } else if (value instanceof Double) {
-            return (T)(Number)MathHelper.clamp(value.doubleValue(), minimum.doubleValue(), maximum.doubleValue());
-        } else if (value instanceof Float) {
-            return (T)(Number)MathHelper.clamp(value.floatValue(), minimum.floatValue(), maximum.floatValue());
-        }
-        return (T)(Number)0;
-    }
-
     @Override
     public String getPossibleValues() {
         return minimum.toString() + " - " + maximum.toString() + "; step = " + step.toString();

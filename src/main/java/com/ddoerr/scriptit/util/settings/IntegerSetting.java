@@ -6,6 +6,7 @@ import com.ddoerr.scriptit.util.ObjectConverter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.BooleanOption;
 import net.minecraft.client.options.DoubleOption;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -33,7 +34,7 @@ public class IntegerSetting extends AbstractNumberSetting<Integer> {
 
     @Override
     public void set(Object object) {
-        setter.accept(clamp(ObjectConverter.toInteger(object)));
+        setter.accept(MathHelper.clamp(ObjectConverter.toInteger(object), minimum, maximum));
     }
 
     @Override
