@@ -1,11 +1,14 @@
 package com.ddoerr.scriptit.util.buttons;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.EnchantingScreen;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.container.EnchantingTableContainer;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.util.Identifier;
 
 public class EnchantingButtonProvider implements ButtonProvider {
     private MinecraftClient minecraft = MinecraftClient.getInstance();
@@ -43,7 +46,7 @@ public class EnchantingButtonProvider implements ButtonProvider {
                     mouseY -= 18;
                 }
 
-                screen.renderTooltip("Button " + i, mouseX, mouseY);
+                screen.renderTooltip(I18n.translate(new Identifier(ScriptItMod.MOD_NAME, "tooltip.button").toString(), i), mouseX, mouseY);
             }
         }
     }

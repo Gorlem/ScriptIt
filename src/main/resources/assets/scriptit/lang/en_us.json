@@ -35,5 +35,8 @@
   "scriptit:keybinding.default": "§f%s",
   "scriptit:keybinding.conflict": "§c%s",
   "scriptit:keybinding.active": "§f> §e%s §f<",
-  "scriptit:keybinding.unknown": "§4???"
+  "scriptit:keybinding.unknown": "§4???",
+
+  "scriptit:tooltip.button": "Button %s",
+  "scriptit:tooltip.slot": "Slot %s"
 }

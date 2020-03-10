@@ -1,7 +1,10 @@
 package com.ddoerr.scriptit.util;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.util.slots.SlotProvider;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.util.Identifier;
 import spinnery.client.BaseScreen;
 import spinnery.widget.WAbstractWidget;
 
@@ -10,11 +13,11 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractSpinneryClickablesProvider<W extends WAbstractWidget> implements ClickablesProvider {
     private Class<W> type;
-    private String clickablesType;
+    private String translationKey;
 
     public AbstractSpinneryClickablesProvider(Class<W> type) {
         this.type = type;
-        clickablesType = this instanceof SlotProvider ? "Slot" : "Button";
+        translationKey = this instanceof SlotProvider ? "tooltip.slot" : "tooltip.button";
     }
 
     protected List<W> getWidgets(BaseScreen screen) {
@@ -43,7 +46,7 @@ public abstract class AbstractSpinneryClickablesProvider<W extends WAbstractWidg
             W widget = widgets.get(i);
 
             if (widget.isWithinBounds(mouseX, mouseY)) {
-                screen.renderTooltip(clickablesType + " " + i, mouseX, mouseY);
+                screen.renderTooltip(I18n.translate(new Identifier(ScriptItMod.MOD_NAME, translationKey).toString(), i), mouseX, mouseY);
             }
         }
     }

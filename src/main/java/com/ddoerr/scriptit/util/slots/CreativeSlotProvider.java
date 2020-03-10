@@ -1,11 +1,13 @@
 package com.ddoerr.scriptit.util.slots;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
 import com.ddoerr.scriptit.mixin.CreativeInventoryAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.item.ItemGroup;
@@ -85,6 +87,6 @@ public class CreativeSlotProvider implements SlotProvider {
             mouseY -= 18;
         }
 
-        screen.renderTooltip("Slot " + slotId, mouseX, mouseY);
+        screen.renderTooltip(I18n.translate(new Identifier(ScriptItMod.MOD_NAME, "tooltip.slot").toString(), slotId), mouseX, mouseY);
     }
 }

@@ -1,9 +1,12 @@
 package com.ddoerr.scriptit.util.buttons;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.BeaconScreen;
 import net.minecraft.client.gui.widget.AbstractPressableButtonWidget;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +46,7 @@ public class DefaultButtonProvider implements ButtonProvider {
                 if (screen instanceof BeaconScreen) {
                     mouseY -= 18;
                 }
-                screen.renderTooltip("Button " + i, mouseX, mouseY);
+                screen.renderTooltip(I18n.translate(new Identifier(ScriptItMod.MOD_NAME, "tooltip.button").toString(), i), mouseX, mouseY);
             }
         }
     }
