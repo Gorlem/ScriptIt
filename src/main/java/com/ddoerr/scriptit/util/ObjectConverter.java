@@ -217,7 +217,8 @@ public class ObjectConverter {
         } else if (object instanceof Number) {
             return ((Number)object).intValue() > 0;
         } else if (object instanceof String) {
-            return ((String)object).equalsIgnoreCase("true");
+            String value = (String) object;
+            return !("false".equalsIgnoreCase(value) || "off".equalsIgnoreCase(value) || value.isEmpty());
         }
         return false;
     }
