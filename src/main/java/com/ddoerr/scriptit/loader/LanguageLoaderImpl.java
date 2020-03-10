@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.loader;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
 import com.ddoerr.scriptit.api.languages.LanguageRegistry;
 import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
@@ -11,7 +12,7 @@ import net.minecraft.util.Tickable;
 
 import java.util.*;
 
-public class LanguageLoader implements Tickable, LanguageRegistry, Loadable {
+public class LanguageLoaderImpl implements Tickable, LanguageRegistry, Loadable, LanguageLoader {
     private Map<String, LanguageImplementation> languages = new HashMap<>();
 
     public void load() {
@@ -27,10 +28,12 @@ public class LanguageLoader implements Tickable, LanguageRegistry, Loadable {
         languages.put(name, languageImplementation);
     }
 
+    @Override
     public Collection<LanguageImplementation> getLanguages() {
         return languages.values();
     }
 
+    @Override
     public LanguageImplementation findByName(String name) {
         return languages.getOrDefault(name, null);
     }

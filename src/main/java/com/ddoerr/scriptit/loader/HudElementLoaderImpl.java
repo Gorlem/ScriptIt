@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.loader;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
 import com.ddoerr.scriptit.api.hud.*;
 import com.ddoerr.scriptit.api.dependencies.Loadable;
 import net.fabricmc.loader.api.FabricLoader;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HudElementLoader implements HudElementRegistry, Loadable {
+public class HudElementLoaderImpl implements HudElementRegistry, Loadable, HudElementLoader {
     Map<String, HudElementProvider> providers = new HashMap<>();
 
     public void load() {
@@ -26,14 +27,17 @@ public class HudElementLoader implements HudElementRegistry, Loadable {
         providers.put(name, provider);
     }
 
+    @Override
     public HudElementProvider findByName(String name) {
         return providers.getOrDefault(name, null);
     }
 
+    @Override
     public Map<String, HudElementProvider> getProviders() {
         return providers;
     }
 
+    @Override
     public String getName(HudElementProvider provider) {
         return providers.entrySet().stream().filter(entry -> entry.getValue() == provider).findFirst().orElse(null).getKey();
     }

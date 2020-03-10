@@ -4,7 +4,6 @@ import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.api.events.EventInitializer;
 import com.ddoerr.scriptit.api.events.EventRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.loader.NamespaceRegistryContainer;
 import com.ddoerr.scriptit.callbacks.ChatMessageCallback;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
@@ -26,10 +25,10 @@ public class ReceivedChatEventDispatcher implements EventInitializer, ChatMessag
     public TypedActionResult<Text> onChatMessage(Text text) {
         ChatMessage chatMessage = new ChatMessage(text);
 
-        NamespaceRegistry event = new NamespaceRegistryContainer("event");
-        event.registerVariable("json", (name, minecraft) -> BaseText.Serializer.toJson(chatMessage.getText()));
-        event.registerVariable("message", (name, minecraft) -> chatMessage.getText().getString());
-        event.registerFunction("modify", (name, minecraft, arguments) -> {
+        NamespaceRegistry namespace = event.createNamespace();
+        namespace.registerVariable("json", (name, minecraft) -> BaseText.Serializer.toJson(chatMessage.getText()));
+        namespace.registerVariable("message", (name, minecraft) -> chatMessage.getText().getString());
+        namespace.registerFunction("modify", (name, minecraft, arguments) -> {
             try {
                 chatMessage.setText(BaseText.Serializer.fromJson((String)arguments[0]));
             }
@@ -39,11 +38,11 @@ public class ReceivedChatEventDispatcher implements EventInitializer, ChatMessag
 
             return null;
         });
-        event.registerFunction("filter", (name, minecraft, arguments) -> {
+        namespace.registerFunction("filter", (name, minecraft, arguments) -> {
             chatMessage.setActionResult(ActionResult.FAIL);
             return null;
         });
-        this.event.dispatch(event);
+        event.dispatch();
 
         return chatMessage.toTypedResult();
     }

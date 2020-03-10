@@ -5,7 +5,6 @@ import com.ddoerr.scriptit.api.events.EventInitializer;
 import com.ddoerr.scriptit.api.events.EventRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.callbacks.SendChatMessageCallback;
-import com.ddoerr.scriptit.loader.NamespaceRegistryContainer;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 
@@ -23,17 +22,17 @@ public class SentChatEventDispatcher implements EventInitializer, SendChatMessag
     public TypedActionResult<String> onSendChatMessage(String message) {
         ChatMessage chatMessage = new ChatMessage(message);
 
-        NamespaceRegistry event = new NamespaceRegistryContainer("event");
-        event.registerVariable("message", (name, minecraft) -> chatMessage.getMessage());
-        event.registerFunction("modify", (name, minecraft, arguments) -> {
+        NamespaceRegistry namespace = event.createNamespace();
+        namespace.registerVariable("message", (name, minecraft) -> chatMessage.getMessage());
+        namespace.registerFunction("modify", (name, minecraft, arguments) -> {
             chatMessage.setMessage(arguments[0].toString());
             return null;
         });
-        event.registerFunction("filter", (name, minecraft, arguments) -> {
+        namespace.registerFunction("filter", (name, minecraft, arguments) -> {
             chatMessage.setActionResult(ActionResult.FAIL);
             return null;
         });
-        this.event.dispatch(event);
+        event.dispatch();
 
         return chatMessage.toTypedResult();
     }

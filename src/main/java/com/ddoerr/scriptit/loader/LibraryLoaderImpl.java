@@ -1,10 +1,12 @@
 package com.ddoerr.scriptit.loader;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.dependencies.LibraryLoader;
 import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.loader.container.NamespaceRegistryImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class LibraryLoader implements Tickable, Loadable, LibraryRegistry {
+public class LibraryLoaderImpl implements Tickable, Loadable, LibraryRegistry, LibraryLoader {
     private List<Tickable> tickables = new ArrayList<>();
     private List<NamespaceRegistry> libraries = new ArrayList<>();
 
@@ -25,6 +27,7 @@ public class LibraryLoader implements Tickable, Loadable, LibraryRegistry {
         }
     }
 
+    @Override
     public Collection<NamespaceRegistry> getLibraries() {
         return libraries;
     }
@@ -43,7 +46,7 @@ public class LibraryLoader implements Tickable, Loadable, LibraryRegistry {
 
     @Override
     public NamespaceRegistry registerLibrary(String name) {
-        NamespaceRegistry registry = new NamespaceRegistryContainer(name);
+        NamespaceRegistry registry = new NamespaceRegistryImpl(name);
         libraries.add(registry);
         return registry;
     }

@@ -1,19 +1,19 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.util.DurationHelper;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
-import com.ddoerr.scriptit.callbacks.ConfigCallback;
+import com.ddoerr.scriptit.api.dependencies.EventLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
-import com.ddoerr.scriptit.loader.EventLoader;
-import com.ddoerr.scriptit.scripts.LifeCycle;
+import com.ddoerr.scriptit.api.scripts.ScriptManager;
+import com.ddoerr.scriptit.api.util.DurationHelper;
+import com.ddoerr.scriptit.callbacks.ConfigCallback;
+import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
+import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
+import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
-import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
-import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
-import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
 import net.minecraft.text.TranslatableText;
@@ -218,7 +218,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private void updateScriptContainer() {
         if (scriptContainer == null) {
             scriptContainer = new ScriptContainer();
-            Resolver.getInstance().resolve(Scripts.class).add(scriptContainer);
+            Resolver.getInstance().resolve(ScriptManager.class).add(scriptContainer);
         }
 
         scriptContainer.setLifeCycle(lifeCycle);

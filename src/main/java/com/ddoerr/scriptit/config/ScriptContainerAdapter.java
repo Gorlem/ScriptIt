@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.scripts.LifeCycle;
+import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.google.gson.*;

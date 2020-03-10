@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.loader;
+package com.ddoerr.scriptit.loader.container;
 
 import com.ddoerr.scriptit.api.bus.EventBus;
 import com.ddoerr.scriptit.api.events.Event;
@@ -8,6 +8,7 @@ import com.ddoerr.scriptit.api.dependencies.Resolver;
 public class EventImpl implements Event {
     String name;
     EventBus eventBus;
+    NamespaceRegistry namespaceRegistry = null;
 
     public EventImpl(String name) {
         this.name = name;
@@ -16,12 +17,13 @@ public class EventImpl implements Event {
 
     @Override
     public void dispatch() {
-        eventBus.publish(name, null);
+        eventBus.publish(name, namespaceRegistry);
+        namespaceRegistry = null;
     }
 
     @Override
-    public void dispatch(NamespaceRegistry registry) {
-        eventBus.publish(name, registry);
+    public NamespaceRegistry createNamespace() {
+        return namespaceRegistry = new NamespaceRegistryImpl("event");
     }
 
     public String getName() {

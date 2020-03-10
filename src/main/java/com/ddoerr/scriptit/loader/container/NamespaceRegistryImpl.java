@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.loader;
+package com.ddoerr.scriptit.loader.container;
 
 import com.ddoerr.scriptit.api.libraries.FunctionExecutor;
 import com.ddoerr.scriptit.api.libraries.VariableUpdater;
@@ -6,14 +6,14 @@ import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 
 import java.util.*;
 
-public class NamespaceRegistryContainer implements NamespaceRegistry {
+public class NamespaceRegistryImpl implements NamespaceRegistry {
     private String name;
 
     private Map<String, FunctionExecutor> functions = new HashMap<>();
     private Map<String, VariableUpdater> variables = new HashMap<>();
     private List<NamespaceRegistry> namespaces = new ArrayList<>();
 
-    public NamespaceRegistryContainer(String name) {
+    public NamespaceRegistryImpl(String name) {
         this.name = name;
     }
 
@@ -33,7 +33,7 @@ public class NamespaceRegistryContainer implements NamespaceRegistry {
 
     @Override
     public NamespaceRegistry registerNamespace(String name) {
-        NamespaceRegistryContainer namespace = new NamespaceRegistryContainer(name);
+        NamespaceRegistryImpl namespace = new NamespaceRegistryImpl(name);
         namespaces.add(namespace);
         return namespace;
     }

@@ -1,20 +1,20 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
+import com.ddoerr.scriptit.api.hud.HudElementManager;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.elements.HudElement;
-import com.ddoerr.scriptit.elements.HudElementManager;
-import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import spinnery.util.MouseUtilities;
-import spinnery.widget.*;
+import spinnery.widget.WInterface;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
@@ -51,14 +51,11 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
 
     ValuesDropdownWidget<String> dropdown;
 
-    ScreenHistory history;
-
     public HudElementOverviewScreen() {
         super();
 
         hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
         hudElementLoader = Resolver.getInstance().resolve(HudElementLoader.class);
-        history = Resolver.getInstance().resolve(ScreenHistory.class);
 
         hudElements = hudElementManager.getAll();
 
@@ -119,7 +116,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
             Duration duration = Duration.between(lastTimeClicked, timeClicked);
 
             if (duration.compareTo(durationBetweenClicks) < 0) {
-                history.open(() -> new HudElementEditorScreen(focusedHudElement));
+                openScreen(() -> new HudElementEditorScreen(focusedHudElement));
             }
         }
 

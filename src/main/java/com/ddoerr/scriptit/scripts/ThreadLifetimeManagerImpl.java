@@ -1,5 +1,6 @@
 package com.ddoerr.scriptit.scripts;
 
+import com.ddoerr.scriptit.api.scripts.ThreadLifetimeManager;
 import com.google.common.collect.ImmutableList;
 import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import net.minecraft.util.Tickable;
@@ -7,7 +8,7 @@ import net.minecraft.util.Tickable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThreadLifetimeManager implements Tickable {
+public class ThreadLifetimeManagerImpl implements Tickable, ThreadLifetimeManager {
     private List<ScriptThread> threads = new ArrayList<>();
 
     public void tick() {
@@ -20,10 +21,12 @@ public class ThreadLifetimeManager implements Tickable {
         }
     }
 
+    @Override
     public void watch(ScriptThread thread) {
         threads.add(thread);
     }
 
+    @Override
     public int stopAll() {
         int amount = threads.size();
         threads.clear();
