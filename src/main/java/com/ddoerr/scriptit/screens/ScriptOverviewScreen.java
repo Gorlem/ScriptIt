@@ -2,7 +2,7 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.Trigger;

@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.loader;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.dependencies.Loadable;
+import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
 import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;

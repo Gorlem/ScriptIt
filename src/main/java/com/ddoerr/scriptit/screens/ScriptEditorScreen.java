@@ -4,7 +4,7 @@ import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.util.DurationHelper;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.loader.EventLoader;
 import com.ddoerr.scriptit.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;

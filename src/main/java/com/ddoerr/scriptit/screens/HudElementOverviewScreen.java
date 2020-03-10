@@ -5,7 +5,7 @@ import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.loader.HudElementLoader;

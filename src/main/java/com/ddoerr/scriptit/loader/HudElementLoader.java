@@ -2,7 +2,7 @@ package com.ddoerr.scriptit.loader;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.*;
-import com.ddoerr.scriptit.dependencies.Loadable;
+import com.ddoerr.scriptit.api.dependencies.Loadable;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 

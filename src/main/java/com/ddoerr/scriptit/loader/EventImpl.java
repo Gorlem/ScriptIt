@@ -3,7 +3,7 @@ package com.ddoerr.scriptit.loader;
 import com.ddoerr.scriptit.api.bus.EventBus;
 import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 
 public class EventImpl implements Event {
     String name;

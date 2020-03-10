@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.screens;
 
-import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
 import spinnery.client.BaseScreen;

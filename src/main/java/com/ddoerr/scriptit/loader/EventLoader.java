@@ -3,14 +3,12 @@ package com.ddoerr.scriptit.loader;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.events.EventInitializer;
 import com.ddoerr.scriptit.api.events.EventRegistry;
-import com.ddoerr.scriptit.dependencies.Loadable;
+import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.events.Event;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Tickable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

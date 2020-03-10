@@ -2,8 +2,8 @@ package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.api.util.Debouncer;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.dependencies.Loadable;
-import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.api.dependencies.Loadable;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.elements.HudElementManager;
 import com.ddoerr.scriptit.scripts.ScriptContainer;

@@ -1,6 +1,6 @@
-package com.ddoerr.scriptit.dependencies;
+package com.ddoerr.scriptit.api.dependencies;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface Resolver {
     static Resolver getInstance() {
@@ -10,5 +10,5 @@ public interface Resolver {
     <T> void add(T dependency);
 
     <T> T resolve(Class<T> dependencyClass);
-    <T> Collection<T> resolveAll(Class<T> dependencyClass);
+    <T> List<T> resolveAll(Class<T> dependencyClass);
 }
