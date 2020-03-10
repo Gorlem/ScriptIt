@@ -1,10 +1,12 @@
 package com.ddoerr.scriptit.loader;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.languages.LanguageRegistry;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.api.languages.LanguageInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 
 import java.util.*;
@@ -13,7 +15,7 @@ public class LanguageLoader implements Tickable, LanguageRegistry, Loadable {
     private Map<String, LanguageImplementation> languages = new HashMap<>();
 
     public void load() {
-        List<LanguageInitializer> entrypoints = FabricLoader.getInstance().getEntrypoints("scriptit:language", LanguageInitializer.class);
+        List<LanguageInitializer> entrypoints = FabricLoader.getInstance().getEntrypoints(new Identifier(ScriptItMod.MOD_NAME, "language").toString(), LanguageInitializer.class);
 
         for (LanguageInitializer initializer : entrypoints) {
             initializer.onInitialize(this);

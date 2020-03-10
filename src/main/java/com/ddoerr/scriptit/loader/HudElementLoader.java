@@ -1,8 +1,10 @@
 package com.ddoerr.scriptit.loader;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.*;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,7 @@ public class HudElementLoader implements HudElementRegistry, Loadable {
     Map<String, HudElementProvider> providers = new HashMap<>();
 
     public void load() {
-        List<HudElementInitializer> entrypoints = FabricLoader.getInstance().getEntrypoints("scriptit:hud", HudElementInitializer.class);
+        List<HudElementInitializer> entrypoints = FabricLoader.getInstance().getEntrypoints(new Identifier(ScriptItMod.MOD_NAME, "hud").toString(), HudElementInitializer.class);
 
         for (HudElementInitializer initializer : entrypoints) {
             initializer.onInitialize(this);

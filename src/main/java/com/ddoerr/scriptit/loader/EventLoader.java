@@ -1,10 +1,12 @@
 package com.ddoerr.scriptit.loader;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.events.EventInitializer;
 import com.ddoerr.scriptit.api.events.EventRegistry;
 import com.ddoerr.scriptit.dependencies.Loadable;
 import com.ddoerr.scriptit.api.events.Event;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ public class EventLoader implements EventRegistry, Loadable {
     List<Event> events = new ArrayList<>();
 
     public void load() {
-        List<EventInitializer> entrypoints = FabricLoader.getInstance().getEntrypoints("scriptit:event", EventInitializer.class);
+        List<EventInitializer> entrypoints = FabricLoader.getInstance().getEntrypoints(new Identifier(ScriptItMod.MOD_NAME, "event").toString(), EventInitializer.class);
 
         for (EventInitializer initializer : entrypoints) {
             initializer.onInitialize(this);
