@@ -1,9 +1,17 @@
 {
   "key.scripitit.open": "Open ScriptIt Settings",
 
+  "scriptit:generic.save": "Save",
+  "scriptit:generic.cancel": "Cancel",
+
   "scriptit:scripts.edit": "Edit Script",
   "scriptit:scripts.remove": "Remove Script",
   "scriptit:scripts.add": "Add new Script",
+  "scriptit:scripts.triggers.keybinding": "Key Binding",
+  "scriptit:scripts.triggers.event": "Event",
+  "scriptit:scripts.triggers.event.select": "Select an Event",
+  "scriptit:scripts.triggers.duration": "Duration",
+  "scriptit:scripts.triggers.duration.select": "Select a Time Unit",
 
   "scriptit:elements.open": "Open Hud Designer"
 }
