@@ -60,10 +60,6 @@ public class ValuesDropdownWidget<T> extends WDropdown {
         this.onChange = onChange;
     }
 
-    public T getSelectedValue() {
-        return selectedValue;
-    }
-
     public void setDirection(DropdownDirection direction) {
         this.direction = direction;
     }
@@ -88,7 +84,7 @@ public class ValuesDropdownWidget<T> extends WDropdown {
 
             int difference = direction == DropdownDirection.Down || !getState() ? 0 : getHeight() - size.getHeight();
 
-            BaseRenderer.drawPanel((double)x, (double)y, (double)z, (double)sX, (double)sY + 1.75D, this.getStyle().asColor("shadow"), this.getStyle().asColor("background"), this.getStyle().asColor("highlight"), this.getStyle().asColor("outline"));
+            BaseRenderer.drawPanel(x, y, z, sX, (double)sY + 1.75D, this.getStyle().asColor("shadow"), this.getStyle().asColor("background"), this.getStyle().asColor("highlight"), this.getStyle().asColor("outline"));
             if (this.hasLabel()) {
                 TextRenderer.pass().shadow(this.isLabelShadowed()).text(this.getLabel()).at(x + sX / 2 - TextRenderer.width(this.getLabel()) / 2, y + 6 + difference, z).color(this.getStyle().asColor("label.color")).shadowColor(this.getStyle().asColor("label.shadow_color")).render();
 
@@ -97,8 +93,8 @@ public class ValuesDropdownWidget<T> extends WDropdown {
                 }
 
                 if (this.getState()) {
-                    BaseRenderer.drawRectangle((double)x, (double)(y + 16 + difference), (double)z, (double)sX, 1.0D, this.getStyle().asColor("outline"));
-                    BaseRenderer.drawRectangle((double)(x + 1), (double)(y + 17 + difference), (double)z, (double)(sX - 2), 0.75D, this.getStyle().asColor("shadow"));
+                    BaseRenderer.drawRectangle(x, y + 16 + difference, z, sX, 1.0D, this.getStyle().asColor("outline"));
+                    BaseRenderer.drawRectangle(x + 1, y + 17 + difference, z, sX - 2, 0.75D, this.getStyle().asColor("shadow"));
                 }
             }
 
