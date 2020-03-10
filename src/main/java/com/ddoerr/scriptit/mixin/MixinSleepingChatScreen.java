@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(SleepingChatScreen.class)
-public class MixinSleepingChatScreen extends ChatScreen {
-    public MixinSleepingChatScreen(String string_1) {
-        super(string_1);
+public abstract class MixinSleepingChatScreen extends ChatScreen {
+    public MixinSleepingChatScreen(String originalChatText) {
+        super(originalChatText);
     }
 
     @Redirect(method = "keyPressed", at = @At(value = "INVOKE", target = "net/minecraft/client/network/ClientPlayerEntity.sendChatMessage(Ljava/lang/String;)V"))
