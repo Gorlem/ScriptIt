@@ -60,7 +60,6 @@ public class ScriptItMod implements ClientModInitializer {
 
 		resolver.add(new ConfigHandler());
 
-		MinecraftClient minecraft = MinecraftClient.getInstance();
 
 		FabricKeyBinding openGuiKeyBinding = FabricKeyBinding.Builder.create(
 				new Identifier(MOD_NAME, "open"),
@@ -68,6 +67,7 @@ public class ScriptItMod implements ClientModInitializer {
 				GLFW.GLFW_KEY_K,
 				"ScriptIt"
 		).build();
+		KeyBindingRegistry.INSTANCE.addCategory("ScriptIt");
 		KeyBindingRegistry.INSTANCE.register(openGuiKeyBinding);
 
 		Collection<Loadable> loadables = resolver.resolveAll(Loadable.class);
