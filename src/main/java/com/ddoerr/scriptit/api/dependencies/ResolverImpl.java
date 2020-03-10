@@ -22,11 +22,17 @@ public class ResolverImpl implements Resolver {
 
     @Override
     public <T> T resolve(Class<T> dependencyClass) {
-        return dependencies.stream().filter(dependencyClass::isInstance).map(dependencyClass::cast).findFirst().orElse(null);
+        return dependencies.stream()
+                .filter(dependencyClass::isInstance)
+                .map(dependencyClass::cast).findFirst()
+                .orElseThrow(() -> new RuntimeException("Can't find implementation for " + dependencyClass.getCanonicalName()) );
     }
 
     @Override
     public <T> List<T> resolveAll(Class<T> dependencyClass) {
-        return dependencies.stream().filter(dependencyClass::isInstance).map(dependencyClass::cast).collect(Collectors.toList());
+        return dependencies.stream()
+                .filter(dependencyClass::isInstance)
+                .map(dependencyClass::cast)
+                .collect(Collectors.toList());
     }
 }
