@@ -28,9 +28,7 @@ public class HudElementManager implements Tickable {
 
     public void tick() {
         for (HudElement hudElement : getAll()) {
-            if (hudElement instanceof Tickable) {
-                ((Tickable) hudElement).tick();
-            }
+            hudElement.tick();
         }
     }
 }
