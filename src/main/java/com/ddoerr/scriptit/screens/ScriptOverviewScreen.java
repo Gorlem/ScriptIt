@@ -7,16 +7,14 @@ import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.ddoerr.scriptit.widgets.PanelWidget;
 import net.minecraft.client.MinecraftClient;
-import spinnery.client.BaseScreen;
 import spinnery.widget.*;
-import spinnery.widget.api.Color;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-public class ScriptsOverviewScreen extends AbstractHistoryScreen {
+public class ScriptOverviewScreen extends AbstractHistoryScreen {
     ScreenHistory history;
 
-    public ScriptsOverviewScreen() {
+    public ScriptOverviewScreen() {
         super();
 
         history = Resolver.getInstance().resolve(ScreenHistory.class);
@@ -81,7 +79,7 @@ public class ScriptsOverviewScreen extends AbstractHistoryScreen {
                         trigger.close();
                     }
                     list.remove(row);
-                    ConfigCallback.EVENT.invoker().saveConfig(ScriptsOverviewScreen.class);
+                    ConfigCallback.EVENT.invoker().saveConfig(ScriptOverviewScreen.class);
                 })
                 .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(- 55, 0, 0)));
         return row;
@@ -108,6 +106,6 @@ public class ScriptsOverviewScreen extends AbstractHistoryScreen {
                 .setSize(Size.of(100, 20))
                 .setOnAlign(w -> w.setPosition(Position.of(panel, 4, 4)))
                 .setLabel("Open Designer")
-                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(HudElementScreen::new));
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> history.open(HudElementOverviewScreen::new));
     }
 }

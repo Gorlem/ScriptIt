@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HudElementScreen extends AbstractHistoryScreen {
+public class HudElementOverviewScreen extends AbstractHistoryScreen {
     HudElement currentlyAdding;
 
     HudElementManager hudElementManager;
@@ -51,7 +51,7 @@ public class HudElementScreen extends AbstractHistoryScreen {
 
     ScreenHistory history;
 
-    public HudElementScreen() {
+    public HudElementOverviewScreen() {
         super();
 
         hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);

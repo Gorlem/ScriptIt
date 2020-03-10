@@ -13,31 +13,19 @@ import com.ddoerr.scriptit.loader.HudElementLoader;
 import com.ddoerr.scriptit.loader.LanguageLoader;
 import com.ddoerr.scriptit.loader.LibraryLoader;
 import com.ddoerr.scriptit.screens.ScreenHistory;
-import com.ddoerr.scriptit.screens.ScriptsOverviewScreen;
+import com.ddoerr.scriptit.screens.ScriptOverviewScreen;
 import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.scripts.ThreadLifetimeManager;
-import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
-import com.ddoerr.scriptit.widgets.PanelWidget;
-import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 import org.lwjgl.glfw.GLFW;
-import spinnery.registry.ResourceRegistry;
-import spinnery.registry.WidgetRegistry;
 
-import java.io.IOException;
 import java.util.Collection;
 
 public class ScriptItMod implements ClientModInitializer {
@@ -89,7 +77,7 @@ public class ScriptItMod implements ClientModInitializer {
 
 		ClientTickCallback.EVENT.register(mc -> {
 			if (openGuiKeyBinding.wasPressed()) {
-				history.open(ScriptsOverviewScreen::new);
+				history.open(ScriptOverviewScreen::new);
 			}
 
 			if (mc.player != null) {
