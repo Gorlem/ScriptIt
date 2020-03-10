@@ -9,5 +9,4 @@ import java.util.Collection;
 public class ConfigContainer {
     public Collection<HudElement> elements = new ArrayList<>();
     public Collection<ScriptContainer> bindings = new ArrayList<>();
-    public Collection<ScriptContainer> events = new ArrayList<>();
 }
