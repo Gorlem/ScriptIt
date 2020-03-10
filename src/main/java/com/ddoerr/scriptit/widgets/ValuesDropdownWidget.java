@@ -1,6 +1,10 @@
 package com.ddoerr.scriptit.widgets;
 
+import com.ddoerr.scriptit.ScriptItMod;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 import spinnery.client.BaseRenderer;
 import spinnery.client.TextRenderer;
 import spinnery.widget.*;
@@ -17,8 +21,21 @@ public class ValuesDropdownWidget<T> extends WDropdown {
     Consumer<T> onChange;
     DropdownDirection direction = DropdownDirection.Down;
 
+    String translationPrefix = null;
+
     public ValuesDropdownWidget() {
         setHideBehavior(HideBehavior.ANYWHERE);
+    }
+
+    public ValuesDropdownWidget<T> setTranslationPrefix(String translationPrefix) {
+        this.translationPrefix = translationPrefix;
+        return this;
+    }
+
+    private Text getDisplayText(T value) {
+        return translationPrefix == null
+                ? new LiteralText(value.toString())
+                : new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, translationPrefix  + "." + value.toString().toLowerCase()).toString());
     }
 
     public void addValues(T... values) {
@@ -41,7 +58,7 @@ public class ValuesDropdownWidget<T> extends WDropdown {
         }
 
         createChild(WStaticText.class, Position.of(this, 5, y))
-                .setText(value.toString())
+                .setText(getDisplayText(value))
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> selectValue(value));
 
         setDropdownSize(Size.of(this.getWidth(), widgets.size() * 11 + 2));
@@ -49,7 +66,7 @@ public class ValuesDropdownWidget<T> extends WDropdown {
 
     public void selectValue(T value) {
         selectedValue = value;
-        setLabel(new LiteralText(value.toString()));
+        setLabel(getDisplayText(value));
 
         if (onChange != null) {
             onChange.accept(value);

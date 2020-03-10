@@ -98,6 +98,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
     private void setupLifeCycleWidget(WInterface mainInterface) {
         ValuesDropdownWidget<LifeCycle> dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
+                .setTranslationPrefix("scripts.lifecycle.values")
                 .setOnAlign(w -> w.setPosition(Position.ofTopRight(mainInterface).add(-150, 20, 0)))
                 .setSize(Size.of(100, 20));
         dropdown.selectValue(lifeCycle);
@@ -136,7 +137,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
         eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event").toString()));
 
-        ValuesDropdownWidget<String> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
+        ValuesDropdownWidget<String> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20))
+                .setTranslationPrefix("scripts.triggers.event.values");
         if (event == null) {
             eventDropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event.select").toString()));
         } else {
@@ -166,7 +168,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             timeText.setText(Integer.toString(time));
         }
 
-        ValuesDropdownWidget<ChronoUnit> durationDropdown = durationTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 155, 30), Size.of(135, 20));
+        ValuesDropdownWidget<ChronoUnit> durationDropdown = durationTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 155, 30), Size.of(135, 20))
+                .setTranslationPrefix("scripts.triggers.duration.values");
 
         durationDropdown.addValues(units);
 
