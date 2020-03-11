@@ -1,13 +1,42 @@
 {
   "key.scripitit.open": "Open ScriptIt Settings",
 
-  "scriptit:bindings.add": "Add Binding",
-  "scriptit:bindings.remove": "Remove",
+  "scriptit:generic.save": "Save",
+  "scriptit:generic.cancel": "Cancel",
 
-  "scriptit:hud.add": "Add Hud Element",
-  "scriptit:hud.add.IconHudElement": "Icon Hud Element",
-  "scriptit:hud.add.TextHudElement": "Text Hud Element",
+  "scriptit:scripts.edit": "Edit Script",
+  "scriptit:scripts.remove": "Remove Script",
+  "scriptit:scripts.add": "Add new Script",
 
-  "scriptit:event.chat": "Chat Message Event",
-  "scriptit:event.gameJoin": "Game Join Event"
+  "scriptit:scripts.triggers.keybinding": "Key Binding",
+
+  "scriptit:scripts.triggers.event": "Event",
+  "scriptit:scripts.triggers.event.select": "Select an Event",
+  "scriptit:scripts.triggers.event.values.receivedchat": "Received Chat",
+  "scriptit:scripts.triggers.event.values.sentchat": "Sent Chat",
+  "scriptit:scripts.triggers.event.values.gamejoin": "Game Join",
+
+  "scriptit:scripts.triggers.duration": "Duration",
+  "scriptit:scripts.triggers.duration.select": "Select a Time Unit",
+  "scriptit:scripts.triggers.duration.values.millis": "Milliseconds",
+  "scriptit:scripts.triggers.duration.values.seconds": "Seconds",
+  "scriptit:scripts.triggers.duration.values.minutes": "Minutes",
+  "scriptit:scripts.triggers.duration.values.hours": "Hours",
+
+  "scriptit:scripts.lifecycle.values.instant": "Instant",
+  "scriptit:scripts.lifecycle.values.threaded": "Threaded",
+
+  "scriptit:elements.open": "Open Hud Designer",
+  "scriptit:elements.add": "Add a Hud Element",
+  "scriptit:elements.edit.script": "Edit Script",
+  "scriptit:elements.values.text": "Any Text",
+  "scriptit:elements.values.icon": "Display any Item",
+
+  "scriptit:keybinding.default": "§f%s",
+  "scriptit:keybinding.conflict": "§c%s",
+  "scriptit:keybinding.active": "§f> §e%s §f<",
+  "scriptit:keybinding.unknown": "§4???",
+
+  "scriptit:tooltip.button": "Button %s",
+  "scriptit:tooltip.slot": "Slot %s"
 }

@@ -4,7 +4,6 @@ import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 
 public interface Event {
     void dispatch();
-    void dispatch(NamespaceRegistry registry);
-
+    NamespaceRegistry createNamespace();
     String getName();
 }

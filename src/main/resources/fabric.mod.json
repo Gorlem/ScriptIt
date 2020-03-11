@@ -20,19 +20,19 @@
       "com.ddoerr.scriptit.ScriptItMod"
     ],
     "scriptit:library": [
-      "com.ddoerr.scriptit.scripts.libraries.ServerLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.ScriptsLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.ChatLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.GameLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.PlayerLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.KeyboardLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.JsonLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.GuiLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.ScoreboardLibrary",
-      "com.ddoerr.scriptit.scripts.libraries.OptionsLibrary"
+      "com.ddoerr.scriptit.libraries.ServerLibrary",
+      "com.ddoerr.scriptit.libraries.ScriptsLibrary",
+      "com.ddoerr.scriptit.libraries.ChatLibrary",
+      "com.ddoerr.scriptit.libraries.GameLibrary",
+      "com.ddoerr.scriptit.libraries.PlayerLibrary",
+      "com.ddoerr.scriptit.libraries.KeyboardLibrary",
+      "com.ddoerr.scriptit.libraries.JsonLibrary",
+      "com.ddoerr.scriptit.libraries.GuiLibrary",
+      "com.ddoerr.scriptit.libraries.ScoreboardLibrary",
+      "com.ddoerr.scriptit.libraries.OptionsLibrary"
     ],
     "scriptit:language": [
-      "com.ddoerr.scriptit.scripts.languages.lua.LuaLanguage"
+      "com.ddoerr.scriptit.languages.lua.LuaLanguage"
     ],
     "scriptit:hud": [
       "com.ddoerr.scriptit.elements.IconHudElement",

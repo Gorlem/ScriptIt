@@ -1,11 +1,9 @@
 package com.ddoerr.scriptit.api.scripts;
 
-import com.ddoerr.scriptit.scripts.LifeCycle;
+import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.languages.LanguageImplementation;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.api.scripts.ScriptBuilder.ScriptImplementation;
-import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.loader.LanguageLoader;
 
 import java.util.ArrayList;
 import java.util.Collection;

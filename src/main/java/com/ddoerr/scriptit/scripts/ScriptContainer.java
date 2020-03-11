@@ -1,10 +1,8 @@
 package com.ddoerr.scriptit.scripts;
 
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.api.scripts.Script;
-import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
-import com.ddoerr.scriptit.api.scripts.ScriptThread;
-import com.ddoerr.scriptit.dependencies.Resolver;
+import com.ddoerr.scriptit.api.scripts.*;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.triggers.Trigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
@@ -135,6 +133,6 @@ public class ScriptContainer {
                 .append("; ")
                 .append(StringUtils.abbreviate(content, 50));
 
-        return  stringBuilder.toString();
+        return stringBuilder.toString();
     }
 }

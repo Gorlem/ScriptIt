@@ -1,21 +1,23 @@
 package com.ddoerr.scriptit.screens;
 
-import com.ddoerr.scriptit.util.DurationHelper;
-import com.ddoerr.scriptit.bus.KeyBindingBusExtension;
+import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
+import com.ddoerr.scriptit.api.dependencies.EventLoader;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.scripts.ScriptManager;
+import com.ddoerr.scriptit.api.util.DurationHelper;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.dependencies.Resolver;
-import com.ddoerr.scriptit.loader.EventLoader;
-import com.ddoerr.scriptit.scripts.LifeCycle;
+import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
+import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
+import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
-import com.ddoerr.scriptit.scripts.Scripts;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
-import com.ddoerr.scriptit.widgets.KeyBindingButtonWidget;
-import com.ddoerr.scriptit.widgets.ValuesDropdownWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import spinnery.widget.*;
@@ -95,6 +97,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
     private void setupLifeCycleWidget(WInterface mainInterface) {
         ValuesDropdownWidget<LifeCycle> dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
+                .setTranslationPrefix("scripts.lifecycle.values")
                 .setOnAlign(w -> w.setPosition(Position.ofTopRight(mainInterface).add(-150, 20, 0)))
                 .setSize(Size.of(100, 20));
         dropdown.selectValue(lifeCycle);
@@ -117,7 +120,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     }
 
     private void addKeyTriggerTab(WTabHolder tabHolder) {
-        keyBindingsTab = tabHolder.addTab(Items.TRIPWIRE_HOOK, new LiteralText("Key Bindings"));
+        keyBindingsTab = tabHolder.addTab(Items.TRIPWIRE_HOOK, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.keybinding").toString()));
 
         KeyBindingButtonWidget keyBindingButtonWidget = keyBindingsTab.createChild(KeyBindingButtonWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
         keyBindingButtonWidget.setOnChange(keyCode -> this.keyCode = keyCode);
@@ -131,11 +134,12 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         EventLoader eventLoader = Resolver.getInstance().resolve(EventLoader.class);
         List<String> eventsList = eventLoader.getEvents();
 
-        eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new LiteralText("Events"));
+        eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event").toString()));
 
-        ValuesDropdownWidget<String> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
+        ValuesDropdownWidget<String> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20))
+                .setTranslationPrefix("scripts.triggers.event.values");
         if (event == null) {
-            eventDropdown.setLabel(new LiteralText("Select an event:"));
+            eventDropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event.select").toString()));
         } else {
             eventDropdown.selectValue(event);
         }
@@ -146,7 +150,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private void addDurationTriggerTab(WTabHolder tabHolder) {
         List<ChronoUnit> units = Arrays.asList(ChronoUnit.MILLIS, ChronoUnit.SECONDS, ChronoUnit.MINUTES, ChronoUnit.HOURS);
 
-        durationTab = tabHolder.addTab(Items.CLOCK, new LiteralText("Duration"));
+        durationTab = tabHolder.addTab(Items.CLOCK, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.duration").toString()));
 
         WTextField timeText = durationTab.createChild(WTextField.class, Position.of(tabHolder, 10, 30), Size.of(135, 20));
 
@@ -163,12 +167,13 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             timeText.setText(Integer.toString(time));
         }
 
-        ValuesDropdownWidget<ChronoUnit> durationDropdown = durationTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 155, 30), Size.of(135, 20));
+        ValuesDropdownWidget<ChronoUnit> durationDropdown = durationTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 155, 30), Size.of(135, 20))
+                .setTranslationPrefix("scripts.triggers.duration.values");
 
         durationDropdown.addValues(units);
 
         if (unit == null) {
-            durationDropdown.setLabel(new LiteralText("Select a time unit:"));
+            durationDropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.duration.select").toString()));
         } else {
             durationDropdown.selectValue((ChronoUnit)unit);
         }
@@ -200,20 +205,20 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         mainInterface.createChild(WButton.class)
                 .setSize(Size.of(size, 20))
                 .setOnAlign(w -> w.setPosition(Position.of(panel).add(5, 5, 1)))
-                .setLabel("Cancel")
+                .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "generic.cancel").toString()))
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> onClose());
 
         mainInterface.createChild(WButton.class)
                 .setSize(Size.of(size, 20))
                 .setOnAlign(w -> w.setPosition(Position.of(panel).add(size + 10, 5, 1)))
-                .setLabel("Save")
+                .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "generic.save").toString()))
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> updateScriptContainer());
     }
 
     private void updateScriptContainer() {
         if (scriptContainer == null) {
             scriptContainer = new ScriptContainer();
-            Resolver.getInstance().resolve(Scripts.class).add(scriptContainer);
+            Resolver.getInstance().resolve(ScriptManager.class).add(scriptContainer);
         }
 
         scriptContainer.setLifeCycle(lifeCycle);
