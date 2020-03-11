@@ -232,6 +232,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             scriptContainer.setTrigger(new ContinuousTrigger(Duration.of(time, unit)));
         }
 
+        scriptContainer.enable();
+
         ConfigCallback.EVENT.invoker().saveConfig(ScriptEditorScreen.class);
 
         onClose();

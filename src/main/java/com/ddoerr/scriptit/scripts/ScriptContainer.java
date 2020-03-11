@@ -16,6 +16,8 @@ public class ScriptContainer {
     private Object lastResult;
     private NamespaceRegistry namespaceRegistry;
 
+    private boolean isDisabled = false;
+
     public ScriptContainer() {
     }
 
@@ -71,6 +73,10 @@ public class ScriptContainer {
     }
 
     public Object run() {
+        if (isDisabled) {
+            return null;
+        }
+
         try {
             ScriptBuilder scriptBuilder = new ScriptBuilder().fromString(content);
 
@@ -93,7 +99,10 @@ public class ScriptContainer {
                     break;
             }
         } catch (Exception e) {
+            disable();
             MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
+            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
+                    new LiteralText("An error occurred while running this script. Script will be disabled until the script is saved again."));
             e.printStackTrace();
         }
 
@@ -134,5 +143,17 @@ public class ScriptContainer {
                 .append(StringUtils.abbreviate(content, 50));
 
         return stringBuilder.toString();
+    }
+
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    public void disable() {
+        isDisabled = true;
+    }
+
+    public void enable() {
+        isDisabled = false;
     }
 }
