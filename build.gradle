@@ -99,7 +99,12 @@ publishing {
 		// uncomment to publish to the local maven
 		// mavenLocal()
 		maven {
-			url = "https://maven.pkg.github.com/Gorlem"
+			name = "GitHubPackages"
+			url = "https://maven.pkg.github.com/gorlem/scriptit"
+			credentials {
+				username = System.getenv("USERNAME")
+				password = System.getenv("PASSWORD")
+			}
 		}
 	}
 }
