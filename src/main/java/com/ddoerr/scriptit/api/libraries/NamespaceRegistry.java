@@ -1,16 +1,15 @@
 package com.ddoerr.scriptit.api.libraries;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 public interface NamespaceRegistry {
-    void registerFunction(String name, FunctionExecutor executor);
-    void registerVariable(String name, VariableUpdater updater);
+    Function registerFunction(String name, FunctionExecutor executor);
+    Variable registerVariable(String name, VariableUpdater updater);
     NamespaceRegistry registerNamespace(String name);
 
-    Map<String, FunctionExecutor> getFunctions();
-    Map<String, VariableUpdater> getVariables();
-    Collection<NamespaceRegistry> getNamespaces();
+    List<Function> getFunctions();
+    List<Variable> getVariables();
+    List<NamespaceRegistry> getNamespaces();
 
     String getName();
 }

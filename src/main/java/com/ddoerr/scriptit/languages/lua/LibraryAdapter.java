@@ -1,10 +1,12 @@
 package com.ddoerr.scriptit.languages.lua;
 
-import com.ddoerr.scriptit.api.libraries.FunctionExecutor;
+import com.ddoerr.scriptit.api.libraries.Function;
 import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.api.libraries.VariableUpdater;
+import com.ddoerr.scriptit.api.libraries.Variable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Tickable;
+import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaNil;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.TwoArgFunction;
@@ -12,7 +14,6 @@ import org.luaj.vm2.lib.VarArgFunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class LibraryAdapter extends TwoArgFunction implements Tickable {
     private NamespaceRegistry registry;
@@ -45,9 +46,19 @@ public class LibraryAdapter extends TwoArgFunction implements Tickable {
         if (!table.istable())
             table = tableOf();
 
-        for (Map.Entry<String, VariableUpdater> variable : registry.getVariables().entrySet()) {
-            Object value = variable.getValue().update(variable.getKey(), minecraft);
-            table.set(variable.getKey(), ValueConverter.toLuaValue(value));
+        for (Variable variable : registry.getVariables()) {
+            if (variable.isDisabled()) {
+                continue;
+            }
+
+            try {
+                Object value = variable.update(variable.getName(), minecraft);
+                table.set(variable.getName(), ValueConverter.toLuaValue(value));
+            } catch (Exception e) {
+                variable.disable();
+                e.printStackTrace();
+//                throw new LuaError("An error occurred while updating `" + variable.getName() + "`. Variable will be disabled until the game is restarted.");
+            }
         }
 
         for (NamespaceRegistry namespace : registry.getNamespaces()) {
@@ -63,8 +74,8 @@ public class LibraryAdapter extends TwoArgFunction implements Tickable {
         if (!table.istable())
             table = tableOf();
 
-        for (Map.Entry<String, FunctionExecutor> function : registry.getFunctions().entrySet()) {
-            table.set(function.getKey(), new LuaFunction(function.getKey(), function.getValue(), minecraft));
+        for (Function function : registry.getFunctions()) {
+            table.set(function.getName(), new LuaFunction(function, minecraft));
         }
 
         for (NamespaceRegistry namespace : registry.getNamespaces()) {
@@ -75,18 +86,20 @@ public class LibraryAdapter extends TwoArgFunction implements Tickable {
     }
 
     static class LuaFunction extends VarArgFunction {
-        private String name;
-        private FunctionExecutor function;
+        private Function function;
         private MinecraftClient minecraft;
 
-        public LuaFunction(String name, FunctionExecutor function, MinecraftClient minecraft) {
-            this.name = name;
+        public LuaFunction(Function function, MinecraftClient minecraft) {
             this.function = function;
             this.minecraft = minecraft;
         }
 
         @Override
         public Varargs invoke(Varargs varargs) {
+            if (function.isDisabled()) {
+                return LuaNil.NIL;
+            }
+
             List<Object> objects = new ArrayList<>();
 
             for (int i = 1; i <= varargs.narg(); i++) {
@@ -95,9 +108,14 @@ public class LibraryAdapter extends TwoArgFunction implements Tickable {
                 objects.add(object);
             }
 
-            Object result = function.execute(name, minecraft, objects.toArray());
-
-            return ValueConverter.toLuaValue(result);
+            try {
+                Object result = function.execute(function.getName(), minecraft, objects.toArray());
+                return ValueConverter.toLuaValue(result);
+            } catch (Exception e) {
+                function.disable();
+                e.printStackTrace();
+                throw new LuaError("An error occurred while executing `" + function.getName() + "`. Function will be disabled until the game is restarted.");
+            }
         }
     }
 }
