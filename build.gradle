@@ -98,5 +98,8 @@ publishing {
 	repositories {
 		// uncomment to publish to the local maven
 		// mavenLocal()
+		maven {
+			url = "https://maven.pkg.github.com/Gorlem"
+		}
 	}
 }
