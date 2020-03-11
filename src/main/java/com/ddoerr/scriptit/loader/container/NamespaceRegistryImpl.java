@@ -1,16 +1,14 @@
 package com.ddoerr.scriptit.loader.container;
 
-import com.ddoerr.scriptit.api.libraries.FunctionExecutor;
-import com.ddoerr.scriptit.api.libraries.VariableUpdater;
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.libraries.*;
 
 import java.util.*;
 
 public class NamespaceRegistryImpl implements NamespaceRegistry {
     private String name;
 
-    private Map<String, FunctionExecutor> functions = new HashMap<>();
-    private Map<String, VariableUpdater> variables = new HashMap<>();
+    private List<Function> functions = new ArrayList<>();
+    private List<Variable> variables = new ArrayList<>();
     private List<NamespaceRegistry> namespaces = new ArrayList<>();
 
     public NamespaceRegistryImpl(String name) {
@@ -22,13 +20,17 @@ public class NamespaceRegistryImpl implements NamespaceRegistry {
     }
 
     @Override
-    public void registerFunction(String name, FunctionExecutor executor) {
-        functions.put(name, executor);
+    public Function registerFunction(String name, FunctionExecutor executor) {
+        Function function = new FunctionImpl(name, executor);
+        functions.add(function);
+        return function;
     }
 
     @Override
-    public void registerVariable(String name, VariableUpdater updater) {
-        variables.put(name, updater);
+    public Variable registerVariable(String name, VariableUpdater updater) {
+        Variable variable = new VariableImpl(name, updater);
+        variables.add(variable);
+        return variable;
     }
 
     @Override
@@ -38,15 +40,18 @@ public class NamespaceRegistryImpl implements NamespaceRegistry {
         return namespace;
     }
 
-    public Map<String, FunctionExecutor> getFunctions() {
+    @Override
+    public List<Function> getFunctions() {
         return functions;
     }
 
-    public Map<String, VariableUpdater> getVariables() {
+    @Override
+    public List<Variable> getVariables() {
         return variables;
     }
 
-    public Collection<NamespaceRegistry> getNamespaces() {
+    @Override
+    public List<NamespaceRegistry> getNamespaces() {
         return namespaces;
     }
 }
