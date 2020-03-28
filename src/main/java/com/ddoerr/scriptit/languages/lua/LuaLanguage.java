@@ -32,7 +32,7 @@ public class LuaLanguage implements LanguageInitializer, Language {
 
     @Override
     public void onInitialize(LanguageRegistry registry) {
-        registry.registerLanguage("lua", this);
+        registry.registerLanguage(getName(), this);
 
         globals = createGlobals();
         extractFunctions(globals);
@@ -40,8 +40,13 @@ public class LuaLanguage implements LanguageInitializer, Language {
     }
 
     @Override
+    public String getName() {
+        return "lua";
+    }
+
+    @Override
     public Collection<String> getExtensions() {
-        return Collections.singletonList(".lua");
+        return Collections.singletonList("lua");
     }
 
     private void extractFunctions(Globals globals) {

@@ -7,6 +7,7 @@ import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import java.util.Collection;
 
 public interface Language {
+    String getName();
     Collection<String> getExtensions();
     void loadLibrary(Library library);
 
