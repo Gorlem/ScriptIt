@@ -1,8 +1,8 @@
 package com.ddoerr.scriptit.libraries.settings;
 
-import com.ddoerr.scriptit.api.util.ObjectConverter;
 import com.google.common.base.Joiner;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -26,17 +26,20 @@ public class StringSetting extends AbstractSetting<String> {
     }
 
     @Override
-    public void set(Object object) {
-        String value = ObjectConverter.toString(object);
+    public void set(Object value) {
         if (!whitelist.isEmpty() && !whitelist.contains(value)) {
             return;
         }
-
-        setter.accept(value);
+        setter.accept((String)value);
     }
 
     @Override
     public String getPossibleValues() {
         return joiner.join(whitelist);
+    }
+
+    @Override
+    public Type getType() {
+        return String.class;
     }
 }

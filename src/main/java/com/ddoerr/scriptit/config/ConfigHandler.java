@@ -1,8 +1,9 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
+import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.api.util.Debouncer;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
@@ -19,8 +20,12 @@ public class ConfigHandler implements ConfigCallback, Loadable {
     private HudElementManager hudElementManager;
 
     public ConfigHandler() {
-        scriptManager = Resolver.getInstance().resolve(ScriptManager.class);
-        hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
+        try {
+            scriptManager = Resolver.getInstance().resolve(ScriptManager.class);
+            hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
     }
 
     public void save() {

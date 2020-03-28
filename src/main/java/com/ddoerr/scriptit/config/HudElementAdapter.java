@@ -1,12 +1,13 @@
 package com.ddoerr.scriptit.config;
 
+import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.elements.HudElement;
-import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.google.gson.*;
 
@@ -18,7 +19,11 @@ public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeseri
     private HudElementLoader hudElementLoader;
 
     public HudElementAdapter() {
-        hudElementLoader = Resolver.getInstance().resolve(HudElementLoader.class);
+        try {
+            hudElementLoader = Resolver.getInstance().resolve(HudElementLoader.class);
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -1,33 +1,34 @@
 package com.ddoerr.scriptit.languages.lua;
 
+import com.ddoerr.scriptit.api.languages.Language;
+import com.ddoerr.scriptit.api.languages.LanguageInitializer;
 import com.ddoerr.scriptit.api.languages.LanguageRegistry;
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.libraries.Library;
 import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.api.scripts.ScriptThread;
-import com.ddoerr.scriptit.api.languages.LanguageImplementation;
-import com.ddoerr.scriptit.api.languages.LanguageInitializer;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaThread;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.*;
+import org.luaj.vm2.lib.CoroutineLib;
+import org.luaj.vm2.lib.DebugLib;
+import org.luaj.vm2.lib.StringLib;
+import org.luaj.vm2.lib.TableLib;
 import org.luaj.vm2.lib.jse.JseBaseLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
-public class LuaLanguage implements LanguageInitializer, LanguageImplementation {
+public class LuaLanguage implements LanguageInitializer, Language {
     private static final int MAX_INSTRUCTIONS_PER_TICK = 100;
 
     private Globals globals;
     private LuaValue luaSetHookFunction;
     private LuaValue luaYieldFunction;
 
-    private List<LibraryAdapter> libraries = new ArrayList<>();
+    private LuaContainedResultFactory factory = new LuaContainedResultFactory();
 
     @Override
     public void onInitialize(LanguageRegistry registry) {
@@ -40,7 +41,7 @@ public class LuaLanguage implements LanguageInitializer, LanguageImplementation 
 
     @Override
     public Collection<String> getExtensions() {
-        return Arrays.asList(".lua");
+        return Collections.singletonList(".lua");
     }
 
     private void extractFunctions(Globals globals) {
@@ -52,30 +53,26 @@ public class LuaLanguage implements LanguageInitializer, LanguageImplementation 
     }
 
     @Override
-    public void loadRegistry(NamespaceRegistry registry) {
-        LibraryAdapter library = new LibraryAdapter(registry);
-        globals.load(library);
-        libraries.add(library);
+    public void loadLibrary(Library library) {
+        globals.set(library.getName(), factory.fromModel(library.getModel()));
     }
 
     @Override
-    public Object runScriptInstantly(Script script) {
-        Collection<NamespaceRegistry> additionalRegistries = script.getAdditionalRegistries();
+    public LuaContainedValue runScriptInstantly(Script script) {
+        Collection<Library> libraries = script.getLibraries();
 
-        for (NamespaceRegistry additionalRegistry : additionalRegistries) {
-            LibraryAdapter library = new LibraryAdapter(additionalRegistry);
-            globals.load(library);
-            library.tick();
+        for (Library library : libraries) {
+            globals.set(library.getName(), factory.fromModel(library.getModel()));
         }
 
         LuaValue chunk = loadChunk(script);
         LuaValue result = chunk.call();
 
-        for (NamespaceRegistry additionalRegistry : additionalRegistries) {
-            globals.set(additionalRegistry.getName(), LuaValue.NIL);
+        for (Library library : libraries) {
+            globals.set(library.getName(), LuaValue.NIL);
         }
 
-        return ValueConverter.toObject(result);
+        return new LuaContainedValue(result);
     }
 
     @Override
@@ -120,12 +117,5 @@ public class LuaLanguage implements LanguageInitializer, LanguageImplementation 
         globals.load(new JseMathLib());
         globals.load(new CoroutineLib());
         return globals;
-    }
-
-    @Override
-    public void tick() {
-        for (LibraryAdapter adapter : libraries) {
-            adapter.tick();
-        }
     }
 }

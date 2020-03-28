@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.api.scripts;
 
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.libraries.Library;
 
 import java.util.Collection;
 
@@ -15,10 +15,7 @@ public interface Script {
     String getFileSource();
     String getStringSource();
 
-    Collection<NamespaceRegistry> getAdditionalRegistries();
-
-    Object runInstantly();
-    ScriptThread runThreaded();
+    Collection<Library> getLibraries();
 
     String getName();
 }

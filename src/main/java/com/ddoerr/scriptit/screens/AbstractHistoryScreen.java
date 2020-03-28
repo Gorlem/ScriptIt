@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
 import spinnery.client.BaseScreen;
@@ -11,7 +12,11 @@ public class AbstractHistoryScreen extends BaseScreen {
     private ScreenHistory history;
 
     public AbstractHistoryScreen() {
-        history = Resolver.getInstance().resolve(ScreenHistory.class);
+        try {
+            history = Resolver.getInstance().resolve(ScreenHistory.class);
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

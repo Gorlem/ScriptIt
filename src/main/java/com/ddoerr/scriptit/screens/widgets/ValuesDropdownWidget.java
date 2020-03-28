@@ -7,12 +7,14 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import spinnery.client.BaseRenderer;
 import spinnery.client.TextRenderer;
-import spinnery.widget.*;
+import spinnery.widget.WDropdown;
+import spinnery.widget.WStaticText;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 import spinnery.widget.api.WLayoutElement;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Consumer;
 
 public class ValuesDropdownWidget<T> extends WDropdown {

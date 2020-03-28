@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.triggers;
 
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.libraries.Library;
 import com.ddoerr.scriptit.api.util.DurationHelper;
 import net.minecraft.util.Pair;
 
@@ -24,11 +24,7 @@ public class ContinuousTrigger implements Trigger {
     public boolean canRun() {
         Duration between = Duration.between(lastActivation, Instant.now());
 
-        if (duration.compareTo(between) < 0) {
-            return true;
-        }
-
-        return false;
+        return duration.compareTo(between) < 0;
     }
 
     @Override
@@ -37,7 +33,7 @@ public class ContinuousTrigger implements Trigger {
     }
 
     @Override
-    public NamespaceRegistry additionalRegistry() {
+    public Library getAdditionalLibrary() {
         return null;
     }
 

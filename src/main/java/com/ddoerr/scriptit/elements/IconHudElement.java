@@ -1,8 +1,6 @@
 package com.ddoerr.scriptit.elements;
 
-import com.ddoerr.scriptit.api.hud.HudElementInitializer;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
-import com.ddoerr.scriptit.api.hud.HudElementRegistry;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
@@ -14,14 +12,8 @@ import net.minecraft.util.registry.Registry;
 
 import static net.minecraft.client.gui.DrawableHelper.fill;
 
-public class IconHudElement implements HudElementInitializer, HudElementProvider {
+public class IconHudElement implements HudElementProvider {
     public static final int ELEMENT_SIZE = 20;
-
-
-    @Override
-    public void onInitialize(HudElementRegistry registry) {
-        registry.registerHudElement("Icon", this);
-    }
 
     @Override
     public Rectangle render(Point origin, HudElement hudElement) {

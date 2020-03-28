@@ -1,7 +1,8 @@
 package com.ddoerr.scriptit.elements;
 
-import com.ddoerr.scriptit.api.hud.*;
-import com.ddoerr.scriptit.api.scripts.Script;
+import com.ddoerr.scriptit.api.hud.HudElementProvider;
+import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
+import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
@@ -134,9 +135,8 @@ public class HudElement extends DrawableHelper implements Tickable, Element, Dra
             return color;
 
         try {
-            Script script = new ScriptBuilder().fromString(value).build();
-            Object result = script.runInstantly();
-            return Color.parse(result.toString());
+            String result = new ScriptBuilder().fromString(value).run();
+            return Color.parse(result);
         }
         catch (Exception e) {
             e.printStackTrace();

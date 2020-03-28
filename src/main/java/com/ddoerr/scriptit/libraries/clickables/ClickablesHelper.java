@@ -14,7 +14,7 @@ public abstract class ClickablesHelper<T extends ClickablesProvider> {
     }
 
     public int getAmount(Screen screen) {
-        return getProvider(screen) .map(p -> p.getAmount(screen)).orElse(0);
+        return getProvider(screen).map(p -> p.getAmount(screen)).orElse(0);
     }
 
     public void renderTooltip(Screen screen, int mouseX, int mouseY) {

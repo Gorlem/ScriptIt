@@ -4,5 +4,5 @@ import net.minecraft.util.Tickable;
 
 public interface LibraryRegistry {
     void registerTickable(Tickable tickable);
-    NamespaceRegistry registerLibrary(String name);
+    void registerLibrary(String name, Model library);
 }

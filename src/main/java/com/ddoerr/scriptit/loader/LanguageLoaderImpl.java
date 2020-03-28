@@ -2,18 +2,20 @@ package com.ddoerr.scriptit.loader;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
-import com.ddoerr.scriptit.api.languages.LanguageRegistry;
 import com.ddoerr.scriptit.api.dependencies.Loadable;
-import com.ddoerr.scriptit.api.languages.LanguageImplementation;
+import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.languages.LanguageInitializer;
+import com.ddoerr.scriptit.api.languages.LanguageRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Tickable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class LanguageLoaderImpl implements Tickable, LanguageRegistry, Loadable, LanguageLoader {
-    private Map<String, LanguageImplementation> languages = new HashMap<>();
+public class LanguageLoaderImpl implements LanguageRegistry, Loadable, LanguageLoader {
+    private Map<String, Language> languages = new HashMap<>();
 
     public void load() {
         List<LanguageInitializer> entrypoints = FabricLoader.getInstance().getEntrypoints(new Identifier(ScriptItMod.MOD_NAME, "language").toString(), LanguageInitializer.class);
@@ -24,24 +26,17 @@ public class LanguageLoaderImpl implements Tickable, LanguageRegistry, Loadable,
     }
 
     @Override
-    public void registerLanguage(String name, LanguageImplementation languageImplementation) {
-        languages.put(name, languageImplementation);
+    public void registerLanguage(String name, Language language) {
+        languages.put(name, language);
     }
 
     @Override
-    public Collection<LanguageImplementation> getLanguages() {
+    public Collection<Language> getLanguages() {
         return languages.values();
     }
 
     @Override
-    public LanguageImplementation findByName(String name) {
+    public Language findByName(String name) {
         return languages.getOrDefault(name, null);
-    }
-
-    @Override
-    public void tick() {
-        for (LanguageImplementation language : languages.values()) {
-            language.tick();
-        }
     }
 }
