@@ -1,28 +1,27 @@
 package com.ddoerr.scriptit.libraries;
 
-import com.ddoerr.scriptit.api.util.ObjectConverter;
+import com.ddoerr.scriptit.api.annotations.Callable;
+import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
 import com.google.gson.Gson;
-import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
-import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import net.minecraft.client.MinecraftClient;
 
-public class JsonLibrary implements LibraryInitializer {
+import java.util.List;
+import java.util.Map;
+
+public class JsonLibrary extends AnnotationBasedModel {
     private Gson gson = new Gson();
 
-    @Override
-    public void onInitialize(LibraryRegistry registry) {
-        NamespaceRegistry library = registry.registerLibrary("json");
-
-        library.registerFunction("encode", this::encode);
-        library.registerFunction("decode", this::decode);
+    @Callable
+    public String encode(Map<?, ?> map) {
+        return gson.toJson(map);
     }
 
-    private Object encode(String name, MinecraftClient minecraft, Object... arguments) {
-        return gson.toJson(arguments[0]);
+    @Callable
+    public String encode(List<?> list) {
+        return gson.toJson(list);
     }
 
-    private Object decode(String name, MinecraftClient minecraft, Object... arguments) {
-        return gson.fromJson(ObjectConverter.toString(arguments[0]), Object.class);
+    @Callable
+    public Object decode(String json) {
+        return gson.fromJson(json, Object.class);
     }
 }

@@ -2,11 +2,11 @@ package com.ddoerr.scriptit.libraries.settings;
 
 import com.ddoerr.scriptit.mixin.OptionKeyAccessor;
 import com.ddoerr.scriptit.mixin.StepAccessor;
-import com.ddoerr.scriptit.api.util.ObjectConverter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.DoubleOption;
 import net.minecraft.util.math.MathHelper;
 
+import java.lang.reflect.Type;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -27,9 +27,26 @@ public class DoubleSetting extends AbstractNumberSetting<Double> {
                 ((StepAccessor)option).getStep());
     }
 
+    public static DoubleSetting fromOption(DoubleOption option, String name) {
+        MinecraftClient minecraft = MinecraftClient.getInstance();
+
+        return new DoubleSetting(
+                name,
+                () -> option.get(minecraft.options),
+                (value) -> option.set(minecraft.options, value),
+                option.getMin(),
+                option.getMax(),
+                ((StepAccessor)option).getStep());
+    }
+
     @Override
-    public void set(Object object) {
-        setter.accept(MathHelper.clamp(ObjectConverter.toDouble(object), minimum, maximum));
+    public void set(Object value) {
+        setter.accept(MathHelper.clamp((double)value, minimum, maximum));
+    }
+
+    @Override
+    public Type getType() {
+        return double.class;
     }
 
     @Override

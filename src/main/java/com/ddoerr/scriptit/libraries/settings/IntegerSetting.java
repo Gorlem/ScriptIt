@@ -2,11 +2,11 @@ package com.ddoerr.scriptit.libraries.settings;
 
 import com.ddoerr.scriptit.mixin.OptionKeyAccessor;
 import com.ddoerr.scriptit.mixin.StepAccessor;
-import com.ddoerr.scriptit.api.util.ObjectConverter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.DoubleOption;
 import net.minecraft.util.math.MathHelper;
 
+import java.lang.reflect.Type;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -32,8 +32,8 @@ public class IntegerSetting extends AbstractNumberSetting<Integer> {
     }
 
     @Override
-    public void set(Object object) {
-        setter.accept(MathHelper.clamp(ObjectConverter.toInteger(object), minimum, maximum));
+    public void set(Object value) {
+        setter.accept(MathHelper.clamp((int)value, minimum, maximum));
     }
 
     @Override
@@ -47,5 +47,10 @@ public class IntegerSetting extends AbstractNumberSetting<Integer> {
 
         setter.accept(next);
         return next;
+    }
+
+    @Override
+    public Type getType() {
+        return int.class;
     }
 }

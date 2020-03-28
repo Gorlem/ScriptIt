@@ -1,30 +1,35 @@
 package com.ddoerr.scriptit.triggers;
 
-import com.ddoerr.scriptit.api.util.KeyBindingHelper;
 import com.ddoerr.scriptit.api.bus.Bus;
 import com.ddoerr.scriptit.api.bus.EventBus;
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
+import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.util.KeyBindingHelper;
 import net.minecraft.client.util.InputUtil;
 
 import java.util.function.Consumer;
 
 public class BusTrigger implements Trigger, Consumer<Object> {
     boolean shouldActivate = false;
-    NamespaceRegistry registry = null;
+    Library library = null;
     String id;
     Bus<Object> bus;
 
     public BusTrigger(String id) {
         this.id = id;
-        bus = Resolver.getInstance().resolve(EventBus.class);
-        bus.subscribe(this.id, this);
+        try {
+            bus = Resolver.getInstance().resolve(EventBus.class);
+            bus.subscribe(this.id, this);
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void activate(NamespaceRegistry registry) {
+    public void activate(Library library) {
         shouldActivate = true;
-        this.registry = registry;
+        this.library = library;
     }
 
     public String getId() {
@@ -42,8 +47,8 @@ public class BusTrigger implements Trigger, Consumer<Object> {
     }
 
     @Override
-    public NamespaceRegistry additionalRegistry() {
-        return registry;
+    public Library getAdditionalLibrary() {
+        return library;
     }
 
     @Override
@@ -61,6 +66,6 @@ public class BusTrigger implements Trigger, Consumer<Object> {
 
     @Override
     public void accept(Object o) {
-        activate((NamespaceRegistry) o);
+        activate((Library) o);
     }
 }

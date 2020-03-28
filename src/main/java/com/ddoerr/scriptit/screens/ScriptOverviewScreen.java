@@ -2,6 +2,7 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.screens.widgets.PanelWidget;
@@ -15,8 +16,16 @@ import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
 public class ScriptOverviewScreen extends AbstractHistoryScreen {
+    private ScriptManager scriptManager;
+
     public ScriptOverviewScreen() {
         super();
+
+        try {
+            scriptManager = Resolver.getInstance().resolve(ScriptManager.class);
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
 
         minecraft = MinecraftClient.getInstance();
         setupWidgets();
@@ -33,8 +42,6 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
     }
 
     private void setupList(WInterface mainInterface) {
-        ScriptManager scriptManager = Resolver.getInstance().resolve(ScriptManager.class);
-
         WPanel panel = mainInterface.createChild(WPanel.class, Position.of(20, 20, 0));
         panel.setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -70)));
 
@@ -73,7 +80,7 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
                 .setSize(Size.of(80, 20))
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.remove").toString()))
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> {
-                    Resolver.getInstance().resolve(ScriptManager.class).remove(scriptContainer);
+                    scriptManager.remove(scriptContainer);
                     Trigger trigger = scriptContainer.getTrigger();
                     if (trigger != null) {
                         trigger.close();

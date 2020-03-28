@@ -1,40 +1,29 @@
 package com.ddoerr.scriptit.events;
 
+import com.ddoerr.scriptit.api.annotations.Callable;
+import com.ddoerr.scriptit.api.annotations.Getter;
 import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.api.events.EventInitializer;
 import com.ddoerr.scriptit.api.events.EventRegistry;
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
 import com.ddoerr.scriptit.callbacks.SendChatMessageCallback;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 
-public class SentChatEventDispatcher implements EventInitializer, SendChatMessageCallback {
+public class SentChatEventDispatcher implements EventInitializer {
     Event event;
 
     @Override
     public void onInitialize(EventRegistry registry) {
         event = registry.registerEvent("sentChat");
 
-        SendChatMessageCallback.EVENT.register(this);
+        SendChatMessageCallback.EVENT.register(this::onSendChatMessage);
     }
 
-    @Override
     public TypedActionResult<String> onSendChatMessage(String message) {
-        ChatMessage chatMessage = new ChatMessage(message);
-
-        NamespaceRegistry namespace = event.createNamespace();
-        namespace.registerVariable("message", (name, minecraft) -> chatMessage.getMessage());
-        namespace.registerFunction("modify", (name, minecraft, arguments) -> {
-            chatMessage.setMessage(arguments[0].toString());
-            return null;
-        });
-        namespace.registerFunction("filter", (name, minecraft, arguments) -> {
-            chatMessage.setActionResult(ActionResult.FAIL);
-            return null;
-        });
-        event.dispatch();
-
-        return chatMessage.toTypedResult();
+        MessageModel messageModel = new MessageModel(message);
+        event.dispatch(messageModel);
+        return messageModel.getActionResult();
     }
 
     static class ChatMessage {
@@ -59,6 +48,35 @@ public class SentChatEventDispatcher implements EventInitializer, SendChatMessag
 
         public TypedActionResult<String> toTypedResult() {
             return new TypedActionResult<>(actionResult, message);
+        }
+    }
+
+    static class MessageModel extends AnnotationBasedModel {
+        private TypedActionResult<String> actionResult;
+        private String message;
+
+        public MessageModel(String message) {
+            actionResult = TypedActionResult.pass(message);
+            this.message = message;
+        }
+
+        @Getter
+        public String getMessage() {
+            return message;
+        }
+
+        @Callable
+        public void modify(String message) {
+            actionResult = TypedActionResult.success(message);
+        }
+
+        @Callable
+        public void filter() {
+            actionResult = TypedActionResult.fail(null);
+        }
+
+        public TypedActionResult<String> getActionResult() {
+            return actionResult;
         }
     }
 }

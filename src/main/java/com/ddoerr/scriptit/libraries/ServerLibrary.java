@@ -1,26 +1,24 @@
 package com.ddoerr.scriptit.libraries;
 
-import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
-import com.ddoerr.scriptit.api.util.ObjectConverter;
+import com.ddoerr.scriptit.api.annotations.Getter;
+import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
+import com.ddoerr.scriptit.libraries.types.PlayerEntryModel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class ServerLibrary implements LibraryInitializer {
-    @Override
-    public void onInitialize(LibraryRegistry registry) {
-        NamespaceRegistry namespace = registry.registerLibrary("server");
+public class ServerLibrary extends AnnotationBasedModel {
+    MinecraftClient minecraft;
 
-        namespace.registerVariable("name", this::name);
-        namespace.registerVariable("address", this::address);
-        namespace.registerVariable("label", this::label);
-
-        namespace.registerFunction("players", this::players);
+    public ServerLibrary(MinecraftClient minecraft) {
+        this.minecraft = minecraft;
     }
-
-    private Object name(String name, MinecraftClient minecraft) {
+    @Getter
+    public String getName() {
         ServerInfo currentServerEntry = minecraft.getCurrentServerEntry();
         if (currentServerEntry != null) {
             return currentServerEntry.name;
@@ -30,10 +28,11 @@ public class ServerLibrary implements LibraryInitializer {
             return minecraft.getServer().getLevelName();
         }
 
-        return null;
+        return StringUtils.EMPTY;
     }
 
-    private Object address(String name, MinecraftClient minecraft) {
+    @Getter
+    public String getAddress() {
         ServerInfo currentServerEntry = minecraft.getCurrentServerEntry();
         if (currentServerEntry != null) {
             return currentServerEntry.address;
@@ -43,10 +42,11 @@ public class ServerLibrary implements LibraryInitializer {
             return "local";
         }
 
-        return null;
+        return StringUtils.EMPTY;
     }
 
-    private Object label(String name, MinecraftClient minecraft) {
+    @Getter
+    public String getLabel() {
         ServerInfo currentServerEntry = minecraft.getCurrentServerEntry();
         if (currentServerEntry != null) {
             return currentServerEntry.label;
@@ -56,16 +56,17 @@ public class ServerLibrary implements LibraryInitializer {
             return minecraft.getServer().getServerMotd();
         }
 
-        return null;
+        return StringUtils.EMPTY;
     }
 
-    private Object players(String name, MinecraftClient minecraft, Object... arguments) {
+    @Getter
+    public List<PlayerEntryModel> getPlayers() {
         if (minecraft.getNetworkHandler() == null) {
-            return null;
+            return Collections.emptyList();
         }
 
-        return minecraft.getNetworkHandler().getPlayerList()
-                .stream().map(ObjectConverter::convert)
+        return minecraft.getNetworkHandler().getPlayerList().stream()
+                .map(PlayerEntryModel::From)
                 .collect(Collectors.toList());
     }
 }

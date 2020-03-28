@@ -1,9 +1,9 @@
 package com.ddoerr.scriptit.api.dependencies;
 
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.libraries.Library;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface LibraryLoader {
-    Collection<NamespaceRegistry> getLibraries();
+    List<Library> getLibraries();
 }

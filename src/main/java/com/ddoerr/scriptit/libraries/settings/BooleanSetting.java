@@ -1,10 +1,10 @@
 package com.ddoerr.scriptit.libraries.settings;
 
 import com.ddoerr.scriptit.mixin.OptionKeyAccessor;
-import com.ddoerr.scriptit.api.util.ObjectConverter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.BooleanOption;
 
+import java.lang.reflect.Type;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -22,14 +22,23 @@ public class BooleanSetting extends AbstractSetting<Boolean> implements Toggleab
                 (value) -> option.set(minecraft.options, value.toString()));
     }
 
-    @Override
-    public void set(Object object) {
-        setter.accept(ObjectConverter.toBoolean(object));
+    public static BooleanSetting fromOption(BooleanOption option, String name) {
+        MinecraftClient minecraft = MinecraftClient.getInstance();
+
+        return new BooleanSetting(
+                name,
+                () -> option.get(minecraft.options),
+                (value) -> option.set(minecraft.options, value.toString()));
     }
 
     @Override
     public String getPossibleValues() {
         return "true, false";
+    }
+
+    @Override
+    public Type getType() {
+        return boolean.class;
     }
 
     @Override

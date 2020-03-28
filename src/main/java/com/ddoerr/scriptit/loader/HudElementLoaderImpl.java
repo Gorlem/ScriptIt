@@ -2,8 +2,10 @@ package com.ddoerr.scriptit.loader;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
-import com.ddoerr.scriptit.api.hud.*;
 import com.ddoerr.scriptit.api.dependencies.Loadable;
+import com.ddoerr.scriptit.api.hud.HudElementInitializer;
+import com.ddoerr.scriptit.api.hud.HudElementProvider;
+import com.ddoerr.scriptit.api.hud.HudElementRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 

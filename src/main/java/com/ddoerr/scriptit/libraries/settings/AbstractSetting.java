@@ -23,4 +23,9 @@ public abstract class AbstractSetting<T> implements Setting {
     public Object get() {
         return getter.get();
     }
+
+    @Override
+    public void set(Object value) {
+        setter.accept((T)value);
+    }
 }

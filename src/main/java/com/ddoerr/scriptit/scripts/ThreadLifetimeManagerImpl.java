@@ -1,8 +1,8 @@
 package com.ddoerr.scriptit.scripts;
 
+import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import com.ddoerr.scriptit.api.scripts.ThreadLifetimeManager;
 import com.google.common.collect.ImmutableList;
-import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import net.minecraft.util.Tickable;
 
 import java.util.ArrayList;

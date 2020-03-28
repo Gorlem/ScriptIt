@@ -4,12 +4,13 @@ import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.api.dependencies.EventLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
+import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.api.util.DurationHelper;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
-import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
@@ -44,14 +45,34 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private WTabHolder.WTab eventsTab;
     private WTabHolder.WTab durationTab;
 
+    private EventLoader eventLoader;
+    private ScriptManager scriptManager;
+
     public ScriptEditorScreen() {
         super();
+
+        Resolver resolver = Resolver.getInstance();
+
+        try {
+            eventLoader = resolver.resolve(EventLoader.class);
+            scriptManager = resolver.resolve(ScriptManager.class);
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
 
         setupWidgets();
     }
 
     public ScriptEditorScreen(ScriptContainer scriptContainer) {
         super();
+
+        Resolver resolver = Resolver.getInstance();
+        try {
+            eventLoader = resolver.resolve(EventLoader.class);
+            scriptManager = resolver.resolve(ScriptManager.class);
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
 
         this.scriptContainer = scriptContainer;
 
@@ -131,7 +152,6 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     }
 
     private void addEventTriggerTab(WTabHolder tabHolder) {
-        EventLoader eventLoader = Resolver.getInstance().resolve(EventLoader.class);
         List<String> eventsList = eventLoader.getEvents();
 
         eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event").toString()));
@@ -218,7 +238,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private void updateScriptContainer() {
         if (scriptContainer == null) {
             scriptContainer = new ScriptContainer();
-            Resolver.getInstance().resolve(ScriptManager.class).add(scriptContainer);
+            scriptManager.add(scriptContainer);
         }
 
         scriptContainer.setLifeCycle(lifeCycle);

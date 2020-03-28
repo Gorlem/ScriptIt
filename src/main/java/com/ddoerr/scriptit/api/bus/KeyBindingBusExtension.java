@@ -1,23 +1,30 @@
 package com.ddoerr.scriptit.api.bus;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.util.KeyBindingHelper;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
+import com.ddoerr.scriptit.api.util.KeyBindingHelper;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class KeyBindingBusExtension implements Tickable{
     EventBus eventBus;
     Map<String, KeyBinding> keyBindings = new HashMap<>();
 
     public KeyBindingBusExtension() {
-        eventBus = Resolver.getInstance().resolve(EventBus.class);
-        eventBus.subscribe("bus:added", this::newEvent);
-        eventBus.subscribe("bus:removed", this::removedEvent);
+        try {
+            eventBus = Resolver.getInstance().resolve(EventBus.class);
+            eventBus.subscribe("bus:added", this::newEvent);
+            eventBus.subscribe("bus:removed", this::removedEvent);
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
     }
 
     private void newEvent(Object idObject) {

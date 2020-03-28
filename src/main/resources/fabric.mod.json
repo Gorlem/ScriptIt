@@ -20,23 +20,13 @@
       "com.ddoerr.scriptit.ScriptItMod"
     ],
     "scriptit:library": [
-      "com.ddoerr.scriptit.libraries.ServerLibrary",
-      "com.ddoerr.scriptit.libraries.ScriptsLibrary",
-      "com.ddoerr.scriptit.libraries.ChatLibrary",
-      "com.ddoerr.scriptit.libraries.GameLibrary",
-      "com.ddoerr.scriptit.libraries.PlayerLibrary",
-      "com.ddoerr.scriptit.libraries.KeyboardLibrary",
-      "com.ddoerr.scriptit.libraries.JsonLibrary",
-      "com.ddoerr.scriptit.libraries.GuiLibrary",
-      "com.ddoerr.scriptit.libraries.ScoreboardLibrary",
-      "com.ddoerr.scriptit.libraries.OptionsLibrary"
+      "com.ddoerr.scriptit.libraries.DefaultLibraries"
     ],
     "scriptit:language": [
       "com.ddoerr.scriptit.languages.lua.LuaLanguage"
     ],
     "scriptit:hud": [
-      "com.ddoerr.scriptit.elements.IconHudElement",
-      "com.ddoerr.scriptit.elements.TextHudElement"
+      "com.ddoerr.scriptit.elements.DefaultHudElements"
     ],
     "scriptit:event": [
       "com.ddoerr.scriptit.events.ReceivedChatEventDispatcher",

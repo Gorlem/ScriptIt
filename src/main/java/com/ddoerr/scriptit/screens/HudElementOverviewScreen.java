@@ -2,8 +2,9 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
-import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
+import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
@@ -54,12 +55,16 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
     public HudElementOverviewScreen() {
         super();
 
-        hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
-        hudElementLoader = Resolver.getInstance().resolve(HudElementLoader.class);
+        try {
+            hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
+            hudElementLoader = Resolver.getInstance().resolve(HudElementLoader.class);
 
-        hudElements = hudElementManager.getAll();
+            hudElements = hudElementManager.getAll();
 
-        setupWidgets();
+            setupWidgets();
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -6,7 +6,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import spinnery.widget.*;
+import spinnery.widget.WButton;
 import spinnery.widget.api.WFocusedMouseListener;
 
 import java.util.function.Consumer;

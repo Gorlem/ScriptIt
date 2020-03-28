@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.screens.widgets;
 
 import spinnery.client.BaseRenderer;
-import spinnery.widget.*;
+import spinnery.widget.WAbstractWidget;
 import spinnery.widget.api.Color;
 import spinnery.widget.api.WDelegatedEventListener;
 import spinnery.widget.api.WEventListener;

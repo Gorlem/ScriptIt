@@ -1,8 +1,6 @@
 package com.ddoerr.scriptit.elements;
 
-import com.ddoerr.scriptit.api.hud.HudElementInitializer;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
-import com.ddoerr.scriptit.api.hud.HudElementRegistry;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
@@ -10,12 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import org.apache.commons.lang3.StringUtils;
 
-public class TextHudElement implements HudElementInitializer, HudElementProvider {
-    @Override
-    public void onInitialize(HudElementRegistry registry) {
-        registry.registerHudElement("Text", this);
-    }
-
+public class TextHudElement implements HudElementProvider {
     @Override
     public Rectangle render(Point origin, HudElement hudElement) {
         Object lastResult = hudElement.getScriptContainer().getLastResult();

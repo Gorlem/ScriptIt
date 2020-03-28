@@ -2,31 +2,40 @@ package com.ddoerr.scriptit.api.scripts;
 
 import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
-import com.ddoerr.scriptit.api.languages.LanguageImplementation;
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
+import com.ddoerr.scriptit.api.exceptions.DependencyException;
+import com.ddoerr.scriptit.api.languages.Language;
+import com.ddoerr.scriptit.api.libraries.Library;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ScriptBuilder {
-    private LanguageImplementation language;
+public class ScriptBuilder implements Script {
+    private Language language;
     private String path;
     private String content;
-    private List<NamespaceRegistry> registries = new ArrayList<>();
+    private List<Library> libraries = new ArrayList<>();
     private String name;
     private LifeCycle lifeCycle;
 
     private LanguageLoader languageLoader;
+    private ThreadLifetimeManager threadLifetimeManager;
 
     public ScriptBuilder() {
-        languageLoader = Resolver.getInstance().resolve(LanguageLoader.class);
-        language = languageLoader.findByName("lua");
-        name = "main";
-        lifeCycle = LifeCycle.Instant;
+        Resolver resolver = Resolver.getInstance();
+        try {
+            languageLoader = resolver.resolve(LanguageLoader.class);
+            threadLifetimeManager = resolver.resolve(ThreadLifetimeManager.class);
+
+            language = languageLoader.findByName("lua");
+            name = "main";
+            lifeCycle = LifeCycle.Instant;
+        } catch (DependencyException e) {
+            e.printStackTrace();
+        }
     }
 
-    public ScriptBuilder setLanguage(String language) {
+    public ScriptBuilder language(String language) {
         this.language = languageLoader.findByName(language);
         return this;
     }
@@ -43,82 +52,52 @@ public class ScriptBuilder {
         return this;
     }
 
-    public ScriptBuilder withRegistry(NamespaceRegistry registry) {
-        if (registry != null) {
-            registries.add(registry);
+    public ScriptBuilder withLibrary(Library library) {
+        if (library != null) {
+            libraries.add(library);
         }
         return this;
     }
 
-    public ScriptBuilder setName(String name) {
+    public ScriptBuilder name(String name) {
         this.name = name;
         return this;
     }
 
-    public ScriptBuilder setLifeCycle(LifeCycle lifeCycle) {
+    public ScriptBuilder lifeCycle(LifeCycle lifeCycle) {
         this.lifeCycle = lifeCycle;
         return this;
     }
 
-    public Script build() {
-        if (path == null && content == null) {
-            return null;
+    public String run() {
+        switch (lifeCycle) {
+            case Instant:
+                return language.runScriptInstantly(this).format();
+            case Threaded:
+                ScriptThread scriptThread = language.runScriptThreaded(this);
+                threadLifetimeManager.watch(scriptThread);
+                return null;
         }
-
-        return new ScriptImplementation(language, path, content, registries, name, lifeCycle);
+        return null;
     }
 
-    static class ScriptImplementation implements Script {
-        LanguageImplementation language;
-        String path;
-        String content;
-        Collection<NamespaceRegistry> namespaceRegistries;
-        private String name;
-        LifeCycle lifeCycle;
+    @Override
+    public String getFileSource() {
+        return path;
+    }
 
-        public ScriptImplementation(LanguageImplementation language, String path, String content, Collection<NamespaceRegistry> namespaceRegistries, String name, LifeCycle lifeCycle) {
-            this.language = language;
-            this.path = path;
-            this.content = content;
-            this.namespaceRegistries = namespaceRegistries;
-            this.name = name;
-            this.lifeCycle = lifeCycle;
-        }
+    @Override
+    public String getStringSource() {
+        return content;
+    }
 
-        @Override
-        public String getFileSource() {
-            return path;
-        }
+    @Override
+    public Collection<Library> getLibraries() {
+        return libraries;
+    }
 
-        @Override
-        public String getStringSource() {
-            return content;
-        }
-
-        @Override
-        public Collection<NamespaceRegistry> getAdditionalRegistries() {
-            return namespaceRegistries;
-        }
-
-        @Override
-        public Object runInstantly() {
-            if (language == null)
-                return null;
-
-            return language.runScriptInstantly(this);
-        }
-
-        @Override
-        public ScriptThread runThreaded() {
-            if (language == null)
-                return null;
-
-            return language.runScriptThreaded(this);
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
+    @Override
+    public String getName() {
+        return name;
     }
 }

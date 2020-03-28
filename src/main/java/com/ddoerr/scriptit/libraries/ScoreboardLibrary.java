@@ -1,24 +1,42 @@
 package com.ddoerr.scriptit.libraries;
 
-import com.ddoerr.scriptit.api.libraries.LibraryInitializer;
-import com.ddoerr.scriptit.api.libraries.LibraryRegistry;
-import com.ddoerr.scriptit.api.libraries.NamespaceRegistry;
-import com.ddoerr.scriptit.api.util.ObjectConverter;
+import com.ddoerr.scriptit.api.annotations.Getter;
+import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
+import com.ddoerr.scriptit.libraries.types.ObjectiveModel;
+import com.ddoerr.scriptit.libraries.types.TeamModel;
+import net.minecraft.client.MinecraftClient;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ScoreboardLibrary implements LibraryInitializer {
-    @Override
-    public void onInitialize(LibraryRegistry registry) {
-        NamespaceRegistry scoreboard = registry.registerLibrary("scoreboard");
+public class ScoreboardLibrary extends AnnotationBasedModel {
+    MinecraftClient minecraft;
 
-        scoreboard.registerVariable("objectives", (name, mc) -> Optional.ofNullable(mc.world)
-                .map(w -> w.getScoreboard().getObjectives().stream().map(ObjectConverter::convert).collect(Collectors.toList()))
-                .orElse(Collections.emptyList()));
-        scoreboard.registerVariable("teams", (name, mc) -> Optional.ofNullable(mc.world)
-                .map(w -> w.getScoreboard().getTeams().stream().map(ObjectConverter::convert).collect(Collectors.toList()))
-                .orElse(Collections.emptyList()));
+    public ScoreboardLibrary(MinecraftClient minecraft) {
+        this.minecraft = minecraft;
+    }
+
+    @Getter
+    public List<ObjectiveModel> getObjectives() {
+        return Optional.ofNullable(minecraft.world)
+                .map(w -> w.getScoreboard()
+                        .getObjectives()
+                        .stream()
+                        .map(ObjectiveModel::From)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
+
+    @Getter
+    public List<TeamModel> getTeams() {
+        return Optional.ofNullable(minecraft.world)
+                .map(w -> w.getScoreboard()
+                        .getTeams()
+                        .stream()
+                        .map(TeamModel::From)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 }

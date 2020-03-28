@@ -1,9 +1,9 @@
 package com.ddoerr.scriptit.libraries.settings;
 
 import com.ddoerr.scriptit.api.util.GenericEnumHelper;
-import com.ddoerr.scriptit.api.util.ObjectConverter;
 import com.google.common.base.Joiner;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -19,18 +19,13 @@ public class EnumSetting<T extends Enum<T>> extends AbstractSetting<T> implement
     }
 
     @Override
-    public Object get() {
-        return getter.get().name();
-    }
-
-    @Override
-    public void set(Object object) {
-        setter.accept(ObjectConverter.toEnum(enumClass, object));
-    }
-
-    @Override
     public String getPossibleValues() {
         return joiner.join(Arrays.stream(GenericEnumHelper.getValues(enumClass)).map(Enum::name).collect(Collectors.toList()));
+    }
+
+    @Override
+    public Type getType() {
+        return enumClass;
     }
 
     @Override
