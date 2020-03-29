@@ -32,6 +32,9 @@
       "com.ddoerr.scriptit.events.ReceivedChatEventDispatcher",
       "com.ddoerr.scriptit.events.SentChatEventDispatcher",
       "com.ddoerr.scriptit.events.GameJoinEventDispatcher"
+    ],
+    "cotton-client-commands": [
+      "com.ddoerr.scriptit.commands.ScriptItCommand"
     ]
   },
 
@@ -41,6 +44,7 @@
 
   "depends": {
     "fabricloader": ">=0.4.0",
-    "fabric": "*"
+    "fabric": "*",
+    "cotton-client-commands":"^1.0.0"
   }
 }

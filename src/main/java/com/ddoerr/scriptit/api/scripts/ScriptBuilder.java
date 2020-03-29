@@ -5,6 +5,7 @@ import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Library;
+import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,6 +50,13 @@ public class ScriptBuilder implements Script {
     public ScriptBuilder fromFile(String path) {
         this.path = path;
         this.content = null;
+
+        String extension = FilenameUtils.getExtension(path);
+        this.language = languageLoader.getLanguages().stream()
+                .filter(l -> l.getExtensions().contains(extension))
+                .findFirst()
+                .orElse(null);
+
         return this;
     }
 

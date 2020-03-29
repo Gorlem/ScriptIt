@@ -45,6 +45,8 @@ dependencies {
 
 	modCompile "com.github.vini2003:spinnery:2.0.18+fabric-1.15"
 	include "com.github.vini2003:spinnery:2.0.18+fabric-1.15"
+
+	modImplementation "io.github.cottonmc:cotton-client-commands:1.0.0+1.15.2"
 }
 
 processResources {
