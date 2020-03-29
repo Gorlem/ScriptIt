@@ -3,7 +3,6 @@ package com.ddoerr.scriptit.screens;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
-import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.util.Color;
@@ -52,19 +51,15 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
 
     ValuesDropdownWidget<String> dropdown;
 
-    public HudElementOverviewScreen() {
-        super();
+    public HudElementOverviewScreen(ScreenHistory history, HudElementManager hudElementManager, HudElementLoader hudElementLoader) {
+        super(history);
 
-        try {
-            hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
-            hudElementLoader = Resolver.getInstance().resolve(HudElementLoader.class);
+        this.hudElementManager = hudElementManager;
+        this.hudElementLoader = hudElementLoader;
 
-            hudElements = hudElementManager.getAll();
+        this.hudElements = hudElementManager.getAll();
 
-            setupWidgets();
-        } catch (DependencyException e) {
-            e.printStackTrace();
-        }
+        setupWidgets();
     }
 
     @Override
@@ -121,7 +116,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
             Duration duration = Duration.between(lastTimeClicked, timeClicked);
 
             if (duration.compareTo(durationBetweenClicks) < 0) {
-                openScreen(() -> new HudElementEditorScreen(focusedHudElement));
+                openScreen(HudElementEditorScreen.class, focusedHudElement);
             }
         }
 

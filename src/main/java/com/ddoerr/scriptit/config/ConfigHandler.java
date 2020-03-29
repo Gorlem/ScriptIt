@@ -19,13 +19,9 @@ public class ConfigHandler implements ConfigCallback, Loadable {
     private ScriptManager scriptManager;
     private HudElementManager hudElementManager;
 
-    public ConfigHandler() {
-        try {
-            scriptManager = Resolver.getInstance().resolve(ScriptManager.class);
-            hudElementManager = Resolver.getInstance().resolve(HudElementManager.class);
-        } catch (DependencyException e) {
-            e.printStackTrace();
-        }
+    public ConfigHandler(ScriptManager scriptManager, HudElementManager hudElementManager) {
+        this.scriptManager = scriptManager;
+        this.hudElementManager = hudElementManager;
     }
 
     public void save() {

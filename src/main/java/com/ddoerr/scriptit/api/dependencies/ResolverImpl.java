@@ -26,9 +26,18 @@ public class ResolverImpl implements Resolver {
         dependencies.add(this);
     }
 
+    private void add(ResolverImpl resolver) {
+        dependencies.addAll(resolver.dependencies);
+    }
+
     @Override
     public <T> void add(T dependency) {
         dependencies.add(dependency);
+    }
+
+    @Override
+    public <T> void add(Class<T> dependencyClass) throws DependencyException {
+        add(create(dependencyClass));
     }
 
     @Override
@@ -48,38 +57,44 @@ public class ResolverImpl implements Resolver {
     }
 
     @Override
-    public <T> T create(Class<T> type) throws DependencyException {
+    public <T> T create(Class<T> type, Object... parameters) throws DependencyException {
+        ResolverImpl creationResolver = new ResolverImpl();
+        creationResolver.add(this);
+        for (Object parameter : parameters) {
+            creationResolver.add(parameter);
+        }
+
         Constructor<?>[] constructors = type.getConstructors();
 
-        Arrays.sort(constructors, Comparator.comparingInt(Constructor::getParameterCount));
+        Arrays.sort(constructors, Comparator.<Constructor<?>>comparingInt(Constructor::getParameterCount).reversed());
 
-        Constructor<?> choosenConstructor = null;
+        Constructor<?> chosenConstructor = null;
         List<Object> resolvedParameters = new ArrayList<>();
 
         for (Constructor<?> constructor : constructors) {
-            Class<?>[] parameters = constructor.getParameterTypes();
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
             resolvedParameters.clear();
-            for (Class<?> parameter : parameters) {
+            for (Class<?> parameterType : parameterTypes) {
                 try {
-                    resolvedParameters.add(resolve(parameter));
+                    resolvedParameters.add(creationResolver.resolve(parameterType));
                 } catch (Exception e) {
                     break;
                 }
             }
 
-            if (resolvedParameters.size() == parameters.length) {
-                choosenConstructor = constructor;
+            if (resolvedParameters.size() == parameterTypes.length) {
+                chosenConstructor = constructor;
                 break;
             }
         }
 
-        if (choosenConstructor == null) {
+        if (chosenConstructor == null) {
             throw new DependencyException("Can't find resolvable constructor for " + type.getCanonicalName());
         }
 
 
         try {
-            return (T) choosenConstructor.newInstance(resolvedParameters.toArray());
+            return (T) chosenConstructor.newInstance(resolvedParameters.toArray());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
