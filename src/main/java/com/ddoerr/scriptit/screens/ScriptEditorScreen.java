@@ -47,7 +47,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private EventLoader eventLoader;
     private ScriptManager scriptManager;
 
-    public ScriptEditorScreen(ScreenHistory history, Resolver resolver, EventLoader eventLoader, ScriptManager scriptManager) {
+    public ScriptEditorScreen(ScreenHistory history, EventLoader eventLoader, ScriptManager scriptManager) {
         super(history);
 
         this.eventLoader = eventLoader;
