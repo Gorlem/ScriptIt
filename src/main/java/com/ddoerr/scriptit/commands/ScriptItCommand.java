@@ -62,13 +62,11 @@ public class ScriptItCommand implements ClientCommandPlugin {
     }
 
     private int execute(CottonClientCommandSource ctx, String language, String lifeCycle, String script) {
-        String result = new ScriptBuilder()
+        new ScriptBuilder()
                 .language(language)
                 .fromString(script)
                 .lifeCycle(LifeCycle.valueOf(lifeCycle))
                 .run();
-
-        ctx.sendFeedback(new LiteralText(result));
 
         return 1;
     }
