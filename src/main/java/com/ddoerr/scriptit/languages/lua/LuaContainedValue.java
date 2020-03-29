@@ -2,6 +2,7 @@ package com.ddoerr.scriptit.languages.lua;
 
 import com.ddoerr.scriptit.api.languages.ContainedValue;
 import com.ddoerr.scriptit.api.exceptions.ConversionException;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
@@ -28,33 +29,57 @@ public class LuaContainedValue implements ContainedValue {
     }
 
     @Override
-    public String toString() {
-        return value.checkjstring();
+    public String toStr() throws ConversionException {
+        try {
+            return value.checkjstring();
+        } catch (LuaError e) {
+            throw new ConversionException("Cannot convert to String");
+        }
     }
 
     @Override
-    public boolean toBoolean() {
-        return value.checkboolean();
+    public boolean toBoolean() throws ConversionException {
+        try {
+            return value.checkboolean();
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Boolean");
+        }
     }
 
     @Override
-    public float toFloat() {
-        return (float) value.checkdouble();
+    public float toFloat() throws ConversionException {
+        try {
+            return (float) value.checkdouble();
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Float");
+        }
     }
 
     @Override
-    public double toDouble() {
-        return value.checkdouble();
+    public double toDouble() throws ConversionException {
+        try {
+            return value.checkdouble();
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Double");
+        }
     }
 
     @Override
-    public int toInteger() {
-        return value.checkint();
+    public int toInteger() throws ConversionException {
+        try {
+            return value.checkint();
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Integer");
+        }
     }
 
     @Override
-    public <T extends Enum<T>> T toEnum(Class<T> enumType) {
-        return Enum.valueOf(enumType, value.checkjstring());
+    public <T extends Enum<T>> T toEnum(Class<T> enumType) throws ConversionException {
+        try {
+            return Enum.valueOf(enumType, value.checkjstring());
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Enum");
+        }
     }
 
     @Override

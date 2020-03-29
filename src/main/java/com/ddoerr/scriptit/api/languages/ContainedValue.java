@@ -10,7 +10,7 @@ import java.util.Map;
 public interface ContainedValue {
     default Object to(Type type) throws ConversionException {
         if (String.class.equals(type)) {
-            return toString();
+            return toStr();
         } else if (Boolean.class.equals(type) || boolean.class.equals(type)) {
             return toBoolean();
         } else if (Float.class.equals(type) || float.class.equals(type)) {
@@ -35,12 +35,12 @@ public interface ContainedValue {
 
     String format();
 
-    String toString();
-    boolean toBoolean();
-    float toFloat();
-    double toDouble();
-    int toInteger();
-    <T extends Enum<T>> T toEnum(Class<T> enumType);
+    String toStr() throws ConversionException;
+    boolean toBoolean() throws ConversionException;
+    float toFloat() throws ConversionException;
+    double toDouble() throws ConversionException;
+    int toInteger() throws ConversionException;
+    <T extends Enum<T>> T toEnum(Class<T> enumType) throws ConversionException;
     <K, V> Map<K, V> toMap(Type keyType, Type valueType) throws ConversionException;
     <T> List<T> toList(Type entryType) throws ConversionException;
 }
