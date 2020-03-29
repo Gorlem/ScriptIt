@@ -26,32 +26,7 @@ public class SentChatEventDispatcher implements EventInitializer {
         return messageModel.getActionResult();
     }
 
-    static class ChatMessage {
-        private String message;
-        private ActionResult actionResult = ActionResult.PASS;
-
-        public ChatMessage(String text) {
-            this.message = text;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-
-        public void setActionResult(ActionResult actionResult) {
-            this.actionResult = actionResult;
-        }
-
-        public TypedActionResult<String> toTypedResult() {
-            return new TypedActionResult<>(actionResult, message);
-        }
-    }
-
-    static class MessageModel extends AnnotationBasedModel {
+    public static class MessageModel extends AnnotationBasedModel {
         private TypedActionResult<String> actionResult;
         private String message;
 
