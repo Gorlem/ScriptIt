@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.util.geometry.Point;
@@ -22,8 +23,8 @@ public class HudElementEditorScreen extends AbstractHistoryScreen {
     HudHorizontalAnchor horizontalAnchor;
     HudVerticalAnchor verticalAnchor;
 
-    public HudElementEditorScreen(HudElement hudElement) {
-        super();
+    public HudElementEditorScreen(ScreenHistory history, HudElement hudElement) {
+        super(history);
 
         this.hudElement = hudElement;
 
@@ -41,7 +42,7 @@ public class HudElementEditorScreen extends AbstractHistoryScreen {
 
         panel.createChild(WButton.class, Position.of(panel, 10, 10), Size.of(180, 20))
                 .setOnMouseClicked((widget, mouseX, mouseY, mouseButton) -> {
-                    openScreen(() -> new ScriptEditorScreen(hudElement.getScriptContainer()));
+                    openScreen(ScriptEditorScreen.class, hudElement.getScriptContainer());
                 })
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.edit.script").toString()));
 

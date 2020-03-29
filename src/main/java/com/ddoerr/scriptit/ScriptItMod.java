@@ -92,7 +92,7 @@ public class ScriptItMod implements ClientModInitializer {
 
 			ClientTickCallback.EVENT.register(mc -> {
 				if (openGuiKeyBinding.wasPressed()) {
-					history.open(ScriptOverviewScreen::new);
+					history.open(ScriptOverviewScreen.class);
 				}
 
 				if (mc.player != null) {

@@ -4,7 +4,6 @@ import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.api.dependencies.EventLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
-import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.api.util.DurationHelper;
@@ -48,32 +47,20 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private EventLoader eventLoader;
     private ScriptManager scriptManager;
 
-    public ScriptEditorScreen() {
-        super();
+    public ScriptEditorScreen(ScreenHistory history, Resolver resolver, EventLoader eventLoader, ScriptManager scriptManager) {
+        super(history);
 
-        Resolver resolver = Resolver.getInstance();
-
-        try {
-            eventLoader = resolver.resolve(EventLoader.class);
-            scriptManager = resolver.resolve(ScriptManager.class);
-        } catch (DependencyException e) {
-            e.printStackTrace();
-        }
+        this.eventLoader = eventLoader;
+        this.scriptManager = scriptManager;
 
         setupWidgets();
     }
 
-    public ScriptEditorScreen(ScriptContainer scriptContainer) {
-        super();
+    public ScriptEditorScreen(ScreenHistory history, EventLoader eventLoader, ScriptManager scriptManager, ScriptContainer scriptContainer) {
+        super(history);
 
-        Resolver resolver = Resolver.getInstance();
-        try {
-            eventLoader = resolver.resolve(EventLoader.class);
-            scriptManager = resolver.resolve(ScriptManager.class);
-        } catch (DependencyException e) {
-            e.printStackTrace();
-        }
-
+        this.eventLoader = eventLoader;
+        this.scriptManager = scriptManager;
         this.scriptContainer = scriptContainer;
 
         lifeCycle = scriptContainer.getLifeCycle();

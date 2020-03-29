@@ -2,7 +2,6 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
-import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.screens.widgets.PanelWidget;
@@ -18,16 +17,12 @@ import spinnery.widget.api.Size;
 public class ScriptOverviewScreen extends AbstractHistoryScreen {
     private ScriptManager scriptManager;
 
-    public ScriptOverviewScreen() {
-        super();
+    public ScriptOverviewScreen(ScreenHistory history, ScriptManager scriptManager, MinecraftClient minecraft) {
+        super(history);
 
-        try {
-            scriptManager = Resolver.getInstance().resolve(ScriptManager.class);
-        } catch (DependencyException e) {
-            e.printStackTrace();
-        }
+        this.scriptManager = scriptManager;
+        this.minecraft = minecraft;
 
-        minecraft = MinecraftClient.getInstance();
         setupWidgets();
     }
 
@@ -73,7 +68,7 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
         row.createChild(WButton.class)
                 .setSize(Size.of(80, 20))
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.edit").toString()))
-                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> openScreen(() -> new ScriptEditorScreen(scriptContainer)))
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> openScreen(ScriptEditorScreen.class, scriptContainer))
                 .setOnAlign(w -> w.setPosition(Position.ofTopRight(row).add(-175, 0, 0)));
 
         row.createChild(WButton.class)
@@ -101,7 +96,7 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
                 .setSize(Size.of(100, 20))
                 .setOnAlign(w -> w.setPosition(Position.of(panel, 4, 4)))
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.add").toString()))
-                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> openScreen(ScriptEditorScreen::new));
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> openScreen(ScriptEditorScreen.class));
     }
 
     private void setupOpenDesignerButton(WInterface mainInterface) {
@@ -113,6 +108,6 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
                 .setSize(Size.of(100, 20))
                 .setOnAlign(w -> w.setPosition(Position.of(panel, 4, 4)))
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.open").toString()))
-                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> openScreen(HudElementOverviewScreen::new));
+                .setOnMouseClicked((widget, mouseX, mouseY, delta) -> openScreen(HudElementOverviewScreen.class));
     }
 }

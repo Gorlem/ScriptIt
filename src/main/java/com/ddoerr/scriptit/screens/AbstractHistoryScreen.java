@@ -6,17 +6,11 @@ import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.glfw.GLFW;
 import spinnery.client.BaseScreen;
 
-import java.util.function.Supplier;
-
 public class AbstractHistoryScreen extends BaseScreen {
     private ScreenHistory history;
 
-    public AbstractHistoryScreen() {
-        try {
-            history = Resolver.getInstance().resolve(ScreenHistory.class);
-        } catch (DependencyException e) {
-            e.printStackTrace();
-        }
+    public AbstractHistoryScreen(ScreenHistory history) {
+        this.history = history;
     }
 
     @Override
@@ -24,8 +18,8 @@ public class AbstractHistoryScreen extends BaseScreen {
         history.back();
     }
 
-    protected void openScreen(Supplier<Screen> screenSupplier) {
-        history.open(screenSupplier);
+    protected void openScreen(Class<? extends Screen> screenClass, Object... parameters) {
+        history.open(screenClass, parameters);
     }
 
     @Override
