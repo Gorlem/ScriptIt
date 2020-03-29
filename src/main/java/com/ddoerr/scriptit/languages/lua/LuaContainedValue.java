@@ -84,39 +84,47 @@ public class LuaContainedValue implements ContainedValue {
 
     @Override
     public <K, V> Map<K, V> toMap(Type keyType, Type valueType) throws ConversionException {
-        Map<K, V> map = new HashMap<>();
+        try {
+            Map<K, V> map = new HashMap<>();
 
-        LuaValue counter = LuaValue.NIL;
-        Varargs key;
-        while (true) {
-            key = value.next(counter);
-            counter = key.arg(1);
+            LuaValue counter = LuaValue.NIL;
+            Varargs key;
+            while (true) {
+                key = value.next(counter);
+                counter = key.arg(1);
 
-            if (counter == LuaValue.NIL)
-                break;
+                if (counter == LuaValue.NIL)
+                    break;
 
-            map.put(convert(keyType, counter), convert(valueType, key.arg(2)));
+                map.put(convert(keyType, counter), convert(valueType, key.arg(2)));
+            }
+
+            return map;
+        } catch (ConversionException e) {
+            throw new ConversionException("Cannot convert to Map");
         }
-
-        return map;
     }
 
     @Override
     public <T> List<T> toList(Type entryType) throws ConversionException {
-        List<T> list = new ArrayList<>(value.len().toint());
+        try {
+            List<T> list = new ArrayList<>(value.len().toint());
 
-        LuaValue counter = LuaValue.NIL;
-        Varargs key;
-        while (true) {
-            key = value.next(counter);
-            counter = key.arg(1);
+            LuaValue counter = LuaValue.NIL;
+            Varargs key;
+            while (true) {
+                key = value.next(counter);
+                counter = key.arg(1);
 
-            if (counter == LuaValue.NIL)
-                break;
+                if (counter == LuaValue.NIL)
+                    break;
 
-            list.add(counter.toint() - 1, convert(entryType, key.arg(2)));
+                list.add(counter.toint() - 1, convert(entryType, key.arg(2)));
+            }
+
+            return list;
+        } catch (LuaError e) {
+            throw new ConversionException("Cannot convert to List");
         }
-
-        return list;
     }
 }

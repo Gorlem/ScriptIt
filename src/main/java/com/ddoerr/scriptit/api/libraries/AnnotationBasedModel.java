@@ -154,6 +154,11 @@ public abstract class AnnotationBasedModel implements Model {
         for (Method method : methods) {
             try {
                 Type[] parameterTypes = method.getGenericParameterTypes();
+
+                if (parameterTypes.length != values.length) {
+                    continue;
+                }
+
                 for (int i = 0; i < parameterTypes.length; i++) {
                     Type type = parameterTypes[i];
                     parameters.add(values[i].to(type));
