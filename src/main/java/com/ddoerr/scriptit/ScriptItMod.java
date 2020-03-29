@@ -41,6 +41,7 @@ public class ScriptItMod implements ClientModInitializer {
 		Resolver resolver = Resolver.getInstance();
 
 		try {
+			resolver.add(resolver);
 			resolver.add(MinecraftClient.getInstance());
 			resolver.add(ScreenHistory.class);
 			resolver.add(new EventBus());

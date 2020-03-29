@@ -1,6 +1,5 @@
 package com.ddoerr.scriptit.api.dependencies;
 
-import com.ddoerr.scriptit.api.exceptions.ConversionException;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 
 import java.lang.reflect.Constructor;
@@ -22,12 +21,10 @@ public class ResolverImpl implements Resolver {
         return instance;
     }
 
-    public ResolverImpl() {
-        dependencies.add(this);
-    }
-
     private void add(ResolverImpl resolver) {
-        dependencies.addAll(resolver.dependencies);
+        for (Object dependency : resolver.dependencies) {
+            add(dependency);
+        }
     }
 
     @Override
@@ -44,7 +41,8 @@ public class ResolverImpl implements Resolver {
     public <T> T resolve(Class<T> dependencyClass) throws DependencyException {
         return dependencies.stream()
                 .filter(dependencyClass::isInstance)
-                .map(dependencyClass::cast).findFirst()
+                .map(dependencyClass::cast)
+                .findFirst()
                 .orElseThrow(() -> new DependencyException("Can't find implementation for " + dependencyClass.getCanonicalName()));
     }
 
