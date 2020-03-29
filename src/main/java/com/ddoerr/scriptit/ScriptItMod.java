@@ -40,19 +40,23 @@ public class ScriptItMod implements ClientModInitializer {
 	public void onInitializeClient() {
 		Resolver resolver = Resolver.getInstance();
 
-		resolver.add(MinecraftClient.getInstance());
-		resolver.add(new ScreenHistory());
-		resolver.add(new EventBus());
-		resolver.add(new KeyBindingBusExtension());
-		resolver.add(new ThreadLifetimeManagerImpl());
-		resolver.add(new LibraryLoaderImpl());
-		resolver.add(new LanguageLoaderImpl());
-		resolver.add(new HudElementLoaderImpl());
-		resolver.add(new HudElementManagerImpl());
-		resolver.add(new EventLoaderImpl());
-		resolver.add(new ScriptManagerImpl());
+		try {
+			resolver.add(MinecraftClient.getInstance());
+			resolver.add(ScreenHistory.class);
+			resolver.add(new EventBus());
+			resolver.add(KeyBindingBusExtension.class);
+			resolver.add(new ThreadLifetimeManagerImpl());
+			resolver.add(new LibraryLoaderImpl());
+			resolver.add(new LanguageLoaderImpl());
+			resolver.add(new HudElementLoaderImpl());
+			resolver.add(new HudElementManagerImpl());
+			resolver.add(new EventLoaderImpl());
+			resolver.add(new ScriptManagerImpl());
 
-		resolver.add(new ConfigHandler());
+			resolver.add(ConfigHandler.class);
+		} catch (DependencyException e) {
+			e.printStackTrace();
+		}
 
 		FabricKeyBinding openGuiKeyBinding = FabricKeyBinding.Builder.create(
 				new Identifier(MOD_NAME, "open"),

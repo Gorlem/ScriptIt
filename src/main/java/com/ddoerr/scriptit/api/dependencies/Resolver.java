@@ -10,9 +10,10 @@ public interface Resolver {
     }
 
     <T> void add(T dependency);
+    <T> void add(Class<T> dependencyClass) throws DependencyException;
 
     <T> T resolve(Class<T> dependencyClass) throws DependencyException;
     <T> List<T> resolveAll(Class<T> dependencyClass);
 
-    <T> T create(Class<T> type) throws DependencyException;
+    <T> T create(Class<T> type, Object... parameters) throws DependencyException;
 }
