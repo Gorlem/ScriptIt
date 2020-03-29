@@ -22,18 +22,18 @@ public class ScriptContainer {
     }
 
     public ScriptContainer(Trigger trigger) {
-        this.trigger = trigger;
+        setTrigger(trigger);
     }
 
     public ScriptContainer(Trigger trigger, LifeCycle lifeCycle) {
-        this.trigger = trigger;
-        this.lifeCycle = lifeCycle;
+        setTrigger(trigger);
+        setLifeCycle(lifeCycle);
     }
 
     public ScriptContainer(Trigger trigger, LifeCycle lifeCycle, String content) {
-        this.trigger = trigger;
-        this.lifeCycle = lifeCycle;
-        this.content = content;
+        setTrigger(trigger);
+        setLifeCycle(lifeCycle);
+        setContent(content);
     }
 
     public Trigger getTrigger() {
@@ -46,6 +46,7 @@ public class ScriptContainer {
         }
 
         this.trigger = trigger;
+        trigger.setCallback(this::triggerCallback);
     }
 
     public String getContent() {
@@ -72,9 +73,9 @@ public class ScriptContainer {
         this.lifeCycle = lifeCycle;
     }
 
-    public Object run() {
+    public void run() {
         if (isDisabled) {
-            return null;
+            return;
         }
 
         try {
@@ -90,19 +91,15 @@ public class ScriptContainer {
                     new LiteralText("An error occurred while running this script. Script will be disabled until the script is saved again."));
             e.printStackTrace();
         }
-
-        return lastResult;
     }
 
-    public Object runIfPossible() {
-        if (trigger != null && trigger.canRun()) {
-            setLibrary(trigger.getAdditionalLibrary());
-            Object result = run();
-            trigger.reset();
-            return result;
-        }
+    private void triggerCallback(Library library) {
+        setLibrary(library);
+        run();
+    }
 
-        return null;
+    public void checkTrigger() {
+        trigger.check();
     }
 
     @Override

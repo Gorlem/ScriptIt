@@ -125,7 +125,7 @@ public class HudElement extends DrawableHelper implements Tickable, Element, Dra
         if (minecraft.player == null || minecraft.world == null)
             return;
 
-        scriptContainer.runIfPossible();
+        scriptContainer.checkTrigger();
     }
 
     public static Color parseAndRun(String value) {

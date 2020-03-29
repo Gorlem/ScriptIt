@@ -28,7 +28,7 @@ public class ReceivedChatEventDispatcher implements EventInitializer {
         return messageModel.getActionResult();
     }
 
-    static class MessageModel extends AnnotationBasedModel {
+    public static class MessageModel extends AnnotationBasedModel {
         private TypedActionResult<Text> actionResult;
         private Text text;
 

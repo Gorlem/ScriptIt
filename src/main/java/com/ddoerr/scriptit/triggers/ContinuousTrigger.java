@@ -7,10 +7,13 @@ import net.minecraft.util.Pair;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.function.Consumer;
 
 public class ContinuousTrigger implements Trigger {
-    Duration duration;
-    Instant lastActivation = Instant.now();
+    private Duration duration;
+    private Instant lastActivation = Instant.now();
+
+    private Consumer<Library> callback = l -> {};
 
     public ContinuousTrigger() {
         this.duration = Duration.ZERO;
@@ -21,25 +24,22 @@ public class ContinuousTrigger implements Trigger {
     }
 
     @Override
-    public boolean canRun() {
+    public void close() {
+    }
+
+    @Override
+    public void setCallback(Consumer<Library> callback) {
+        this.callback = callback;
+    }
+
+    @Override
+    public void check() {
         Duration between = Duration.between(lastActivation, Instant.now());
 
-        return duration.compareTo(between) < 0;
-    }
-
-    @Override
-    public void reset() {
-        lastActivation = Instant.now();
-    }
-
-    @Override
-    public Library getAdditionalLibrary() {
-        return null;
-    }
-
-    @Override
-    public void close() {
-
+        if (duration.compareTo(between) < 0) {
+            callback.accept(null);
+            lastActivation = Instant.now();
+        }
     }
 
     public Duration getDuration() {
