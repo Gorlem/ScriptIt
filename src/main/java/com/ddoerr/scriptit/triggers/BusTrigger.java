@@ -7,29 +7,25 @@ import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.libraries.Library;
 import com.ddoerr.scriptit.api.util.KeyBindingHelper;
+import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.util.InputUtil;
 
 import java.util.function.Consumer;
 
-public class BusTrigger implements Trigger, Consumer<Object> {
-    boolean shouldActivate = false;
-    Library library = null;
+public class BusTrigger implements Trigger {
     String id;
     Bus<Object> bus;
+    Consumer<Library> callback = l -> {};
+    Consumer<Object> busMessage = o -> callback.accept((Library)o);
 
     public BusTrigger(String id) {
         this.id = id;
         try {
             bus = Resolver.getInstance().resolve(EventBus.class);
-            bus.subscribe(this.id, this);
+            bus.subscribe(this.id, busMessage);
         } catch (DependencyException e) {
             e.printStackTrace();
         }
-    }
-
-    public void activate(Library library) {
-        shouldActivate = true;
-        this.library = library;
     }
 
     public String getId() {
@@ -37,23 +33,17 @@ public class BusTrigger implements Trigger, Consumer<Object> {
     }
 
     @Override
-    public boolean canRun() {
-        return shouldActivate;
-    }
-
-    @Override
-    public void reset() {
-        shouldActivate = false;
-    }
-
-    @Override
-    public Library getAdditionalLibrary() {
-        return library;
-    }
-
-    @Override
     public void close() {
-        bus.unsubscribe(id, this);
+        bus.unsubscribe(id, busMessage);
+    }
+
+    @Override
+    public void setCallback(Consumer<Library> callback) {
+        this.callback = callback;
+    }
+
+    @Override
+    public void check() {
     }
 
     @Override
@@ -62,10 +52,5 @@ public class BusTrigger implements Trigger, Consumer<Object> {
             return "on key " + KeyBindingHelper.getKeyCodeName(InputUtil.fromName(id));
         }
         return "on event " + id;
-    }
-
-    @Override
-    public void accept(Object o) {
-        activate((Library) o);
     }
 }

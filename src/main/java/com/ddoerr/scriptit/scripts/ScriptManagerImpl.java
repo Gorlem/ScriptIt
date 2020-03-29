@@ -27,7 +27,7 @@ public class ScriptManagerImpl implements Tickable, ScriptManager {
     @Override
     public void tick() {
         for (ScriptContainer script : scripts) {
-            script.runIfPossible();
+            script.checkTrigger();
         }
     }
 }
