@@ -5,6 +5,7 @@ import com.ddoerr.scriptit.api.annotations.Getter;
 import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
 import com.ddoerr.scriptit.libraries.clickables.buttons.ButtonHelper;
 import com.ddoerr.scriptit.libraries.clickables.slots.SlotHelper;
+import com.ddoerr.scriptit.libraries.types.InventoryModel;
 import com.ddoerr.scriptit.libraries.types.ItemModel;
 import com.google.common.collect.Lists;
 import net.minecraft.client.MinecraftClient;
@@ -30,6 +31,15 @@ public class GuiLibrary extends AnnotationBasedModel {
     @Getter
     public String getScreen() {
         return Optional.ofNullable(minecraft.currentScreen).map(s -> s.getClass().getSimpleName()).orElse(StringUtils.EMPTY);
+    }
+
+    @Getter
+    public InventoryModel getInventory() {
+        if (minecraft.player == null) {
+            return null;
+        }
+
+        return InventoryModel.From(minecraft.currentScreen, minecraft.player.inventory);
     }
 
     @Getter
