@@ -5,33 +5,35 @@ import com.ddoerr.scriptit.api.annotations.Getter;
 import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
 import com.ddoerr.scriptit.libraries.clickables.slots.SlotHelper;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.container.Container;
 import net.minecraft.container.SlotActionType;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.entity.player.PlayerInventory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class InventoryModel extends AnnotationBasedModel {
-    public static InventoryModel From(Screen screen, Inventory inventory) {
+    public static InventoryModel From(ContainerScreen<?> screen, PlayerInventory inventory) {
         InventoryModel inventoryModel = new InventoryModel();
         inventoryModel.screen = screen;
         inventoryModel.inventory = inventory;
         return inventoryModel;
     }
 
-    private Screen screen;
-    private Inventory inventory;
+    private ContainerScreen<?> screen;
+    private PlayerInventory inventory;
 
     private SlotHelper slotHelper = new SlotHelper();
 
     @Getter
     public List<ItemModel> getSlots() {
-        return null;
+        return screen.getContainer().getStacks().stream().map(ItemModel::From).collect(Collectors.toList());
     }
 
     @Getter
     public ItemModel getActiveStack() {
-        return null;
+        return ItemModel.From(inventory.getCursorStack());
     }
 
     @Callable
