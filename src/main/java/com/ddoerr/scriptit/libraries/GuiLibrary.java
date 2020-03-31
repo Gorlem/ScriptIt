@@ -35,11 +35,11 @@ public class GuiLibrary extends AnnotationBasedModel {
 
     @Getter
     public InventoryModel getInventory() {
-        if (minecraft.player == null) {
+        if (minecraft.player == null || !(minecraft.currentScreen instanceof ContainerScreen<?>)) {
             return null;
         }
 
-        return InventoryModel.From(minecraft.currentScreen, minecraft.player.inventory);
+        return InventoryModel.From((ContainerScreen<?>)minecraft.currentScreen, minecraft.player.inventory);
     }
 
     @Getter
