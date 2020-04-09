@@ -1,7 +1,6 @@
 package com.ddoerr.scriptit.libraries.clickables;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.libraries.clickables.slots.SlotProvider;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.Identifier;
@@ -17,7 +16,7 @@ public abstract class AbstractSpinneryClickablesProvider<W extends WAbstractWidg
 
     public AbstractSpinneryClickablesProvider(Class<W> type) {
         this.type = type;
-        translationKey = this instanceof SlotProvider ? "tooltip.slot" : "tooltip.button";
+        translationKey = "tooltip.button";
     }
 
     protected List<W> getWidgets(BaseScreen screen) {

@@ -11,10 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AnnotationBasedModel implements Model {
     private Map<String, Method> getterMethods = new HashMap<>();
@@ -28,7 +25,13 @@ public abstract class AnnotationBasedModel implements Model {
     }
 
     public void parse() {
-        Method[] methods = this.getClass().getMethods();
+        List<Method> methods = new ArrayList<>();
+        Class<?> modelClass = this.getClass();
+
+        while (modelClass != null) {
+            Collections.addAll(methods, modelClass.getMethods());
+            modelClass = modelClass.getSuperclass();
+        }
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(Callable.class)) {

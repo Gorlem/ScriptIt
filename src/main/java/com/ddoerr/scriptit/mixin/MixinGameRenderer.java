@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.mixin;
 
 import com.ddoerr.scriptit.libraries.clickables.buttons.ButtonHelper;
-import com.ddoerr.scriptit.libraries.clickables.slots.SlotHelper;
+import com.ddoerr.scriptit.libraries.types.inventory.InventoryModel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin({GameRenderer.class})
 public abstract class MixinGameRenderer {
     private ButtonHelper buttonHelper = new ButtonHelper();
-    private SlotHelper slotHelper = new SlotHelper();
 
     @Shadow
     private MinecraftClient client;
@@ -24,6 +23,8 @@ public abstract class MixinGameRenderer {
         int mouseY = (int)(client.mouse.getY() * (double)client.getWindow().getScaledHeight() / (double)client.getWindow().getHeight());
 
         buttonHelper.renderTooltip(client.currentScreen, mouseX, mouseY);
-        slotHelper.renderTooltip(client.currentScreen, mouseX, mouseY);
+        if (client.player != null) {
+            InventoryModel.From(client.currentScreen, client.player.inventory).renderTooltip(mouseX, mouseY);
+        }
     }
 }
