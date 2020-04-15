@@ -20,6 +20,7 @@ public abstract class InventoryModel extends AnnotationBasedModel {
     static {
         inventories.put(CreativeInventoryScreen.class::isInstance, CreativeInventoryModel::new);
         inventories.put(ContainerScreen.class::isInstance, ContainerInventoryModel::new);
+        inventories.put(screen -> true, DefaultInventoryModel::new);
     }
 
     private static InventoryModel noInventoryModel = new NoInventoryModel();
@@ -46,19 +47,26 @@ public abstract class InventoryModel extends AnnotationBasedModel {
     @Getter
     public abstract ItemModel getActiveStack();
 
+
+    @Callable
+    public void click(int slot) {
+        click(slot, ClickType.WholeStack);
+    }
     @Callable
     public void click(int slot, ClickType clickType) {
         click(slot, clickType.button);
     }
-
     @Callable
     public abstract void click(int slot, int button);
 
     @Callable
+    public void drop() {
+        drop(ClickType.WholeStack);
+    }
+    @Callable
     public void drop(ClickType clickType) {
         drop(clickType.button);
     }
-
     @Callable
     public abstract void drop(int button);
 
@@ -66,7 +74,6 @@ public abstract class InventoryModel extends AnnotationBasedModel {
     public void drop(int slot, ClickType clickType) {
         drop(slot, clickType.button == 0 ? 1 : 0);
     }
-
     @Callable
     public abstract void drop(int slot, int button);
 
@@ -95,7 +102,7 @@ public abstract class InventoryModel extends AnnotationBasedModel {
         SingleItem(1),
         Right(1);
 
-        private final int button;
+        protected final int button;
         ClickType(int button) {
             this.button = button;
         }
