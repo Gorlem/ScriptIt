@@ -13,14 +13,13 @@ import net.minecraft.item.ItemStack;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public abstract class InventoryModel extends AnnotationBasedModel {
     private static Map<Predicate<Screen>, BiFunction<Screen, PlayerInventory, InventoryModel>> inventories = new LinkedHashMap<>();
 
     static {
         inventories.put(CreativeInventoryScreen.class::isInstance, CreativeInventoryModel::new);
-        inventories.put(ContainerScreen.class::isInstance, DefaultInventoryModel::new);
+        inventories.put(ContainerScreen.class::isInstance, ContainerInventoryModel::new);
     }
 
     private static InventoryModel noInventoryModel = new NoInventoryModel();

@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-public class CreativeInventoryModel extends DefaultInventoryModel {
+public class CreativeInventoryModel extends ContainerInventoryModel {
     public CreativeInventoryModel(Screen screen, PlayerInventory inventory) {
         super(screen, inventory);
     }

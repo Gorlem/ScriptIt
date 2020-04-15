@@ -16,11 +16,11 @@ import net.minecraft.util.Identifier;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DefaultInventoryModel extends InventoryModel {
+public class ContainerInventoryModel extends InventoryModel {
     protected ContainerScreen<?> screen;
     protected PlayerInventory inventory;
 
-    public DefaultInventoryModel(Screen screen, PlayerInventory inventory) {
+    public ContainerInventoryModel(Screen screen, PlayerInventory inventory) {
         this.screen = (ContainerScreen<?>)screen;
         this.inventory = inventory;
     }
