@@ -10,6 +10,7 @@ import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.callbacks.LateInitCallback;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
 import com.ddoerr.scriptit.loader.EventLoaderImpl;
@@ -33,12 +34,15 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Collection;
 
-public class ScriptItMod implements ClientModInitializer {
+public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 	public static final String MOD_NAME = "scriptit";
+	private Resolver resolver;
 
 	@Override
 	public void onInitializeClient() {
-		Resolver resolver = Resolver.getInstance();
+		LateInitCallback.EVENT.register(this);
+
+		resolver = Resolver.getInstance();
 
 		try {
 			resolver.add(resolver);
@@ -68,25 +72,6 @@ public class ScriptItMod implements ClientModInitializer {
 		KeyBindingRegistry.INSTANCE.addCategory("ScriptIt");
 		KeyBindingRegistry.INSTANCE.register(openGuiKeyBinding);
 
-		Collection<Loadable> loadables = resolver.resolveAll(Loadable.class);
-		for (Loadable loadable : loadables) {
-			loadable.load();
-		}
-
-		try {
-			LanguageLoader languageLoader = resolver.resolve(LanguageLoader.class);
-			LibraryLoader libraryLoader = resolver.resolve(LibraryLoader.class);
-
-			for (Language language : languageLoader.getLanguages()) {
-				for (Library library : libraryLoader.getLibraries()) {
-					language.loadLibrary(library);
-				}
-			}
-		} catch (DependencyException e) {
-			e.printStackTrace();
-		}
-
-
 		try {
 			Collection<Tickable> tickables = resolver.resolveAll(Tickable.class);
 			ScreenHistory history = resolver.resolve(ScreenHistory.class);
@@ -109,6 +94,27 @@ public class ScriptItMod implements ClientModInitializer {
 		try {
 			HudElementManager hudElementManager = resolver.resolve(HudElementManager.class);
 			HudRenderCallback.EVENT.register(delta -> hudElementManager.renderAll());
+		} catch (DependencyException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onLateInitialize(MinecraftClient minecraft) {
+		Collection<Loadable> loadables = resolver.resolveAll(Loadable.class);
+		for (Loadable loadable : loadables) {
+			loadable.load();
+		}
+
+		try {
+			LanguageLoader languageLoader = resolver.resolve(LanguageLoader.class);
+			LibraryLoader libraryLoader = resolver.resolve(LibraryLoader.class);
+
+			for (Language language : languageLoader.getLanguages()) {
+				for (Library library : libraryLoader.getLibraries()) {
+					language.loadLibrary(library);
+				}
+			}
 		} catch (DependencyException e) {
 			e.printStackTrace();
 		}

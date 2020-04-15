@@ -15,6 +15,7 @@
   "scriptit:scripts.triggers.event.values.receivedchat": "Received Chat",
   "scriptit:scripts.triggers.event.values.sentchat": "Sent Chat",
   "scriptit:scripts.triggers.event.values.gamejoin": "Game Join",
+  "scriptit:scripts.triggers.event.values.sound": "Sound",
 
   "scriptit:scripts.triggers.duration": "Duration",
   "scriptit:scripts.triggers.duration.select": "Select a Time Unit",

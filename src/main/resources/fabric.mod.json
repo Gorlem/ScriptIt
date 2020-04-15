@@ -31,7 +31,8 @@
     "scriptit:event": [
       "com.ddoerr.scriptit.events.ReceivedChatEventDispatcher",
       "com.ddoerr.scriptit.events.SentChatEventDispatcher",
-      "com.ddoerr.scriptit.events.GameJoinEventDispatcher"
+      "com.ddoerr.scriptit.events.GameJoinEventDispatcher",
+      "com.ddoerr.scriptit.events.SoundEventDispatcher"
     ],
     "cotton-client-commands": [
       "com.ddoerr.scriptit.commands.ScriptItCommand"
