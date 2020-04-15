@@ -11,6 +11,10 @@ public class PositionModel extends AnnotationBasedModel {
         return positionModel;
     }
 
+    public static PositionModel From(double x, double y, double z) {
+        return From(new Vec3d(x, y, z));
+    }
+
     private Vec3d vector;
 
     @Getter
