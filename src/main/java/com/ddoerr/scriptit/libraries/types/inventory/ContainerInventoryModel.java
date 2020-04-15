@@ -3,6 +3,7 @@ package com.ddoerr.scriptit.libraries.types.inventory;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.libraries.types.ItemModel;
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
+import com.ddoerr.scriptit.ducks.TooltipRenderedDuck;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.resource.language.I18n;
@@ -46,7 +47,7 @@ public class ContainerInventoryModel extends InventoryModel {
             return;
         }
 
-        if ((inventory.getCursorStack().isEmpty() && focusedSlot.hasStack())) {
+        if (((TooltipRenderedDuck) screen).wasTooltipRendered()) {
             mouseY -= 18;
         }
 
