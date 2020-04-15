@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.libraries.clickables.buttons;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.ducks.TooltipRenderedDuck;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.BeaconScreen;
@@ -43,9 +44,10 @@ public class DefaultButtonProvider implements ButtonProvider {
             AbstractPressableButtonWidget button = buttons.get(i);
             if (button.visible && button.isHovered()) {
 
-                if (screen instanceof BeaconScreen) {
+                if (((TooltipRenderedDuck) screen).wasTooltipRendered()) {
                     mouseY -= 18;
                 }
+
                 screen.renderTooltip(I18n.translate(new Identifier(ScriptItMod.MOD_NAME, "tooltip.button").toString(), i), mouseX, mouseY);
             }
         }

@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.libraries.types.inventory;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.ducks.TooltipRenderedDuck;
 import com.ddoerr.scriptit.libraries.types.ItemModel;
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
 import com.ddoerr.scriptit.mixin.CreativeInventoryAccessor;
@@ -14,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-public class CreativeInventoryModel extends DefaultInventoryModel {
+public class CreativeInventoryModel extends ContainerInventoryModel {
     public CreativeInventoryModel(Screen screen, PlayerInventory inventory) {
         super(screen, inventory);
     }
@@ -36,8 +37,7 @@ public class CreativeInventoryModel extends DefaultInventoryModel {
             slotId = ((CreativeInventoryScreen)screen).getContainer().slots.indexOf(focusedSlot);
         }
 
-        Slot deleteItemSlot = ((CreativeInventoryAccessor)screen).getDeleteItemSlot();
-        if ((inventory.getCursorStack().isEmpty() && focusedSlot.hasStack()) || focusedSlot == deleteItemSlot) {
+        if (((TooltipRenderedDuck) screen).wasTooltipRendered()) {
             mouseY -= 18;
         }
 

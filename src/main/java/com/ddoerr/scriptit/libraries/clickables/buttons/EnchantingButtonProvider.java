@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.libraries.clickables.buttons;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.ducks.TooltipRenderedDuck;
 import com.ddoerr.scriptit.mixin.ContainerAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -36,13 +37,7 @@ public class EnchantingButtonProvider implements ButtonProvider {
     public void renderTooltip(Screen screen, int mouseX, int mouseY) {
         for (int i = 0; i < 3; i++) {
             if (((ContainerAccessor)screen).invokeIsPointWithinBounds(60, 14 + 19 * i, 108, 17, mouseX, mouseY)) {
-                EnchantingTableContainer container = ((EnchantingScreen) screen).getContainer();
-
-                int power = container.enchantmentPower[i];
-                int level = container.enchantmentLevel[i];
-                Enchantment enchantment = Enchantment.byRawId(container.enchantmentId[i]);
-
-                if (power > 0 && level >= 0 && enchantment != null) {
+                if (((TooltipRenderedDuck) screen).wasTooltipRendered()) {
                     mouseY -= 18;
                 }
 
