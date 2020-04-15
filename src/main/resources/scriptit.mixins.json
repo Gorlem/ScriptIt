@@ -18,7 +18,8 @@
     "CreativeInventoryAccessor",
     "MixinGameRenderer",
     "OptionKeyAccessor",
-    "StepAccessor"
+    "StepAccessor",
+    "MixinMinecraftClient"
   ],
   "injectors": {
     "defaultRequire": 1
