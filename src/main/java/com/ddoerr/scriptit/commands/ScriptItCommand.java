@@ -9,6 +9,7 @@ import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.mojang.brigadier.CommandDispatcher;
 import io.github.cottonmc.clientcommands.ClientCommandPlugin;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.command.CommandSource;
 import net.minecraft.text.LiteralText;
 
@@ -65,21 +66,30 @@ public class ScriptItCommand implements ClientCommandPlugin {
         if (script.startsWith("\"") && script.endsWith("\"")) {
             script = script.substring(1, script.length() - 1);
         }
-        new ScriptBuilder()
-                .language(language)
-                .fromString(script)
-                .lifeCycle(LifeCycle.valueOf(lifeCycle))
-                .run();
+        try {
+            new ScriptBuilder()
+                    .language(language)
+                    .fromString(script)
+                    .lifeCycle(LifeCycle.valueOf(lifeCycle))
+                    .run();
+        } catch (Exception e) {
+            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
+            e.printStackTrace();
+        }
 
         return 1;
     }
 
     private int execute(CottonClientCommandSource ctx, String file) {
-        new ScriptBuilder()
-                .fromFile(file)
-                .lifeCycle(LifeCycle.Threaded)
-                .run();
-
+        try {
+            new ScriptBuilder()
+                    .fromFile(file)
+                    .lifeCycle(LifeCycle.Threaded)
+                    .run();
+        } catch (Exception e) {
+            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
+            e.printStackTrace();
+        }
         return 1;
     }
 }
