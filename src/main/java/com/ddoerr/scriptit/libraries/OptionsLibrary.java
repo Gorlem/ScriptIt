@@ -8,6 +8,7 @@ import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
 import com.ddoerr.scriptit.libraries.settings.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.*;
+import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.client.tutorial.TutorialStep;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.util.Arm;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class OptionsLibrary extends AnnotationBasedModel {
