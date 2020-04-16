@@ -62,6 +62,9 @@ public class ScriptItCommand implements ClientCommandPlugin {
     }
 
     private int execute(CottonClientCommandSource ctx, String language, String lifeCycle, String script) {
+        if (script.startsWith("\"") && script.endsWith("\"")) {
+            script = script.substring(1, script.length() - 1);
+        }
         new ScriptBuilder()
                 .language(language)
                 .fromString(script)

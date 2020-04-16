@@ -1,24 +1,26 @@
 package com.ddoerr.scriptit.libraries.settings;
 
+import com.ddoerr.scriptit.api.annotations.Callable;
+import com.ddoerr.scriptit.api.annotations.Getter;
+import com.ddoerr.scriptit.api.annotations.Setter;
 import com.ddoerr.scriptit.mixin.OptionKeyAccessor;
 import com.ddoerr.scriptit.mixin.StepAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.DoubleOption;
 import net.minecraft.util.math.MathHelper;
 
-import java.lang.reflect.Type;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class DoubleSetting extends AbstractNumberSetting<Double> {
-    public DoubleSetting(String name, Supplier<Double> getter, Consumer<Double> setter, double minimum, double maximum, double step) {
+public class DoubleSettingModel extends AbstractNumberSettingModel<Double> {
+    public DoubleSettingModel(String name, Supplier<Double> getter, Consumer<Double> setter, double minimum, double maximum, double step) {
         super(name, getter, setter, minimum, maximum, step);
     }
 
-    public static DoubleSetting fromOption(DoubleOption option) {
+    public static DoubleSettingModel fromOption(DoubleOption option) {
         MinecraftClient minecraft = MinecraftClient.getInstance();
 
-        return new DoubleSetting(
+        return new DoubleSettingModel(
                 ((OptionKeyAccessor)option).getKey().substring(8),
                 () -> option.get(minecraft.options),
                 (value) -> option.set(minecraft.options, value),
@@ -27,10 +29,10 @@ public class DoubleSetting extends AbstractNumberSetting<Double> {
                 ((StepAccessor)option).getStep());
     }
 
-    public static DoubleSetting fromOption(DoubleOption option, String name) {
+    public static DoubleSettingModel fromOption(DoubleOption option, String name) {
         MinecraftClient minecraft = MinecraftClient.getInstance();
 
-        return new DoubleSetting(
+        return new DoubleSettingModel(
                 name,
                 () -> option.get(minecraft.options),
                 (value) -> option.set(minecraft.options, value),
@@ -39,26 +41,29 @@ public class DoubleSetting extends AbstractNumberSetting<Double> {
                 ((StepAccessor)option).getStep());
     }
 
+    @Setter
     @Override
-    public void set(Object value) {
-        setter.accept(MathHelper.clamp((double)value, minimum, maximum));
+    public void setValue(Double value) {
+        super.setValue(MathHelper.clamp(value, minimum, maximum));
     }
 
+    @Getter
     @Override
-    public Type getType() {
-        return double.class;
+    public Double getValue() {
+        return super.getValue();
     }
 
+    @Callable
     @Override
-    public Object toggle() {
-        double value = getter.get();
+    public Double toggle() {
+        double value = getValue();
         double next = value + step;
 
         if (next > maximum) {
             next = minimum;
         }
 
-        setter.accept(next);
+        setValue(next);
         return next;
     }
 }

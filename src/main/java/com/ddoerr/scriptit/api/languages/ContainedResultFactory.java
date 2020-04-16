@@ -10,7 +10,9 @@ import java.util.Map;
 
 public interface ContainedResultFactory<T> {
     default T from(Type type, Object value) throws ConversionException {
-        if (String.class.equals(type)) {
+        if (value == null) {
+            return nullValue();
+        } else if (String.class.equals(type)) {
             return fromString((String)value);
         } else if (Boolean.class.equals(type) || boolean.class.equals(type)) {
             return fromBoolean((boolean)value);

@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AnnotationBasedModel implements Model {
     private Map<String, Method> getterMethods = new HashMap<>();
@@ -25,13 +26,18 @@ public abstract class AnnotationBasedModel implements Model {
     }
 
     public void parse() {
-        List<Method> methods = new ArrayList<>();
         Class<?> modelClass = this.getClass();
+        List<Class<?>> classes = new ArrayList<>();
 
         while (modelClass != null) {
-            Collections.addAll(methods, modelClass.getMethods());
+            classes.add(modelClass);
+            Collections.addAll(classes, modelClass.getInterfaces());
             modelClass = modelClass.getSuperclass();
         }
+
+        List<Method> methods = classes.stream()
+                .flatMap(c -> Arrays.stream(c.getMethods()))
+                .collect(Collectors.toList());
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(Callable.class)) {
@@ -72,7 +78,9 @@ public abstract class AnnotationBasedModel implements Model {
             }
         }
 
-        Field[] fields = this.getClass().getFields();
+        List<Field> fields = classes.stream()
+                .flatMap(c -> Arrays.stream(c.getFields()))
+                .collect(Collectors.toList());
 
         for (Field field : fields) {
             if (field.isAnnotationPresent(Getter.class)) {
