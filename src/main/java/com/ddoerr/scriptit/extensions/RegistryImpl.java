@@ -1,12 +1,15 @@
-package com.ddoerr.scriptit.api.registry;
+package com.ddoerr.scriptit.extensions;
 
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
+import com.ddoerr.scriptit.api.registry.Registry;
+import com.ddoerr.scriptit.api.util.Named;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RegistryImpl<T> implements Registry<T> {
     private Map<String, T> registered = new HashMap<>();
@@ -32,7 +35,10 @@ public class RegistryImpl<T> implements Registry<T> {
     }
 
     @Override
-    public List<T> getAll() {
-        return new ArrayList<>(registered.values());
+    public List<Named<T>> getAll() {
+        return registered.entrySet()
+                .stream()
+                .map(e -> Named.of(e))
+                .collect(Collectors.toList());
     }
 }

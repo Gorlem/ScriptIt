@@ -2,21 +2,20 @@ package com.ddoerr.scriptit;
 
 import com.ddoerr.scriptit.api.bus.EventBus;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
-import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
-import com.ddoerr.scriptit.api.dependencies.LibraryLoader;
 import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.languages.Language;
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
+import com.ddoerr.scriptit.api.registry.ExtensionManager;
+import com.ddoerr.scriptit.api.util.Named;
 import com.ddoerr.scriptit.callbacks.LateInitCallback;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
+import com.ddoerr.scriptit.extensions.ExtensionLoader;
 import com.ddoerr.scriptit.loader.EventLoaderImpl;
 import com.ddoerr.scriptit.loader.HudElementLoaderImpl;
-import com.ddoerr.scriptit.loader.LanguageLoaderImpl;
-import com.ddoerr.scriptit.loader.LibraryLoaderImpl;
 import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptOverviewScreen;
 import com.ddoerr.scriptit.scripts.ScriptManagerImpl;
@@ -33,6 +32,7 @@ import net.minecraft.util.Tickable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Collection;
+import java.util.List;
 
 public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 	public static final String MOD_NAME = "scriptit";
@@ -51,8 +51,7 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 			resolver.add(new EventBus());
 			resolver.add(KeyBindingBusExtension.class);
 			resolver.add(new ThreadLifetimeManagerImpl());
-			resolver.add(new LibraryLoaderImpl());
-			resolver.add(new LanguageLoaderImpl());
+			resolver.add(ExtensionLoader.class);
 			resolver.add(new HudElementLoaderImpl());
 			resolver.add(new HudElementManagerImpl());
 			resolver.add(new EventLoaderImpl());
@@ -107,12 +106,14 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 		}
 
 		try {
-			LanguageLoader languageLoader = resolver.resolve(LanguageLoader.class);
-			LibraryLoader libraryLoader = resolver.resolve(LibraryLoader.class);
+			ExtensionManager extensionManager = resolver.resolve(ExtensionManager.class);
 
-			for (Language language : languageLoader.getLanguages()) {
-				for (Library library : libraryLoader.getLibraries()) {
-					language.loadLibrary(library);
+			List<Named<Language>> languages = extensionManager.getAll(Language.class);
+			List<Named<Model>> libraries = extensionManager.getAll(Model.class);
+
+			for (Named<Language> language : languages) {
+				for (Named<Model> library : libraries) {
+					language.getValue().loadLibrary(library.getName(), library.getValue());
 				}
 			}
 		} catch (DependencyException e) {

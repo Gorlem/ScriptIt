@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.api.scripts;
 
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
+import com.ddoerr.scriptit.api.util.Named;
 
 import java.util.Collection;
 
@@ -15,7 +16,7 @@ public interface Script {
     String getFileSource();
     String getStringSource();
 
-    Collection<Library> getLibraries();
+    Collection<Named<Model>> getLibraries();
 
     String getName();
 }

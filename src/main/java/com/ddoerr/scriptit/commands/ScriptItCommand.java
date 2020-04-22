@@ -1,11 +1,12 @@
 package com.ddoerr.scriptit.commands;
 
-import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.languages.Language;
+import com.ddoerr.scriptit.api.registry.ExtensionManager;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
+import com.ddoerr.scriptit.api.util.Named;
 import com.mojang.brigadier.CommandDispatcher;
 import io.github.cottonmc.clientcommands.ClientCommandPlugin;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
@@ -25,9 +26,9 @@ public class ScriptItCommand implements ClientCommandPlugin {
     @Override
     public void registerCommands(CommandDispatcher<CottonClientCommandSource> dispatcher) {
         try {
-            LanguageLoader languageLoader = Resolver.getInstance().resolve(LanguageLoader.class);
+            ExtensionManager extensionManager = Resolver.getInstance().resolve(ExtensionManager.class);
 
-            List<String> languageNames = languageLoader.getLanguages().stream().map(Language::getName).collect(Collectors.toList());
+            List<String> languageNames = extensionManager.getAll(Language.class).stream().map(Named::getName).collect(Collectors.toList());
             List<String> lifeCycles = Arrays.stream(LifeCycle.values()).map(Enum::name).collect(Collectors.toList());
 
             dispatcher.register(literal("scriptit")

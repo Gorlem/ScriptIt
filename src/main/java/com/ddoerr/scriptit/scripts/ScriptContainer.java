@@ -1,8 +1,9 @@
 package com.ddoerr.scriptit.scripts;
 
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
+import com.ddoerr.scriptit.api.util.Named;
 import com.ddoerr.scriptit.triggers.Trigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
@@ -14,7 +15,7 @@ public class ScriptContainer {
     private Trigger trigger;
     private String content = StringUtils.EMPTY;
     private Object lastResult;
-    private Library library;
+    private Named<Model> library;
 
     private boolean isDisabled = false;
 
@@ -61,7 +62,7 @@ public class ScriptContainer {
         return lastResult;
     }
 
-    public void setLibrary(Library library) {
+    public void setLibrary(Named<Model> library) {
         this.library = library;
     }
 
@@ -74,6 +75,7 @@ public class ScriptContainer {
     }
 
     public void run() {
+        MinecraftClient minecraft = MinecraftClient.getInstance();
         if (isDisabled) {
             return;
         }
@@ -86,15 +88,15 @@ public class ScriptContainer {
                     .run();
         } catch (Exception e) {
             disable();
-            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
-            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
-                    new LiteralText("An error occurred while running this script. Script will be disabled until the script is saved again."));
             e.printStackTrace();
+            minecraft.inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
+            minecraft.inGameHud.getChatHud().addMessage(
+                    new LiteralText("An error occurred while running this script. Script will be disabled until the script is saved again."));
         }
     }
 
-    private void triggerCallback(Library library) {
-        setLibrary(library);
+    private void triggerCallback(Model library) {
+        setLibrary(Named.of("event", library));
         run();
     }
 

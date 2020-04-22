@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.triggers;
 
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
 import com.ddoerr.scriptit.api.util.DurationHelper;
 import net.minecraft.util.Pair;
 
@@ -13,7 +13,7 @@ public class ContinuousTrigger implements Trigger {
     private Duration duration;
     private Instant lastActivation = Instant.now();
 
-    private Consumer<Library> callback = l -> {};
+    private Consumer<Model> callback = model -> {};
 
     public ContinuousTrigger() {
         this.duration = Duration.ZERO;
@@ -28,7 +28,7 @@ public class ContinuousTrigger implements Trigger {
     }
 
     @Override
-    public void setCallback(Consumer<Library> callback) {
+    public void setCallback(Consumer<Model> callback) {
         this.callback = callback;
     }
 

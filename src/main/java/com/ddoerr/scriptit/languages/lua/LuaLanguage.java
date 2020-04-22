@@ -1,11 +1,10 @@
 package com.ddoerr.scriptit.languages.lua;
 
 import com.ddoerr.scriptit.api.languages.Language;
-import com.ddoerr.scriptit.api.languages.LanguageInitializer;
-import com.ddoerr.scriptit.api.languages.LanguageRegistry;
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
 import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.api.scripts.ScriptThread;
+import com.ddoerr.scriptit.api.util.Named;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaThread;
@@ -21,7 +20,7 @@ import org.luaj.vm2.lib.jse.JseMathLib;
 import java.util.Collection;
 import java.util.Collections;
 
-public class LuaLanguage implements LanguageInitializer, Language {
+public class LuaLanguage implements Language {
     private static final int MAX_INSTRUCTIONS_PER_TICK = 100;
 
     private Globals globals;
@@ -30,18 +29,10 @@ public class LuaLanguage implements LanguageInitializer, Language {
 
     private LuaContainedResultFactory factory = new LuaContainedResultFactory();
 
-    @Override
-    public void onInitialize(LanguageRegistry registry) {
-        registry.registerLanguage(getName(), this);
-
+    public LuaLanguage() {
         globals = createGlobals();
         extractFunctions(globals);
         globals.finder = new ScriptResourceFinder();
-    }
-
-    @Override
-    public String getName() {
-        return "lua";
     }
 
     @Override
@@ -58,22 +49,22 @@ public class LuaLanguage implements LanguageInitializer, Language {
     }
 
     @Override
-    public void loadLibrary(Library library) {
-        globals.set(library.getName(), factory.fromModel(library.getModel()));
+    public void loadLibrary(String name, Model model) {
+        globals.set(name, factory.fromModel(model));
     }
 
     @Override
     public LuaContainedValue runScriptInstantly(Script script) {
-        Collection<Library> libraries = script.getLibraries();
+        Collection<Named<Model>> libraries = script.getLibraries();
 
-        for (Library library : libraries) {
-            globals.set(library.getName(), factory.fromModel(library.getModel()));
+        for (Named<Model> library : libraries) {
+            globals.set(library.getName(), factory.fromModel(library.getValue()));
         }
 
         LuaValue chunk = loadChunk(script);
         LuaValue result = chunk.call();
 
-        for (Library library : libraries) {
+        for (Named<Model> library : libraries) {
             globals.set(library.getName(), LuaValue.NIL);
         }
 

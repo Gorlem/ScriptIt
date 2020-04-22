@@ -26,7 +26,7 @@ public class EventImpl implements Event {
 
     @Override
     public void dispatch(Model model) {
-        eventBus.publish(name, new LibraryImpl("event", model));
+        eventBus.publish(name, model);
     }
 
     public String getName() {

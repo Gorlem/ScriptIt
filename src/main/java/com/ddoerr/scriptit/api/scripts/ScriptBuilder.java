@@ -1,10 +1,11 @@
 package com.ddoerr.scriptit.api.scripts;
 
-import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.languages.Language;
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
+import com.ddoerr.scriptit.api.registry.ExtensionManager;
+import com.ddoerr.scriptit.api.util.Named;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
@@ -15,20 +16,20 @@ public class ScriptBuilder implements Script {
     private Language language;
     private String path;
     private String content;
-    private List<Library> libraries = new ArrayList<>();
+    private List<Named<Model>> libraries = new ArrayList<>();
     private String name;
     private LifeCycle lifeCycle;
 
-    private LanguageLoader languageLoader;
+    private ExtensionManager extensionManager;
     private ThreadLifetimeManager threadLifetimeManager;
 
     public ScriptBuilder() {
         Resolver resolver = Resolver.getInstance();
         try {
-            languageLoader = resolver.resolve(LanguageLoader.class);
+            extensionManager = resolver.resolve(ExtensionManager.class);
             threadLifetimeManager = resolver.resolve(ThreadLifetimeManager.class);
 
-            language = languageLoader.findByName("lua");
+            language = extensionManager.findByName(Language.class, "lua");
             name = "main";
             lifeCycle = LifeCycle.Instant;
         } catch (DependencyException e) {
@@ -37,7 +38,7 @@ public class ScriptBuilder implements Script {
     }
 
     public ScriptBuilder language(String language) {
-        this.language = languageLoader.findByName(language);
+        this.language = extensionManager.findByName(Language.class, language);
         return this;
     }
 
@@ -52,17 +53,26 @@ public class ScriptBuilder implements Script {
         this.content = null;
 
         String extension = FilenameUtils.getExtension(path);
-        this.language = languageLoader.getLanguages().stream()
-                .filter(l -> l.getExtensions().contains(extension))
+        this.language = extensionManager.getAll(Language.class)
+                .stream()
+                .map(Named::getValue)
+                .filter(language -> language.getExtensions().contains(extension))
                 .findFirst()
                 .orElse(null);
 
         return this;
     }
 
-    public ScriptBuilder withLibrary(Library library) {
+    public ScriptBuilder withLibrary(Named<Model> library) {
         if (library != null) {
             libraries.add(library);
+        }
+        return this;
+    }
+
+    public ScriptBuilder withLibrary(String name, Model model) {
+        if (model != null) {
+            libraries.add(Named.of(name, model));
         }
         return this;
     }
@@ -100,7 +110,7 @@ public class ScriptBuilder implements Script {
     }
 
     @Override
-    public Collection<Library> getLibraries() {
+    public Collection<Named<Model>> getLibraries() {
         return libraries;
     }
 
