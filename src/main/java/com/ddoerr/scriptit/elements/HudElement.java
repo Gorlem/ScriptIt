@@ -5,6 +5,7 @@ import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.util.Color;
+import com.ddoerr.scriptit.api.util.Named;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
@@ -26,7 +27,7 @@ public class HudElement extends DrawableHelper implements Tickable, Element, Dra
     public static final String BACK_COLOR = "back-color";
 
     private Map<String, Object> options = new HashMap<>();
-    private HudElementProvider provider;
+    private Named<HudElementProvider> provider;
     private ScriptContainer scriptContainer;
 
     private double xDifference = 0;
@@ -39,12 +40,12 @@ public class HudElement extends DrawableHelper implements Tickable, Element, Dra
     private HudVerticalAnchor verticalAnchor = HudVerticalAnchor.TOP;
 
 
-    public HudElement(HudElementProvider provider, double xPosition, double yPosition) {
+    public HudElement(Named<HudElementProvider> provider, double xPosition, double yPosition) {
         scriptContainer = new ScriptContainer(new ContinuousTrigger());
 
         this.provider = provider;
 
-        provider.setDefaults(this);
+        provider.getValue().setDefaults(this);
         setRealPosition(new Point(xPosition, yPosition));
     }
 
@@ -107,13 +108,13 @@ public class HudElement extends DrawableHelper implements Tickable, Element, Dra
         return options;
     }
 
-    public HudElementProvider getProvider() {
+    public Named<HudElementProvider> getProvider() {
         return provider;
     }
 
     @Override
     public void render(int var1, int var2, float var3) {
-        Rectangle rectangle = provider.render(getRealPosition(), this);
+        Rectangle rectangle = provider.getValue().render(getRealPosition(), this);
         width = rectangle.getWidth();
         height = rectangle.getHeight();
     }

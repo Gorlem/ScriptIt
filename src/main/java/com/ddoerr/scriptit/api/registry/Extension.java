@@ -1,9 +1,9 @@
 package com.ddoerr.scriptit.api.registry;
 
 import com.ddoerr.scriptit.api.events.Event;
+import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Model;
-import com.ddoerr.scriptit.elements.HudElement;
 
 public interface Extension {
     <T> Extension register(Class<T> registryType, String name, Class<? extends T> model);
@@ -20,7 +20,7 @@ public interface Extension {
         return register(Language.class, name, language);
     }
 
-    default Extension hudElement(String name, Class<? extends HudElement> hudElement) {
-        return register(HudElement.class, name, hudElement);
+    default Extension hudElement(String name, Class<? extends HudElementProvider> hudElement) {
+        return register(HudElementProvider.class, name, hudElement);
     }
 }

@@ -15,7 +15,6 @@ import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
 import com.ddoerr.scriptit.extensions.ExtensionLoader;
 import com.ddoerr.scriptit.loader.EventLoaderImpl;
-import com.ddoerr.scriptit.loader.HudElementLoaderImpl;
 import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptOverviewScreen;
 import com.ddoerr.scriptit.scripts.ScriptManagerImpl;
@@ -52,7 +51,6 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 			resolver.add(KeyBindingBusExtension.class);
 			resolver.add(new ThreadLifetimeManagerImpl());
 			resolver.add(ExtensionLoader.class);
-			resolver.add(new HudElementLoaderImpl());
 			resolver.add(new HudElementManagerImpl());
 			resolver.add(new EventLoaderImpl());
 			resolver.add(new ScriptManagerImpl());

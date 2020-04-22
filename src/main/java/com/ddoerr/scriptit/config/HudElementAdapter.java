@@ -1,11 +1,12 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
+import com.ddoerr.scriptit.api.registry.ExtensionManager;
+import com.ddoerr.scriptit.api.util.Named;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.elements.HudElement;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
@@ -16,11 +17,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeserializer<HudElement> {
-    private HudElementLoader hudElementLoader;
+    private ExtensionManager extensionManager;
 
     public HudElementAdapter() {
         try {
-            hudElementLoader = Resolver.getInstance().resolve(HudElementLoader.class);
+            extensionManager = Resolver.getInstance().resolve(ExtensionManager.class);
         } catch (DependencyException e) {
             e.printStackTrace();
         }
@@ -34,7 +35,7 @@ public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeseri
         anchor.add("horizontal", context.serialize(src.getHorizontalAnchor()));
         anchor.add("vertical", context.serialize(src.getVerticalAnchor()));
 
-        json.addProperty("type", hudElementLoader.getName(src.getProvider()));
+        json.addProperty("type", src.getProvider().getName());
         json.add("relative", context.serialize(src.getRelativePosition()));
         json.add("anchor", anchor);
         json.add("options",  context.serialize(src.getOptions()));
@@ -62,8 +63,8 @@ public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeseri
             options.put(entry.getKey(), value);
         }
 
-        HudElementProvider factory = hudElementLoader.findByName(type);
-        HudElement hudElement = new HudElement(factory, 0, 0);
+        HudElementProvider hudElementProvider = extensionManager.findByName(HudElementProvider.class, type);
+        HudElement hudElement = new HudElement(Named.of(type, hudElementProvider), 0, 0);
         hudElement.setRelativePosition(point);
 
         for (Map.Entry<String, Object> entry : options.entrySet()) {

@@ -1,11 +1,11 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.dependencies.HudElementLoader;
-import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.hud.HudElementProvider;
+import com.ddoerr.scriptit.api.registry.ExtensionManager;
 import com.ddoerr.scriptit.api.util.Color;
+import com.ddoerr.scriptit.api.util.Named;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.elements.HudElement;
@@ -24,12 +24,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HudElementOverviewScreen extends AbstractHistoryScreen {
     HudElement currentlyAdding;
 
     HudElementManager hudElementManager;
-    HudElementLoader hudElementLoader;
+    ExtensionManager extensionManager;
 
     List<HudElement> hudElements;
     HudElement focusedHudElement;
@@ -51,11 +52,11 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
 
     ValuesDropdownWidget<String> dropdown;
 
-    public HudElementOverviewScreen(ScreenHistory history, HudElementManager hudElementManager, HudElementLoader hudElementLoader) {
+    public HudElementOverviewScreen(ScreenHistory history, HudElementManager hudElementManager, ExtensionManager extensionManager) {
         super(history);
 
         this.hudElementManager = hudElementManager;
-        this.hudElementLoader = hudElementLoader;
+        this.extensionManager = extensionManager;
 
         this.hudElements = hudElementManager.getAll();
 
@@ -81,7 +82,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
     }
 
     private void setupDropdown(WInterface mainInterface) {
-        Map<String, HudElementProvider> providers = hudElementLoader.getProviders();
+        List<Named<HudElementProvider>> providers = extensionManager.getAll(HudElementProvider.class);
 
         dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
                 .setTranslationPrefix("elements.values")
@@ -92,11 +93,11 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
                 });
 
         dropdown.setDirection(ValuesDropdownWidget.DropdownDirection.Up);
-        dropdown.addValues(providers.keySet());
+        dropdown.addValues(providers.stream().map(Named::getName).collect(Collectors.toList()));
         dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
         dropdown.setOnChange(key -> {
-            HudElementProvider hudElementProvider = providers.get(key);
-            currentlyAdding = new HudElement(hudElementProvider, MouseUtilities.mouseX, MouseUtilities.mouseY);
+            HudElementProvider hudElementProvider = extensionManager.findByName(HudElementProvider.class, key);
+            currentlyAdding = new HudElement(Named.of(key, hudElementProvider), MouseUtilities.mouseX, MouseUtilities.mouseY);
             currentlyAdding.tick();
         });
     }
