@@ -12,6 +12,7 @@ import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.callbacks.LateInitCallback;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
+import com.ddoerr.scriptit.events.EventManagerImpl;
 import com.ddoerr.scriptit.extensions.ExtensionLoader;
 import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptOverviewScreen;
@@ -43,12 +44,14 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 		try {
 			resolver.add(resolver);
 			resolver.add(MinecraftClient.getInstance());
+
 			resolver.add(ScreenHistory.class);
 			resolver.add(new EventBus());
 			resolver.add(KeyBindingBusExtension.class);
 			resolver.add(new ThreadLifetimeManagerImpl());
 			resolver.add(ScriptItRegistry.class);
 			resolver.add(ExtensionLoader.class);
+			resolver.add(EventManagerImpl.class);
 			resolver.add(new HudElementManagerImpl());
 			resolver.add(new ScriptManagerImpl());
 
