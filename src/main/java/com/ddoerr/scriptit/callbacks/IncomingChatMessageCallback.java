@@ -6,13 +6,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 
-public interface ChatMessageCallback {
-    Event<ChatMessageCallback> EVENT = EventFactory.createArrayBacked(
-            ChatMessageCallback.class,
+public interface IncomingChatMessageCallback {
+    Event<IncomingChatMessageCallback> EVENT = EventFactory.createArrayBacked(
+            IncomingChatMessageCallback.class,
             (listeners) -> (text) -> {
 
-                for (ChatMessageCallback event : listeners) {
-                    TypedActionResult<Text> result = event.onChatMessage(text);
+                for (IncomingChatMessageCallback event : listeners) {
+                    TypedActionResult<Text> result = event.onIncomingChatMessage(text);
 
                     if (result.getResult() != ActionResult.PASS) {
                         return result;
@@ -25,5 +25,5 @@ public interface ChatMessageCallback {
             }
     );
 
-    TypedActionResult<Text> onChatMessage(Text text);
+    TypedActionResult<Text> onIncomingChatMessage(Text text);
 }

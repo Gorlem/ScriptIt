@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.extensions;
+package com.ddoerr.scriptit.extension;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
@@ -6,6 +6,10 @@ import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.registry.*;
 import com.ddoerr.scriptit.elements.IconHudElement;
 import com.ddoerr.scriptit.elements.TextHudElement;
+import com.ddoerr.scriptit.events.GameConnectEvent;
+import com.ddoerr.scriptit.events.ChatIncomingEvent;
+import com.ddoerr.scriptit.events.ChatOutgoingEvent;
+import com.ddoerr.scriptit.events.SoundEvent;
 import com.ddoerr.scriptit.languages.lua.LuaLanguage;
 import com.ddoerr.scriptit.libraries.*;
 import net.minecraft.util.Identifier;
@@ -32,6 +36,11 @@ public class ScriptItExtension implements ExtensionInitializer {
 
             registry.hudElements.add(new Identifier(ScriptItMod.MOD_NAME, "text"), resolver.create(TextHudElement.class));
             registry.hudElements.add(new Identifier(ScriptItMod.MOD_NAME, "icon"), resolver.create(IconHudElement.class));
+
+            registry.events.add(new Identifier(ScriptItMod.MOD_NAME, "game/connect"), resolver.create(GameConnectEvent.class));
+            registry.events.add(new Identifier(ScriptItMod.MOD_NAME, "chat/incoming"), resolver.create(ChatIncomingEvent.class));
+            registry.events.add(new Identifier(ScriptItMod.MOD_NAME, "chat/outgoing"), resolver.create(ChatOutgoingEvent.class));
+            registry.events.add(new Identifier(ScriptItMod.MOD_NAME, "sound"), resolver.create(SoundEvent.class));
         } catch (DependencyException e) {
             e.printStackTrace();
         }

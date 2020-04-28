@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.events;
 
 import com.ddoerr.scriptit.api.annotations.Getter;
+import com.ddoerr.scriptit.api.events.AbstractEvent;
 import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.api.events.EventInitializer;
 import com.ddoerr.scriptit.api.events.EventRegistry;
@@ -12,20 +13,15 @@ import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundCategory;
 
-public class SoundEventDispatcher implements EventInitializer, ListenerSoundInstance {
-    private Event event;
-
-    @Override
-    public void onInitialize(EventRegistry registry) {
-        event = registry.registerEvent("sound");
-
+public class SoundEvent extends AbstractEvent implements ListenerSoundInstance {
+    public SoundEvent() {
         MinecraftClient.getInstance().getSoundManager().registerListener(this);
     }
 
     @Override
     public void onSoundPlayed(SoundInstance sound, WeightedSoundSet soundSet) {
         SoundModel soundModel = new SoundModel(sound);
-        event.dispatch(soundModel);
+        dispatch(soundModel);
     }
 
     public static class SoundModel extends AnnotationBasedModel {

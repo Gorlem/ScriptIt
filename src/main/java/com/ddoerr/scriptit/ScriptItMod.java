@@ -12,7 +12,7 @@ import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.callbacks.LateInitCallback;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
-import com.ddoerr.scriptit.extensions.ExtensionLoader;
+import com.ddoerr.scriptit.extension.ExtensionLoader;
 import com.ddoerr.scriptit.loader.EventLoaderImpl;
 import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptOverviewScreen;

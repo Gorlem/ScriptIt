@@ -20,22 +20,7 @@
       "com.ddoerr.scriptit.ScriptItMod"
     ],
     "scriptit:extensions": [
-      "com.ddoerr.scriptit.extensions.minecraft.MinecraftExtension",
-      "com.ddoerr.scriptit.extensions.base.BaseExtension",
-      "com.ddoerr.scriptit.extensions.converter.ConverterExtension",
-      "com.ddoerr.scriptit.extensions.lua.LuaExtension"
-    ],
-    "scriptit:language": [
-      "com.ddoerr.scriptit.languages.lua.LuaLanguage"
-    ],
-    "scriptit:hud": [
-      "com.ddoerr.scriptit.elements.DefaultHudElements"
-    ],
-    "scriptit:event": [
-      "com.ddoerr.scriptit.events.ReceivedChatEventDispatcher",
-      "com.ddoerr.scriptit.events.SentChatEventDispatcher",
-      "com.ddoerr.scriptit.events.GameJoinEventDispatcher",
-      "com.ddoerr.scriptit.events.SoundEventDispatcher"
+      "com.ddoerr.scriptit.extension.ScriptItExtension"
     ],
     "cotton-client-commands": [
       "com.ddoerr.scriptit.commands.ScriptItCommand"

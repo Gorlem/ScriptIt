@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.mixin;
 
-import com.ddoerr.scriptit.callbacks.SendChatMessageCallback;
+import com.ddoerr.scriptit.callbacks.OutgoingChatMessageCallback;
 import com.ddoerr.scriptit.ducks.TooltipRenderedDuck;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ActionResult;
@@ -19,7 +19,7 @@ public abstract class MixinScreen implements TooltipRenderedDuck {
 
     @ModifyVariable(method = "sendMessage(Ljava/lang/String;Z)V", at = @At(value = "LOAD", ordinal = 1))
     private String modifyMessage(String message) {
-        TypedActionResult<String> result = SendChatMessageCallback.EVENT.invoker().onSendChatMessage(message);
+        TypedActionResult<String> result = OutgoingChatMessageCallback.EVENT.invoker().onOutgoingChatMessage(message);
 
         if (result.getResult() == ActionResult.FAIL) {
             return null;

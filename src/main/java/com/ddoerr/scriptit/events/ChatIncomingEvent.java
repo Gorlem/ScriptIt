@@ -2,29 +2,22 @@ package com.ddoerr.scriptit.events;
 
 import com.ddoerr.scriptit.api.annotations.Callable;
 import com.ddoerr.scriptit.api.annotations.Getter;
-import com.ddoerr.scriptit.api.events.Event;
-import com.ddoerr.scriptit.api.events.EventInitializer;
-import com.ddoerr.scriptit.api.events.EventRegistry;
+import com.ddoerr.scriptit.api.events.AbstractEvent;
 import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
-import com.ddoerr.scriptit.callbacks.ChatMessageCallback;
+import com.ddoerr.scriptit.callbacks.IncomingChatMessageCallback;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypedActionResult;
 
-public class ReceivedChatEventDispatcher implements EventInitializer {
-    Event event;
-
-    @Override
-    public void onInitialize(EventRegistry registry) {
-        event = registry.registerEvent("receivedChat");
-
-        ChatMessageCallback.EVENT.register(this::onChatMessage);
+public class ChatIncomingEvent extends AbstractEvent implements IncomingChatMessageCallback {
+    public ChatIncomingEvent() {
+        IncomingChatMessageCallback.EVENT.register(this);
     }
 
-    public TypedActionResult<Text> onChatMessage(Text text) {
+    public TypedActionResult<Text> onIncomingChatMessage(Text text) {
         MessageModel messageModel = new MessageModel(text);
-        event.dispatch(messageModel);
+        dispatch(messageModel);
         return messageModel.getActionResult();
     }
 
