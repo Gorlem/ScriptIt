@@ -1,11 +1,10 @@
 package com.ddoerr.scriptit.elements;
 
-import com.ddoerr.scriptit.api.hud.HudElementProvider;
+import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.util.Color;
-import com.ddoerr.scriptit.api.util.Named;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
@@ -20,14 +19,14 @@ import net.minecraft.util.Tickable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HudElement extends DrawableHelper implements Tickable, Element, Drawable {
+public class HudElementContainer extends DrawableHelper implements Tickable, Element, Drawable {
     public static final int DEFAULT_PADDING = 2;
 
     public static final String FORE_COLOR = "fore-color";
     public static final String BACK_COLOR = "back-color";
 
     private Map<String, Object> options = new HashMap<>();
-    private Named<HudElementProvider> provider;
+    private HudElement hudElement;
     private ScriptContainer scriptContainer;
 
     private double xDifference = 0;
@@ -40,12 +39,12 @@ public class HudElement extends DrawableHelper implements Tickable, Element, Dra
     private HudVerticalAnchor verticalAnchor = HudVerticalAnchor.TOP;
 
 
-    public HudElement(Named<HudElementProvider> provider, double xPosition, double yPosition) {
+    public HudElementContainer(HudElement hudElement, double xPosition, double yPosition) {
         scriptContainer = new ScriptContainer(new ContinuousTrigger());
 
-        this.provider = provider;
+        this.hudElement = hudElement;
 
-        provider.getValue().setDefaults(this);
+        hudElement.setDefaults(this);
         setRealPosition(new Point(xPosition, yPosition));
     }
 
@@ -108,13 +107,13 @@ public class HudElement extends DrawableHelper implements Tickable, Element, Dra
         return options;
     }
 
-    public Named<HudElementProvider> getProvider() {
-        return provider;
+    public HudElement getHudElement() {
+        return hudElement;
     }
 
     @Override
     public void render(int var1, int var2, float var3) {
-        Rectangle rectangle = provider.getValue().render(getRealPosition(), this);
+        Rectangle rectangle = hudElement.render(getRealPosition(), this);
         width = rectangle.getWidth();
         height = rectangle.getHeight();
     }

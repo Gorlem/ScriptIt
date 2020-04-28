@@ -2,13 +2,12 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.HudElementManager;
-import com.ddoerr.scriptit.api.hud.HudElementProvider;
-import com.ddoerr.scriptit.api.registry.ExtensionManager;
+import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.util.Color;
-import com.ddoerr.scriptit.api.util.Named;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.elements.HudElement;
+import com.ddoerr.scriptit.elements.HudElementContainer;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.TranslatableText;
@@ -27,13 +26,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HudElementOverviewScreen extends AbstractHistoryScreen {
-    HudElement currentlyAdding;
+    HudElementContainer currentlyAdding;
 
     HudElementManager hudElementManager;
-    ExtensionManager extensionManager;
+    ScriptItRegistry registry;
 
-    List<HudElement> hudElements;
-    HudElement focusedHudElement;
+    List<HudElementContainer> hudElementContainers;
+    HudElementContainer focusedHudElement;
     Instant lastTimeClicked = Instant.now();
     Duration durationBetweenClicks = Duration.ofMillis(200);
 
@@ -52,13 +51,13 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
 
     ValuesDropdownWidget<String> dropdown;
 
-    public HudElementOverviewScreen(ScreenHistory history, HudElementManager hudElementManager, ExtensionManager extensionManager) {
+    public HudElementOverviewScreen(ScreenHistory history, HudElementManager hudElementManager, ScriptItRegistry registry) {
         super(history);
 
         this.hudElementManager = hudElementManager;
-        this.extensionManager = extensionManager;
+        this.registry = registry;
 
-        this.hudElements = hudElementManager.getAll();
+        this.hudElementContainers = hudElementManager.getAll();
 
         setupWidgets();
     }
@@ -82,8 +81,6 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
     }
 
     private void setupDropdown(WInterface mainInterface) {
-        List<Named<HudElementProvider>> providers = extensionManager.getAll(HudElementProvider.class);
-
         dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
                 .setTranslationPrefix("elements.values")
                 .setSize(Size.of(200, 20))
@@ -93,11 +90,11 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
                 });
 
         dropdown.setDirection(ValuesDropdownWidget.DropdownDirection.Up);
-        dropdown.addValues(providers.stream().map(Named::getName).collect(Collectors.toList()));
+        dropdown.addValues(registry.hudElements.getIds().stream().map(Identifier::toString).collect(Collectors.toList()));
         dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
         dropdown.setOnChange(key -> {
-            HudElementProvider hudElementProvider = extensionManager.findByName(HudElementProvider.class, key);
-            currentlyAdding = new HudElement(Named.of(key, hudElementProvider), MouseUtilities.mouseX, MouseUtilities.mouseY);
+            HudElement hudElement = registry.hudElements.get(new Identifier(key));
+            currentlyAdding = new HudElementContainer(hudElement, MouseUtilities.mouseX, MouseUtilities.mouseY);
             currentlyAdding.tick();
         });
     }
@@ -124,7 +121,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
         lastTimeClicked = Instant.now();
 
         focusedHudElement = null;
-        for (HudElement hudElement : hudElements) {
+        for (HudElementContainer hudElement : hudElementContainers) {
             if (isMouseOver(hudElement, mouseX, mouseY)) {
                 focusedHudElement = hudElement;
                 break;
@@ -142,7 +139,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
             currentlyAdding.render(0, 0, 0);
         }
 
-        for (HudElement hudElement : hudElements) {
+        for (HudElementContainer hudElement : hudElementContainers) {
             Point point = hudElement.getRealPosition();
             int x = (int) point.getX();
             int y = (int) point.getY();
@@ -219,12 +216,12 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
         return super.mouseDragged(mouseX, mouseY, mouseButton, deltaX, deltaY);
     }
 
-    private void move(HudElement hudElement, double xDelta, double yDelta) {
+    private void move(HudElementContainer hudElement, double xDelta, double yDelta) {
         Point point = hudElement.getRealPosition();
         hudElement.setRealPosition(new Point(point.getX() + xDelta, point.getY() + yDelta));
     }
 
-    public boolean isMouseOver(HudElement hudElement, double x, double y) {
+    public boolean isMouseOver(HudElementContainer hudElement, double x, double y) {
         Point point = hudElement.getRealPosition();
         return x >= point.getX() && x <= point.getX() + hudElement.getWidth() && y >= point.getY() && y <= point.getY() + hudElement.getHeight();
     }

@@ -8,8 +8,7 @@ import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Model;
-import com.ddoerr.scriptit.api.registry.ExtensionManager;
-import com.ddoerr.scriptit.api.util.Named;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.callbacks.LateInitCallback;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
@@ -31,7 +30,6 @@ import net.minecraft.util.Tickable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Collection;
-import java.util.List;
 
 public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 	public static final String MOD_NAME = "scriptit";
@@ -104,14 +102,11 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 		}
 
 		try {
-			ExtensionManager extensionManager = resolver.resolve(ExtensionManager.class);
+			ScriptItRegistry registry = resolver.resolve(ScriptItRegistry.class);
 
-			List<Named<Language>> languages = extensionManager.getAll(Language.class);
-			List<Named<Model>> libraries = extensionManager.getAll(Model.class);
-
-			for (Named<Language> language : languages) {
-				for (Named<Model> library : libraries) {
-					language.getValue().loadLibrary(library.getName(), library.getValue());
+			for (Language language : registry.languages) {
+				for (Model library : registry.libraries) {
+					language.loadLibrary(registry.libraries.getId(library).toString(), library);
 				}
 			}
 		} catch (DependencyException e) {

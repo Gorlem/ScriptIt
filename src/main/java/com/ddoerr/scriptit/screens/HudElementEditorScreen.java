@@ -1,11 +1,10 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.util.geometry.Point;
-import com.ddoerr.scriptit.elements.HudElement;
+import com.ddoerr.scriptit.elements.HudElementContainer;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import com.google.common.collect.Maps;
 import net.minecraft.text.TranslatableText;
@@ -17,13 +16,13 @@ import spinnery.widget.api.Size;
 import java.util.Map;
 
 public class HudElementEditorScreen extends AbstractHistoryScreen {
-    HudElement hudElement;
+    HudElementContainer hudElement;
 
     Map<String, Object> options;
     HudHorizontalAnchor horizontalAnchor;
     HudVerticalAnchor verticalAnchor;
 
-    public HudElementEditorScreen(ScreenHistory history, HudElement hudElement) {
+    public HudElementEditorScreen(ScreenHistory history, HudElementContainer hudElement) {
         super(history);
 
         this.hudElement = hudElement;
@@ -35,7 +34,7 @@ public class HudElementEditorScreen extends AbstractHistoryScreen {
         showSetup(hudElement);
     }
 
-    private void showSetup(HudElement hudElement) {
+    private void showSetup(HudElementContainer hudElement) {
         WInterface mainInterface = getInterface();
         WPanel panel = mainInterface.createChild(WPanel.class, Position.of(0, 0, 0), Size.of(200, 200))
                 .setOnAlign(WAbstractWidget::center);

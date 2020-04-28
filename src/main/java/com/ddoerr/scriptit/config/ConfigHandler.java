@@ -1,13 +1,11 @@
 package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.api.dependencies.Loadable;
-import com.ddoerr.scriptit.api.dependencies.Resolver;
-import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.hud.HudElementManager;
 import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.api.util.Debouncer;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.elements.HudElement;
+import com.ddoerr.scriptit.elements.HudElementContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 
 import java.time.Duration;
@@ -41,7 +39,7 @@ public class ConfigHandler implements ConfigCallback, Loadable {
             scriptManager.add(binding);
         }
 
-        for (HudElement element : configContainer.elements) {
+        for (HudElementContainer element : configContainer.elements) {
             hudElementManager.add(element);
         }
 

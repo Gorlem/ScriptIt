@@ -2,40 +2,40 @@ package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
-import com.ddoerr.scriptit.api.hud.HudElementProvider;
+import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
-import com.ddoerr.scriptit.api.registry.ExtensionManager;
-import com.ddoerr.scriptit.api.util.Named;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.util.geometry.Point;
-import com.ddoerr.scriptit.elements.HudElement;
+import com.ddoerr.scriptit.elements.HudElementContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.google.gson.*;
+import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeserializer<HudElement> {
-    private ExtensionManager extensionManager;
+public class HudElementAdapter implements JsonSerializer<HudElementContainer>, JsonDeserializer<HudElementContainer> {
+    private ScriptItRegistry registry;
 
     public HudElementAdapter() {
         try {
-            extensionManager = Resolver.getInstance().resolve(ExtensionManager.class);
+            registry = Resolver.getInstance().resolve(ScriptItRegistry.class);
         } catch (DependencyException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public JsonElement serialize(HudElement src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(HudElementContainer src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject json = new JsonObject();
 
         JsonObject anchor = new JsonObject();
         anchor.add("horizontal", context.serialize(src.getHorizontalAnchor()));
         anchor.add("vertical", context.serialize(src.getVerticalAnchor()));
 
-        json.addProperty("type", src.getProvider().getName());
+        json.addProperty("type", registry.hudElements.getId(src.getHudElement()).toString());
         json.add("relative", context.serialize(src.getRelativePosition()));
         json.add("anchor", anchor);
         json.add("options",  context.serialize(src.getOptions()));
@@ -45,7 +45,7 @@ public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeseri
     }
 
     @Override
-    public HudElement deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public HudElementContainer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
         String type = jsonObject.getAsJsonPrimitive("type").getAsString();
@@ -63,17 +63,17 @@ public class HudElementAdapter implements JsonSerializer<HudElement>, JsonDeseri
             options.put(entry.getKey(), value);
         }
 
-        HudElementProvider hudElementProvider = extensionManager.findByName(HudElementProvider.class, type);
-        HudElement hudElement = new HudElement(Named.of(type, hudElementProvider), 0, 0);
-        hudElement.setRelativePosition(point);
+        HudElement hudElement = registry.hudElements.get(new Identifier(type));
+        HudElementContainer hudElementContainer = new HudElementContainer(hudElement, 0, 0);
+        hudElementContainer.setRelativePosition(point);
 
         for (Map.Entry<String, Object> entry : options.entrySet()) {
-            hudElement.setOption(entry.getKey(), entry.getValue());
+            hudElementContainer.setOption(entry.getKey(), entry.getValue());
         }
 
-        hudElement.getScriptContainer().setContent(scriptContainer.getContent());
-        hudElement.setAnchor(horizontalAnchor, verticalAnchor);
+        hudElementContainer.getScriptContainer().setContent(scriptContainer.getContent());
+        hudElementContainer.setAnchor(horizontalAnchor, verticalAnchor);
 
-        return hudElement;
+        return hudElementContainer;
     }
 }

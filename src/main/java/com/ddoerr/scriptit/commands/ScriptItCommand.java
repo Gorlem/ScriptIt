@@ -2,17 +2,16 @@ package com.ddoerr.scriptit.commands;
 
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
-import com.ddoerr.scriptit.api.languages.Language;
-import com.ddoerr.scriptit.api.registry.ExtensionManager;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
-import com.ddoerr.scriptit.api.util.Named;
 import com.mojang.brigadier.CommandDispatcher;
 import io.github.cottonmc.clientcommands.ClientCommandPlugin;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.command.CommandSource;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Identifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +25,9 @@ public class ScriptItCommand implements ClientCommandPlugin {
     @Override
     public void registerCommands(CommandDispatcher<CottonClientCommandSource> dispatcher) {
         try {
-            ExtensionManager extensionManager = Resolver.getInstance().resolve(ExtensionManager.class);
+            ScriptItRegistry registry = Resolver.getInstance().resolve(ScriptItRegistry.class);
 
-            List<String> languageNames = extensionManager.getAll(Language.class).stream().map(Named::getName).collect(Collectors.toList());
+            List<String> languageNames = registry.languages.getIds().stream().map(Identifier::toString).collect(Collectors.toList());
             List<String> lifeCycles = Arrays.stream(LifeCycle.values()).map(Enum::name).collect(Collectors.toList());
 
             dispatcher.register(literal("scriptit")

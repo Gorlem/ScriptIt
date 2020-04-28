@@ -4,8 +4,9 @@ import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Model;
-import com.ddoerr.scriptit.api.registry.ExtensionManager;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.util.Named;
+import net.minecraft.util.Identifier;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
@@ -20,16 +21,16 @@ public class ScriptBuilder implements Script {
     private String name;
     private LifeCycle lifeCycle;
 
-    private ExtensionManager extensionManager;
+    private ScriptItRegistry registry;
     private ThreadLifetimeManager threadLifetimeManager;
 
     public ScriptBuilder() {
         Resolver resolver = Resolver.getInstance();
         try {
-            extensionManager = resolver.resolve(ExtensionManager.class);
+            registry = resolver.resolve(ScriptItRegistry.class);
             threadLifetimeManager = resolver.resolve(ThreadLifetimeManager.class);
 
-            language = extensionManager.findByName(Language.class, "lua");
+            language = registry.languages.get(registry.languages.getDefaultId());
             name = "main";
             lifeCycle = LifeCycle.Instant;
         } catch (DependencyException e) {
@@ -38,7 +39,7 @@ public class ScriptBuilder implements Script {
     }
 
     public ScriptBuilder language(String language) {
-        this.language = extensionManager.findByName(Language.class, language);
+        this.language = registry.languages.get(new Identifier(language));
         return this;
     }
 
@@ -53,9 +54,8 @@ public class ScriptBuilder implements Script {
         this.content = null;
 
         String extension = FilenameUtils.getExtension(path);
-        this.language = extensionManager.getAll(Language.class)
+        this.language = registry.languages
                 .stream()
-                .map(Named::getValue)
                 .filter(language -> language.getExtensions().contains(extension))
                 .findFirst()
                 .orElse(null);

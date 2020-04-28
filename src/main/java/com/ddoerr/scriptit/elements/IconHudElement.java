@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.elements;
 
-import com.ddoerr.scriptit.api.hud.HudElementProvider;
+import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
@@ -12,14 +12,14 @@ import net.minecraft.util.registry.Registry;
 
 import static net.minecraft.client.gui.DrawableHelper.fill;
 
-public class IconHudElement implements HudElementProvider {
+public class IconHudElement implements HudElement {
     public static final int ELEMENT_SIZE = 20;
 
     @Override
-    public Rectangle render(Point origin, HudElement hudElement) {
+    public Rectangle render(Point origin, HudElementContainer hudElement) {
         Rectangle rectangle = new Rectangle((int) origin.getX(), (int) origin.getY(), ELEMENT_SIZE, ELEMENT_SIZE);
 
-        Color backColor = HudElement.parseAndRun(hudElement.getOption(HudElement.BACK_COLOR).toString());
+        Color backColor = HudElementContainer.parseAndRun(hudElement.getOption(HudElementContainer.BACK_COLOR).toString());
         if (backColor != null) {
             fill(rectangle.getMinX(), rectangle.getMinY(), rectangle.getMaxX(), rectangle.getMaxY(), backColor.getValue());
         }
@@ -30,7 +30,7 @@ public class IconHudElement implements HudElementProvider {
             DiffuseLighting.enableGuiDepthLighting();
             MinecraftClient.getInstance()
                     .getItemRenderer()
-                    .renderGuiItemIcon(item.getStackForRender(), rectangle.getMinX() + HudElement.DEFAULT_PADDING, rectangle.getMinY() + HudElement.DEFAULT_PADDING);
+                    .renderGuiItemIcon(item.getStackForRender(), rectangle.getMinX() + HudElementContainer.DEFAULT_PADDING, rectangle.getMinY() + HudElementContainer.DEFAULT_PADDING);
         }
         catch (Exception ignored) { }
 
@@ -38,8 +38,8 @@ public class IconHudElement implements HudElementProvider {
     }
 
     @Override
-    public void setDefaults(HudElement hudElement) {
+    public void setDefaults(HudElementContainer hudElement) {
         hudElement.getScriptContainer().setContent("return \"grass_block\"");
-        hudElement.setOption(HudElement.BACK_COLOR, "BLACK 50%");
+        hudElement.setOption(HudElementContainer.BACK_COLOR, "BLACK 50%");
     }
 }

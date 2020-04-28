@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.elements.HudElement;
+import com.ddoerr.scriptit.elements.HudElementContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
@@ -24,7 +24,7 @@ public class Config {
     public Config() {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
-        gsonBuilder.registerTypeAdapter(HudElement.class, new HudElementAdapter());
+        gsonBuilder.registerTypeAdapter(HudElementContainer.class, new HudElementAdapter());
         gsonBuilder.registerTypeAdapter(ScriptContainer.class, new ScriptContainerAdapter());
         gsonBuilder.registerTypeAdapter(Trigger.class, new TriggerAdapter());
         gsonBuilder.registerTypeAdapter(BusTrigger.class, new BusTriggerAdapter());
