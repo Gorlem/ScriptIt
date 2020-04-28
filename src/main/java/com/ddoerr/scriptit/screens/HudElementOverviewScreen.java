@@ -82,7 +82,6 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
 
     private void setupDropdown(WInterface mainInterface) {
         dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
-                .setTranslationPrefix("elements.values")
                 .setSize(Size.of(200, 20))
                 .setOnAlign(w -> {
                    w.setPosition(Position.ofBottomLeft(mainInterface).add(0, -22, 0))

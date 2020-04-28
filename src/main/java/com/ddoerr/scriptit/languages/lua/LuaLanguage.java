@@ -11,10 +11,7 @@ import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaThread;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.CoroutineLib;
-import org.luaj.vm2.lib.DebugLib;
-import org.luaj.vm2.lib.StringLib;
-import org.luaj.vm2.lib.TableLib;
+import org.luaj.vm2.lib.*;
 import org.luaj.vm2.lib.jse.JseBaseLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
 
@@ -52,7 +49,7 @@ public class LuaLanguage implements Language {
 
     @Override
     public void loadLibrary(String name, Model model) {
-        globals.set(name, factory.fromModel(model));
+        globals.package_.setIsLoaded(name, factory.fromModel(model).checktable());
     }
 
     @Override
@@ -114,6 +111,7 @@ public class LuaLanguage implements Language {
         globals.load(new StringLib());
         globals.load(new JseMathLib());
         globals.load(new CoroutineLib());
+        globals.load(new PackageLib());
         return globals;
     }
 }

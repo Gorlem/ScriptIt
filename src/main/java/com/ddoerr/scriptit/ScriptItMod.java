@@ -108,7 +108,8 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 
 			for (Language language : registry.languages) {
 				for (Model library : registry.libraries) {
-					language.loadLibrary(registry.libraries.getId(library).getPath(), library);
+					Identifier identifier = registry.libraries.getId(library);
+					language.loadLibrary(identifier.toString(), library);
 				}
 			}
 		} catch (DependencyException e) {

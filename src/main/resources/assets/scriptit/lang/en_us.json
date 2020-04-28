@@ -31,8 +31,9 @@
   "scriptit:elements.open": "Open Hud Designer",
   "scriptit:elements.add": "Add a Hud Element",
   "scriptit:elements.edit.script": "Edit Script",
-  "scriptit:elements.values.text": "Any Text",
-  "scriptit:elements.values.icon": "Display any Item",
+  
+  "scriptit:text": "Any Text",
+  "scriptit:icon": "Display any Item",
 
   "scriptit:keybinding.default": "§f%s",
   "scriptit:keybinding.conflict": "§c%s",
