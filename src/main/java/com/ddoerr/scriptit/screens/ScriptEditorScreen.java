@@ -2,8 +2,7 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
-import com.ddoerr.scriptit.api.dependencies.EventLoader;
-import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.api.util.DurationHelper;
@@ -29,6 +28,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
     private LifeCycle lifeCycle = LifeCycle.Instant;
@@ -44,22 +44,22 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private WTabHolder.WTab eventsTab;
     private WTabHolder.WTab durationTab;
 
-    private EventLoader eventLoader;
+    private ScriptItRegistry registry;
     private ScriptManager scriptManager;
 
-    public ScriptEditorScreen(ScreenHistory history, EventLoader eventLoader, ScriptManager scriptManager) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptManager scriptManager) {
         super(history);
 
-        this.eventLoader = eventLoader;
+        this.registry = registry;
         this.scriptManager = scriptManager;
 
         setupWidgets();
     }
 
-    public ScriptEditorScreen(ScreenHistory history, EventLoader eventLoader, ScriptManager scriptManager, ScriptContainer scriptContainer) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptManager scriptManager, ScriptContainer scriptContainer) {
         super(history);
 
-        this.eventLoader = eventLoader;
+        this.registry = registry;
         this.scriptManager = scriptManager;
         this.scriptContainer = scriptContainer;
 
@@ -139,7 +139,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     }
 
     private void addEventTriggerTab(WTabHolder tabHolder) {
-        List<String> eventsList = eventLoader.getEvents();
+        List<String> eventsList = registry.events.getIds().stream().map(Identifier::toString).collect(Collectors.toList());
 
         eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event").toString()));
 

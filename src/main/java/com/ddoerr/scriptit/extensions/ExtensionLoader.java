@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.extension;
+package com.ddoerr.scriptit.extensions;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.Loadable;

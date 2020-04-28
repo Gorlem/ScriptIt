@@ -12,8 +12,7 @@ import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.callbacks.LateInitCallback;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
-import com.ddoerr.scriptit.extension.ExtensionLoader;
-import com.ddoerr.scriptit.loader.EventLoaderImpl;
+import com.ddoerr.scriptit.extensions.ExtensionLoader;
 import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptOverviewScreen;
 import com.ddoerr.scriptit.scripts.ScriptManagerImpl;
@@ -48,9 +47,9 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 			resolver.add(new EventBus());
 			resolver.add(KeyBindingBusExtension.class);
 			resolver.add(new ThreadLifetimeManagerImpl());
+			resolver.add(ScriptItRegistry.class);
 			resolver.add(ExtensionLoader.class);
 			resolver.add(new HudElementManagerImpl());
-			resolver.add(new EventLoaderImpl());
 			resolver.add(new ScriptManagerImpl());
 
 			resolver.add(ConfigHandler.class);
@@ -106,7 +105,7 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 
 			for (Language language : registry.languages) {
 				for (Model library : registry.libraries) {
-					language.loadLibrary(registry.libraries.getId(library).toString(), library);
+					language.loadLibrary(registry.libraries.getId(library).getPath(), library);
 				}
 			}
 		} catch (DependencyException e) {

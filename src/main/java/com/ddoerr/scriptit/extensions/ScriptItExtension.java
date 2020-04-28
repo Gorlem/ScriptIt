@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.extension;
+package com.ddoerr.scriptit.extensions;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
@@ -24,14 +24,13 @@ public class ScriptItExtension implements ExtensionInitializer {
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "scripts"), resolver.create(ScriptsLibrary.class));
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "json"), resolver.create(JsonLibrary.class));
 
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "player"), resolver.create(PlayerLibrary.class));
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "chat"), resolver.create(ChatLibrary.class));
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "game"), resolver.create(GameLibrary.class));
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "gui"), resolver.create(GuiLibrary.class));
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "keyboard"), resolver.create(KeyboardLibrary.class));
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "options"), resolver.create(OptionsLibrary.class));
+            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "player"), resolver.create(PlayerLibrary.class));
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "scoreboard"), resolver.create(ScoreboardLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "server"), resolver.create(ServerLibrary.class));
             registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "server"), resolver.create(ServerLibrary.class));
 
             registry.hudElements.add(new Identifier(ScriptItMod.MOD_NAME, "text"), resolver.create(TextHudElement.class));
