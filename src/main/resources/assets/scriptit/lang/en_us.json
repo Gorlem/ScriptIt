@@ -12,10 +12,11 @@
 
   "scriptit:scripts.triggers.event": "Event",
   "scriptit:scripts.triggers.event.select": "Select an Event",
-  "scriptit:scripts.triggers.event.values.receivedchat": "Received Chat",
-  "scriptit:scripts.triggers.event.values.sentchat": "Sent Chat",
-  "scriptit:scripts.triggers.event.values.gamejoin": "Game Join",
-  "scriptit:scripts.triggers.event.values.sound": "Sound",
+
+  "scriptit:chat/incoming": "Incoming Chat",
+  "scriptit:chat/outgoing": "Outgoing Chat",
+  "scriptit:game/connect": "Connect",
+  "scriptit:sound": "Sound",
 
   "scriptit:scripts.triggers.duration": "Duration",
   "scriptit:scripts.triggers.duration.select": "Select a Time Unit",
