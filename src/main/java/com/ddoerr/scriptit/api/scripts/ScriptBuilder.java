@@ -5,19 +5,16 @@ import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Model;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
-import com.ddoerr.scriptit.api.util.Named;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FilenameUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 public class ScriptBuilder implements Script {
     private Language language;
-    private String path;
-    private String content;
-    private List<Named<Model>> libraries = new ArrayList<>();
+    private ScriptSource scriptSource;
+    private Map<String, Model> libraries = new HashMap<>();
     private String name;
     private LifeCycle lifeCycle;
 
@@ -44,14 +41,12 @@ public class ScriptBuilder implements Script {
     }
 
     public ScriptBuilder fromString(String content) {
-        this.content = content;
-        this.path = null;
+        this.scriptSource = ScriptSource.From(content);
         return this;
     }
 
     public ScriptBuilder fromFile(String path) {
-        this.path = path;
-        this.content = null;
+        this.scriptSource = ScriptSource.From(new File(path));
 
         String extension = FilenameUtils.getExtension(path);
         this.language = registry.languages
@@ -63,16 +58,9 @@ public class ScriptBuilder implements Script {
         return this;
     }
 
-    public ScriptBuilder withLibrary(Named<Model> library) {
-        if (library != null) {
-            libraries.add(library);
-        }
-        return this;
-    }
-
     public ScriptBuilder withLibrary(String name, Model model) {
         if (model != null) {
-            libraries.add(Named.of(name, model));
+            libraries.put(name, model);
         }
         return this;
     }
@@ -100,17 +88,12 @@ public class ScriptBuilder implements Script {
     }
 
     @Override
-    public String getFileSource() {
-        return path;
+    public ScriptSource getScriptSource() {
+        return scriptSource;
     }
 
     @Override
-    public String getStringSource() {
-        return content;
-    }
-
-    @Override
-    public Collection<Named<Model>> getLibraries() {
+    public Map<String, Model> getLibraries() {
         return libraries;
     }
 

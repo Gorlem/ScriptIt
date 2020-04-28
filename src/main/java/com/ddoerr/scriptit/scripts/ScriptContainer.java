@@ -3,11 +3,11 @@ package com.ddoerr.scriptit.scripts;
 import com.ddoerr.scriptit.api.libraries.Model;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
-import com.ddoerr.scriptit.api.util.Named;
 import com.ddoerr.scriptit.triggers.Trigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 
 public class ScriptContainer {
@@ -15,7 +15,7 @@ public class ScriptContainer {
     private Trigger trigger;
     private String content = StringUtils.EMPTY;
     private Object lastResult;
-    private Named<Model> library;
+    private Pair<String, Model> library;
 
     private boolean isDisabled = false;
 
@@ -62,8 +62,8 @@ public class ScriptContainer {
         return lastResult;
     }
 
-    public void setLibrary(Named<Model> library) {
-        this.library = library;
+    public void setLibrary(String name, Model library) {
+        this.library = new Pair<>(name, library);
     }
 
     public LifeCycle getLifeCycle() {
@@ -83,7 +83,7 @@ public class ScriptContainer {
         try {
             lastResult = new ScriptBuilder()
                     .fromString(content)
-                    .withLibrary(library)
+                    .withLibrary(library.getLeft(), library.getRight())
                     .lifeCycle(lifeCycle)
                     .run();
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class ScriptContainer {
     }
 
     private void triggerCallback(Model library) {
-        setLibrary(Named.of("event", library));
+        setLibrary("event", library);
         run();
     }
 

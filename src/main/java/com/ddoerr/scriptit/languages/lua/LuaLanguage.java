@@ -2,9 +2,10 @@ package com.ddoerr.scriptit.languages.lua;
 
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Model;
+import com.ddoerr.scriptit.api.scripts.FileScriptSource;
 import com.ddoerr.scriptit.api.scripts.Script;
+import com.ddoerr.scriptit.api.scripts.ScriptSource;
 import com.ddoerr.scriptit.api.scripts.ScriptThread;
-import com.ddoerr.scriptit.api.util.Named;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaThread;
@@ -19,6 +20,7 @@ import org.luaj.vm2.lib.jse.JseMathLib;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 public class LuaLanguage implements Language {
     private static final int MAX_INSTRUCTIONS_PER_TICK = 100;
@@ -55,17 +57,17 @@ public class LuaLanguage implements Language {
 
     @Override
     public LuaContainedValue runScriptInstantly(Script script) {
-        Collection<Named<Model>> libraries = script.getLibraries();
+        Map<String, Model> libraries = script.getLibraries();
 
-        for (Named<Model> library : libraries) {
-            globals.set(library.getName(), factory.fromModel(library.getValue()));
+        for (Map.Entry<String, Model> library : libraries.entrySet()) {
+            globals.set(library.getKey(), factory.fromModel(library.getValue()));
         }
 
         LuaValue chunk = loadChunk(script);
         LuaValue result = chunk.call();
 
-        for (Named<Model> library : libraries) {
-            globals.set(library.getName(), LuaValue.NIL);
+        for (String libraryName : libraries.keySet()) {
+            globals.set(libraryName, LuaValue.NIL);
         }
 
         return new LuaContainedValue(result);
@@ -87,13 +89,13 @@ public class LuaLanguage implements Language {
     }
 
     private LuaValue loadChunk(Script script) {
-        if (script.hasStringSource())
-            return globals.load(script.getStringSource(), script.getName());
+        ScriptSource scriptSource = script.getScriptSource();
 
-        if (script.hasFileSource())
-            return globals.loadfile(script.getFileSource());
-
-        return LuaValue.NIL;
+        if (scriptSource instanceof FileScriptSource) {
+            return globals.loadfile(((FileScriptSource)scriptSource).getFilePath());
+        } else {
+            return globals.load(scriptSource.getContent(), script.getName());
+        }
     }
 
     private Globals createGlobals() {
