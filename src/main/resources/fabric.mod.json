@@ -19,20 +19,8 @@
     "client": [
       "com.ddoerr.scriptit.ScriptItMod"
     ],
-    "scriptit:library": [
-      "com.ddoerr.scriptit.libraries.DefaultLibraries"
-    ],
-    "scriptit:language": [
-      "com.ddoerr.scriptit.languages.lua.LuaLanguage"
-    ],
-    "scriptit:hud": [
-      "com.ddoerr.scriptit.elements.DefaultHudElements"
-    ],
-    "scriptit:event": [
-      "com.ddoerr.scriptit.events.ReceivedChatEventDispatcher",
-      "com.ddoerr.scriptit.events.SentChatEventDispatcher",
-      "com.ddoerr.scriptit.events.GameJoinEventDispatcher",
-      "com.ddoerr.scriptit.events.SoundEventDispatcher"
+    "scriptit:extensions": [
+      "com.ddoerr.scriptit.extensions.ScriptItExtension"
     ],
     "cotton-client-commands": [
       "com.ddoerr.scriptit.commands.ScriptItCommand"

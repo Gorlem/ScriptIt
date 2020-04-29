@@ -5,13 +5,13 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 
-public interface SendChatMessageCallback {
-    Event<SendChatMessageCallback> EVENT = EventFactory.createArrayBacked(
-            SendChatMessageCallback.class,
+public interface OutgoingChatMessageCallback {
+    Event<OutgoingChatMessageCallback> EVENT = EventFactory.createArrayBacked(
+            OutgoingChatMessageCallback.class,
             (listeners) -> (message) -> {
 
-                for (SendChatMessageCallback event : listeners) {
-                    TypedActionResult<String> result = event.onSendChatMessage(message);
+                for (OutgoingChatMessageCallback event : listeners) {
+                    TypedActionResult<String> result = event.onOutgoingChatMessage(message);
 
                     if (result.getResult() != ActionResult.PASS) {
                         return result;
@@ -24,5 +24,5 @@ public interface SendChatMessageCallback {
             }
     );
 
-    TypedActionResult<String> onSendChatMessage(String message);
+    TypedActionResult<String> onOutgoingChatMessage(String message);
 }

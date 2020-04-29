@@ -1,27 +1,25 @@
 package com.ddoerr.scriptit.languages.lua;
 
 import com.ddoerr.scriptit.api.languages.Language;
-import com.ddoerr.scriptit.api.languages.LanguageInitializer;
-import com.ddoerr.scriptit.api.languages.LanguageRegistry;
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
+import com.ddoerr.scriptit.api.scripts.FileScriptSource;
 import com.ddoerr.scriptit.api.scripts.Script;
+import com.ddoerr.scriptit.api.scripts.ScriptSource;
 import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaThread;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.CoroutineLib;
-import org.luaj.vm2.lib.DebugLib;
-import org.luaj.vm2.lib.StringLib;
-import org.luaj.vm2.lib.TableLib;
+import org.luaj.vm2.lib.*;
 import org.luaj.vm2.lib.jse.JseBaseLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
-public class LuaLanguage implements LanguageInitializer, Language {
+public class LuaLanguage implements Language {
     private static final int MAX_INSTRUCTIONS_PER_TICK = 100;
 
     private Globals globals;
@@ -30,18 +28,10 @@ public class LuaLanguage implements LanguageInitializer, Language {
 
     private LuaContainedResultFactory factory = new LuaContainedResultFactory();
 
-    @Override
-    public void onInitialize(LanguageRegistry registry) {
-        registry.registerLanguage(getName(), this);
-
+    public LuaLanguage() {
         globals = createGlobals();
         extractFunctions(globals);
         globals.finder = new ScriptResourceFinder();
-    }
-
-    @Override
-    public String getName() {
-        return "lua";
     }
 
     @Override
@@ -58,23 +48,23 @@ public class LuaLanguage implements LanguageInitializer, Language {
     }
 
     @Override
-    public void loadLibrary(Library library) {
-        globals.set(library.getName(), factory.fromModel(library.getModel()));
+    public void loadLibrary(String name, Model model) {
+        globals.package_.setIsLoaded(name, factory.fromModel(model).checktable());
     }
 
     @Override
     public LuaContainedValue runScriptInstantly(Script script) {
-        Collection<Library> libraries = script.getLibraries();
+        Map<String, Model> libraries = script.getLibraries();
 
-        for (Library library : libraries) {
-            globals.set(library.getName(), factory.fromModel(library.getModel()));
+        for (Map.Entry<String, Model> library : libraries.entrySet()) {
+            globals.set(library.getKey(), factory.fromModel(library.getValue()));
         }
 
         LuaValue chunk = loadChunk(script);
         LuaValue result = chunk.call();
 
-        for (Library library : libraries) {
-            globals.set(library.getName(), LuaValue.NIL);
+        for (String libraryName : libraries.keySet()) {
+            globals.set(libraryName, LuaValue.NIL);
         }
 
         return new LuaContainedValue(result);
@@ -96,13 +86,13 @@ public class LuaLanguage implements LanguageInitializer, Language {
     }
 
     private LuaValue loadChunk(Script script) {
-        if (script.hasStringSource())
-            return globals.load(script.getStringSource(), script.getName());
+        ScriptSource scriptSource = script.getScriptSource();
 
-        if (script.hasFileSource())
-            return globals.loadfile(script.getFileSource());
-
-        return LuaValue.NIL;
+        if (scriptSource instanceof FileScriptSource) {
+            return globals.loadfile(((FileScriptSource)scriptSource).getFilePath());
+        } else {
+            return globals.load(scriptSource.getContent(), script.getName());
+        }
     }
 
     private Globals createGlobals() {
@@ -121,6 +111,7 @@ public class LuaLanguage implements LanguageInitializer, Language {
         globals.load(new StringLib());
         globals.load(new JseMathLib());
         globals.load(new CoroutineLib());
+        globals.load(new PackageLib());
         return globals;
     }
 }

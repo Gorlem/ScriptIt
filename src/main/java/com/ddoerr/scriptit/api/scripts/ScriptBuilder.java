@@ -1,34 +1,33 @@
 package com.ddoerr.scriptit.api.scripts;
 
-import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.languages.Language;
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
+import net.minecraft.util.Identifier;
 import org.apache.commons.io.FilenameUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 public class ScriptBuilder implements Script {
     private Language language;
-    private String path;
-    private String content;
-    private List<Library> libraries = new ArrayList<>();
+    private ScriptSource scriptSource;
+    private Map<String, Model> libraries = new HashMap<>();
     private String name;
     private LifeCycle lifeCycle;
 
-    private LanguageLoader languageLoader;
+    private ScriptItRegistry registry;
     private ThreadLifetimeManager threadLifetimeManager;
 
     public ScriptBuilder() {
         Resolver resolver = Resolver.getInstance();
         try {
-            languageLoader = resolver.resolve(LanguageLoader.class);
+            registry = resolver.resolve(ScriptItRegistry.class);
             threadLifetimeManager = resolver.resolve(ThreadLifetimeManager.class);
 
-            language = languageLoader.findByName("lua");
+            language = registry.languages.get(registry.languages.getDefaultId());
             name = "main";
             lifeCycle = LifeCycle.Instant;
         } catch (DependencyException e) {
@@ -37,32 +36,31 @@ public class ScriptBuilder implements Script {
     }
 
     public ScriptBuilder language(String language) {
-        this.language = languageLoader.findByName(language);
+        this.language = registry.languages.get(new Identifier(language));
         return this;
     }
 
     public ScriptBuilder fromString(String content) {
-        this.content = content;
-        this.path = null;
+        this.scriptSource = ScriptSource.From(content);
         return this;
     }
 
     public ScriptBuilder fromFile(String path) {
-        this.path = path;
-        this.content = null;
+        this.scriptSource = ScriptSource.From(new File(path));
 
         String extension = FilenameUtils.getExtension(path);
-        this.language = languageLoader.getLanguages().stream()
-                .filter(l -> l.getExtensions().contains(extension))
+        this.language = registry.languages
+                .stream()
+                .filter(language -> language.getExtensions().contains(extension))
                 .findFirst()
                 .orElse(null);
 
         return this;
     }
 
-    public ScriptBuilder withLibrary(Library library) {
-        if (library != null) {
-            libraries.add(library);
+    public ScriptBuilder withLibrary(String name, Model model) {
+        if (model != null) {
+            libraries.put(name, model);
         }
         return this;
     }
@@ -90,17 +88,12 @@ public class ScriptBuilder implements Script {
     }
 
     @Override
-    public String getFileSource() {
-        return path;
+    public ScriptSource getScriptSource() {
+        return scriptSource;
     }
 
     @Override
-    public String getStringSource() {
-        return content;
-    }
-
-    @Override
-    public Collection<Library> getLibraries() {
+    public Map<String, Model> getLibraries() {
         return libraries;
     }
 

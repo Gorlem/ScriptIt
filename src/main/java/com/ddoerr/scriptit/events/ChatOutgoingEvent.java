@@ -2,27 +2,19 @@ package com.ddoerr.scriptit.events;
 
 import com.ddoerr.scriptit.api.annotations.Callable;
 import com.ddoerr.scriptit.api.annotations.Getter;
-import com.ddoerr.scriptit.api.events.Event;
-import com.ddoerr.scriptit.api.events.EventInitializer;
-import com.ddoerr.scriptit.api.events.EventRegistry;
+import com.ddoerr.scriptit.api.events.AbstractEvent;
 import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
-import com.ddoerr.scriptit.callbacks.SendChatMessageCallback;
-import net.minecraft.util.ActionResult;
+import com.ddoerr.scriptit.callbacks.OutgoingChatMessageCallback;
 import net.minecraft.util.TypedActionResult;
 
-public class SentChatEventDispatcher implements EventInitializer {
-    Event event;
-
-    @Override
-    public void onInitialize(EventRegistry registry) {
-        event = registry.registerEvent("sentChat");
-
-        SendChatMessageCallback.EVENT.register(this::onSendChatMessage);
+public class ChatOutgoingEvent extends AbstractEvent implements OutgoingChatMessageCallback {
+    public ChatOutgoingEvent() {
+        OutgoingChatMessageCallback.EVENT.register(this);
     }
 
-    public TypedActionResult<String> onSendChatMessage(String message) {
+    public TypedActionResult<String> onOutgoingChatMessage(String message) {
         MessageModel messageModel = new MessageModel(message);
-        event.dispatch(messageModel);
+        dispatch(messageModel);
         return messageModel.getActionResult();
     }
 

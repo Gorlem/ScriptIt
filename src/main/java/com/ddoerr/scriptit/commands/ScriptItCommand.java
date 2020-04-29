@@ -1,9 +1,8 @@
 package com.ddoerr.scriptit.commands;
 
-import com.ddoerr.scriptit.api.dependencies.LanguageLoader;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
-import com.ddoerr.scriptit.api.languages.Language;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.mojang.brigadier.CommandDispatcher;
@@ -12,6 +11,7 @@ import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.command.CommandSource;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Identifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,23 +20,25 @@ import java.util.stream.Collectors;
 import static com.mojang.brigadier.arguments.StringArgumentType.*;
 import static io.github.cottonmc.clientcommands.ArgumentBuilders.argument;
 import static io.github.cottonmc.clientcommands.ArgumentBuilders.literal;
+import static net.minecraft.command.arguments.IdentifierArgumentType.getIdentifier;
+import static net.minecraft.command.arguments.IdentifierArgumentType.identifier;
 
 public class ScriptItCommand implements ClientCommandPlugin {
     @Override
     public void registerCommands(CommandDispatcher<CottonClientCommandSource> dispatcher) {
         try {
-            LanguageLoader languageLoader = Resolver.getInstance().resolve(LanguageLoader.class);
+            ScriptItRegistry registry = Resolver.getInstance().resolve(ScriptItRegistry.class);
 
-            List<String> languageNames = languageLoader.getLanguages().stream().map(Language::getName).collect(Collectors.toList());
+            List<String> languageNames = registry.languages.getIds().stream().map(Identifier::toString).collect(Collectors.toList());
             List<String> lifeCycles = Arrays.stream(LifeCycle.values()).map(Enum::name).collect(Collectors.toList());
 
             dispatcher.register(literal("scriptit")
                     .then(literal("run")
-                            .then(argument("language", word())
+                            .then(argument("language", identifier())
                                     .suggests((ctx, builder) -> CommandSource.suggestMatching(languageNames, builder))
                                     .then(argument("script", greedyString())
                                             .executes(ctx -> execute(ctx.getSource(),
-                                                    getString(ctx, "language"),
+                                                    ctx.getArgument("language", Identifier.class),
                                                     "Instant",
                                                     getString(ctx, "script")))
                                     )
@@ -44,7 +46,7 @@ public class ScriptItCommand implements ClientCommandPlugin {
                                             .suggests((ctx, builder) -> CommandSource.suggestMatching(lifeCycles, builder))
                                             .then(argument("script", greedyString())
                                                     .executes(ctx -> execute(ctx.getSource(),
-                                                            getString(ctx, "language"),
+                                                            ctx.getArgument("language", Identifier.class),
                                                             getString(ctx, "lifeCycle"),
                                                             getString(ctx, "script")))
                                             )
@@ -62,13 +64,13 @@ public class ScriptItCommand implements ClientCommandPlugin {
         }
     }
 
-    private int execute(CottonClientCommandSource ctx, String language, String lifeCycle, String script) {
+    private int execute(CottonClientCommandSource ctx, Identifier language, String lifeCycle, String script) {
         if (script.startsWith("\"") && script.endsWith("\"")) {
             script = script.substring(1, script.length() - 1);
         }
         try {
             new ScriptBuilder()
-                    .language(language)
+                    .language(language.toString())
                     .fromString(script)
                     .lifeCycle(LifeCycle.valueOf(lifeCycle))
                     .run();

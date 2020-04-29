@@ -1,12 +1,13 @@
 package com.ddoerr.scriptit.scripts;
 
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.triggers.Trigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 
 public class ScriptContainer {
@@ -14,7 +15,7 @@ public class ScriptContainer {
     private Trigger trigger;
     private String content = StringUtils.EMPTY;
     private Object lastResult;
-    private Library library;
+    private Pair<String, Model> library;
 
     private boolean isDisabled = false;
 
@@ -61,8 +62,8 @@ public class ScriptContainer {
         return lastResult;
     }
 
-    public void setLibrary(Library library) {
-        this.library = library;
+    public void setLibrary(String name, Model library) {
+        this.library = new Pair<>(name, library);
     }
 
     public LifeCycle getLifeCycle() {
@@ -74,6 +75,7 @@ public class ScriptContainer {
     }
 
     public void run() {
+        MinecraftClient minecraft = MinecraftClient.getInstance();
         if (isDisabled) {
             return;
         }
@@ -81,20 +83,20 @@ public class ScriptContainer {
         try {
             lastResult = new ScriptBuilder()
                     .fromString(content)
-                    .withLibrary(library)
+                    .withLibrary(library.getLeft(), library.getRight())
                     .lifeCycle(lifeCycle)
                     .run();
         } catch (Exception e) {
             disable();
-            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
-            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
-                    new LiteralText("An error occurred while running this script. Script will be disabled until the script is saved again."));
             e.printStackTrace();
+            minecraft.inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
+            minecraft.inGameHud.getChatHud().addMessage(
+                    new LiteralText("An error occurred while running this script. Script will be disabled until the script is saved again."));
         }
     }
 
-    private void triggerCallback(Library library) {
-        setLibrary(library);
+    private void triggerCallback(Model library) {
+        setLibrary("event", library);
         run();
     }
 

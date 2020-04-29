@@ -1,6 +1,6 @@
 package com.ddoerr.scriptit.mixin;
 
-import com.ddoerr.scriptit.callbacks.ChatMessageCallback;
+import com.ddoerr.scriptit.callbacks.IncomingChatMessageCallback;
 import com.ddoerr.scriptit.callbacks.GameJoinCallback;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -25,7 +25,7 @@ public abstract class MixinClientPlayerNetworkHandler implements ClientPlayPacke
                     shift = At.Shift.AFTER,
                     target = "net/minecraft/network/NetworkThreadUtils.forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
     private void onChatMessageMixin(ChatMessageS2CPacket packet, CallbackInfo info) {
-        TypedActionResult<Text> result = ChatMessageCallback.EVENT.invoker().onChatMessage(packet.getMessage());
+        TypedActionResult<Text> result = IncomingChatMessageCallback.EVENT.invoker().onIncomingChatMessage(packet.getMessage());
 
         if (result.getResult() == ActionResult.FAIL) {
             info.cancel();

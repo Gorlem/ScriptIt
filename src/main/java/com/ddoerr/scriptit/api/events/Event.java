@@ -2,8 +2,8 @@ package com.ddoerr.scriptit.api.events;
 
 import com.ddoerr.scriptit.api.libraries.Model;
 
+import java.util.function.Consumer;
+
 public interface Event {
-    void dispatch();
-    void dispatch(Model model);
-    String getName();
+    void registerListener(Consumer<Model> modelSupplier);
 }

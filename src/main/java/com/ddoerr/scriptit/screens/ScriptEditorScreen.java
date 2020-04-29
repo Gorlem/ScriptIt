@@ -2,8 +2,7 @@ package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
-import com.ddoerr.scriptit.api.dependencies.EventLoader;
-import com.ddoerr.scriptit.api.dependencies.Resolver;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.api.util.DurationHelper;
@@ -27,13 +26,15 @@ import spinnery.widget.api.Size;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
     private LifeCycle lifeCycle = LifeCycle.Instant;
     private InputUtil.KeyCode keyCode;
-    private String event;
+    private Identifier event;
     private int time;
     private TemporalUnit unit;
     private String script;
@@ -44,22 +45,22 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private WTabHolder.WTab eventsTab;
     private WTabHolder.WTab durationTab;
 
-    private EventLoader eventLoader;
+    private ScriptItRegistry registry;
     private ScriptManager scriptManager;
 
-    public ScriptEditorScreen(ScreenHistory history, EventLoader eventLoader, ScriptManager scriptManager) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptManager scriptManager) {
         super(history);
 
-        this.eventLoader = eventLoader;
+        this.registry = registry;
         this.scriptManager = scriptManager;
 
         setupWidgets();
     }
 
-    public ScriptEditorScreen(ScreenHistory history, EventLoader eventLoader, ScriptManager scriptManager, ScriptContainer scriptContainer) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptManager scriptManager, ScriptContainer scriptContainer) {
         super(history);
 
-        this.eventLoader = eventLoader;
+        this.registry = registry;
         this.scriptManager = scriptManager;
         this.scriptContainer = scriptContainer;
 
@@ -76,7 +77,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
                 keyCode = InputUtil.fromName(id);
             }
             else {
-                event = id;
+                event = new Identifier(id);
             }
         }
 
@@ -139,18 +140,15 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     }
 
     private void addEventTriggerTab(WTabHolder tabHolder) {
-        List<String> eventsList = eventLoader.getEvents();
-
         eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event").toString()));
 
-        ValuesDropdownWidget<String> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20))
-                .setTranslationPrefix("scripts.triggers.event.values");
+        ValuesDropdownWidget<Identifier> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
         if (event == null) {
             eventDropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event.select").toString()));
         } else {
             eventDropdown.selectValue(event);
         }
-        eventDropdown.addValues(eventsList);
+        eventDropdown.addValues(new ArrayList<>(registry.events.getIds()));
         eventDropdown.setOnChange(event -> this.event = event);
     }
 
@@ -233,8 +231,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
         if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
             scriptContainer.setTrigger(new BusTrigger(keyCode.getName()));
-        } else if (eventsTab.getToggle().getToggleState() && StringUtils.isNotBlank(event)) {
-            scriptContainer.setTrigger(new BusTrigger(event));
+        } else if (eventsTab.getToggle().getToggleState() && event != null) {
+            scriptContainer.setTrigger(new BusTrigger(event.toString()));
         } else if (durationTab.getToggle().getToggleState() && unit != null) {
             scriptContainer.setTrigger(new ContinuousTrigger(Duration.of(time, unit)));
         }

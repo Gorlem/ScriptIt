@@ -1,21 +1,11 @@
 package com.ddoerr.scriptit.api.scripts;
 
-import com.ddoerr.scriptit.api.libraries.Library;
+import com.ddoerr.scriptit.api.libraries.Model;
 
-import java.util.Collection;
+import java.util.Map;
 
 public interface Script {
-    default boolean hasFileSource() {
-        return getFileSource() != null;
-    }
-    default boolean hasStringSource() {
-        return getStringSource() != null;
-    }
-
-    String getFileSource();
-    String getStringSource();
-
-    Collection<Library> getLibraries();
-
+    ScriptSource getScriptSource();
+    Map<String, Model> getLibraries();
     String getName();
 }

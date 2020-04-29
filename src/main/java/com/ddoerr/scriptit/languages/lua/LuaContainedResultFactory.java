@@ -2,6 +2,7 @@ package com.ddoerr.scriptit.languages.lua;
 
 import com.ddoerr.scriptit.api.languages.ContainedResultFactory;
 import com.ddoerr.scriptit.api.exceptions.ConversionException;
+import com.ddoerr.scriptit.api.languages.ContainedValue;
 import com.ddoerr.scriptit.api.libraries.Model;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -123,5 +124,14 @@ public class LuaContainedResultFactory implements ContainedResultFactory<LuaValu
 
         table.setmetatable(metaTable);
         return table;
+    }
+
+    @Override
+    public LuaValue fromContainedValue(ContainedValue containedValue) throws ConversionException {
+        if (containedValue instanceof LuaContainedValue) {
+            return ((LuaContainedValue)containedValue).getValue();
+        }
+
+        return ContainedResultFactory.super.fromContainedValue(containedValue);
     }
 }
