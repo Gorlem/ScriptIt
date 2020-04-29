@@ -33,6 +33,8 @@ public interface ContainedValue {
         throw new ConversionException("Unknown type " + type.getTypeName());
     }
 
+    Type guessType();
+
     String format();
 
     String toStr() throws ConversionException;

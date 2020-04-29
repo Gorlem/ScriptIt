@@ -13,33 +13,42 @@ import com.ddoerr.scriptit.events.SoundEvent;
 import com.ddoerr.scriptit.languages.lua.LuaLanguage;
 import com.ddoerr.scriptit.libraries.*;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.MutableRegistry;
 
 public class ScriptItExtension implements ExtensionInitializer {
 
+    private Resolver resolver;
+
     @Override
     public void onInitialize(ScriptItRegistry registry, Resolver resolver) {
+        this.resolver = resolver;
+        add(registry.languages, "lua", LuaLanguage.class);
+
+        add(registry.libraries, "scripts", ScriptsLibrary.class);
+        add(registry.libraries, "json", JsonLibrary.class);
+
+        add(registry.libraries, "chat", ChatLibrary.class);
+        add(registry.libraries, "game", GameLibrary.class);
+        add(registry.libraries, "gui", GuiLibrary.class);
+        add(registry.libraries, "keyboard", KeyboardLibrary.class);
+        add(registry.libraries, "options", OptionsLibrary.class);
+        add(registry.libraries, "player", PlayerLibrary.class);
+        add(registry.libraries, "scoreboard", ScoreboardLibrary.class);
+        add(registry.libraries, "server", ServerLibrary.class);
+        add(registry.libraries, "shared", SharedLibrary.class);
+
+        add(registry.hudElements, "text", TextHudElement.class);
+        add(registry.hudElements, "icon", IconHudElement.class);
+
+        add(registry.events, "game/connect", GameConnectEvent.class);
+        add(registry.events, "chat/incoming", ChatIncomingEvent.class);
+        add(registry.events, "chat/outgoing", ChatOutgoingEvent.class);
+        add(registry.events, "sound", SoundEvent.class);
+    }
+
+    private <T> void add(MutableRegistry<T> registry, String identifierPath, Class<? extends T> type) {
         try {
-            registry.languages.add(new Identifier(ScriptItMod.MOD_NAME, "lua"), resolver.create(LuaLanguage.class));
-
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "scripts"), resolver.create(ScriptsLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "json"), resolver.create(JsonLibrary.class));
-
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "chat"), resolver.create(ChatLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "game"), resolver.create(GameLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "gui"), resolver.create(GuiLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "keyboard"), resolver.create(KeyboardLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "options"), resolver.create(OptionsLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "player"), resolver.create(PlayerLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "scoreboard"), resolver.create(ScoreboardLibrary.class));
-            registry.libraries.add(new Identifier(ScriptItMod.MOD_NAME, "server"), resolver.create(ServerLibrary.class));
-
-            registry.hudElements.add(new Identifier(ScriptItMod.MOD_NAME, "text"), resolver.create(TextHudElement.class));
-            registry.hudElements.add(new Identifier(ScriptItMod.MOD_NAME, "icon"), resolver.create(IconHudElement.class));
-
-            registry.events.add(new Identifier(ScriptItMod.MOD_NAME, "game/connect"), resolver.create(GameConnectEvent.class));
-            registry.events.add(new Identifier(ScriptItMod.MOD_NAME, "chat/incoming"), resolver.create(ChatIncomingEvent.class));
-            registry.events.add(new Identifier(ScriptItMod.MOD_NAME, "chat/outgoing"), resolver.create(ChatOutgoingEvent.class));
-            registry.events.add(new Identifier(ScriptItMod.MOD_NAME, "sound"), resolver.create(SoundEvent.class));
+            registry.add(new Identifier(ScriptItMod.MOD_NAME, identifierPath), resolver.create(type));
         } catch (DependencyException e) {
             e.printStackTrace();
         }

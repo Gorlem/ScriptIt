@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 import static com.mojang.brigadier.arguments.StringArgumentType.*;
 import static io.github.cottonmc.clientcommands.ArgumentBuilders.argument;
 import static io.github.cottonmc.clientcommands.ArgumentBuilders.literal;
+import static net.minecraft.command.arguments.IdentifierArgumentType.getIdentifier;
+import static net.minecraft.command.arguments.IdentifierArgumentType.identifier;
 
 public class ScriptItCommand implements ClientCommandPlugin {
     @Override
@@ -32,11 +34,11 @@ public class ScriptItCommand implements ClientCommandPlugin {
 
             dispatcher.register(literal("scriptit")
                     .then(literal("run")
-                            .then(argument("language", word())
+                            .then(argument("language", identifier())
                                     .suggests((ctx, builder) -> CommandSource.suggestMatching(languageNames, builder))
                                     .then(argument("script", greedyString())
                                             .executes(ctx -> execute(ctx.getSource(),
-                                                    getString(ctx, "language"),
+                                                    ctx.getArgument("language", Identifier.class),
                                                     "Instant",
                                                     getString(ctx, "script")))
                                     )
@@ -44,7 +46,7 @@ public class ScriptItCommand implements ClientCommandPlugin {
                                             .suggests((ctx, builder) -> CommandSource.suggestMatching(lifeCycles, builder))
                                             .then(argument("script", greedyString())
                                                     .executes(ctx -> execute(ctx.getSource(),
-                                                            getString(ctx, "language"),
+                                                            ctx.getArgument("language", Identifier.class),
                                                             getString(ctx, "lifeCycle"),
                                                             getString(ctx, "script")))
                                             )
@@ -62,13 +64,13 @@ public class ScriptItCommand implements ClientCommandPlugin {
         }
     }
 
-    private int execute(CottonClientCommandSource ctx, String language, String lifeCycle, String script) {
+    private int execute(CottonClientCommandSource ctx, Identifier language, String lifeCycle, String script) {
         if (script.startsWith("\"") && script.endsWith("\"")) {
             script = script.substring(1, script.length() - 1);
         }
         try {
             new ScriptBuilder()
-                    .language(language)
+                    .language(language.toString())
                     .fromString(script)
                     .lifeCycle(LifeCycle.valueOf(lifeCycle))
                     .run();

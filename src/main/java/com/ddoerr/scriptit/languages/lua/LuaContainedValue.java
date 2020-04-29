@@ -23,6 +23,27 @@ public class LuaContainedValue implements ContainedValue {
         this.value = luaValue;
     }
 
+    public LuaValue getValue() {
+        return value;
+    }
+
+    @Override
+    public Type guessType() {
+        if (value.isboolean()) {
+            return Boolean.class;
+        } else if (value.isint()) {
+            return Integer.class;
+        } else if (value.isnumber()) {
+            return Double.class;
+        } else if (value.isstring()) {
+            return String.class;
+        } else if (value.istable()) {
+            return Map.class;
+        }
+
+        return Object.class;
+    }
+
     @Override
     public String format() {
         return value.tojstring();

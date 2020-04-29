@@ -35,6 +35,8 @@ public interface ContainedResultFactory<T> {
             return nullValue();
         } else if (Object.class.equals(type)) {
             return from(value.getClass(), value);
+        } else if (ContainedValue.class.equals(type)) {
+            return fromContainedValue((ContainedValue)value);
         }
 
         throw new ConversionException("Unknown type " + type.getTypeName());
@@ -51,4 +53,8 @@ public interface ContainedResultFactory<T> {
     T fromMap(Type keyType, Type valueType, Map<?, ?> value) throws ConversionException;
     T fromList(Type entryType, List<?> value) throws ConversionException;
     T fromModel(Model value);
+    default T fromContainedValue(ContainedValue containedValue) throws ConversionException {
+        Type typeGuess = containedValue.guessType();
+        return from(typeGuess, containedValue.to(typeGuess));
+    }
 }
