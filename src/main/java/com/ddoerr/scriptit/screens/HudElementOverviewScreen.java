@@ -8,6 +8,7 @@ import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.elements.HudElementContainer;
+import com.ddoerr.scriptit.elements.HudElementContainerImpl;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.TranslatableText;
@@ -93,7 +94,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
         dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
         dropdown.setOnChange(key -> {
             HudElement hudElement = registry.hudElements.get(new Identifier(key));
-            currentlyAdding = new HudElementContainer(hudElement, MouseUtilities.mouseX, MouseUtilities.mouseY);
+            currentlyAdding = new HudElementContainerImpl(hudElement, MouseUtilities.mouseX, MouseUtilities.mouseY);
             currentlyAdding.tick();
         });
     }

@@ -8,6 +8,7 @@ import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.elements.HudElementContainer;
+import com.ddoerr.scriptit.elements.HudElementContainerImpl;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
 import com.google.gson.*;
 import net.minecraft.util.Identifier;
@@ -64,7 +65,7 @@ public class HudElementAdapter implements JsonSerializer<HudElementContainer>, J
         }
 
         HudElement hudElement = registry.hudElements.get(new Identifier(type));
-        HudElementContainer hudElementContainer = new HudElementContainer(hudElement, 0, 0);
+        HudElementContainer hudElementContainer = new HudElementContainerImpl(hudElement, 0, 0);
         hudElementContainer.setRelativePosition(point);
 
         for (Map.Entry<String, Object> entry : options.entrySet()) {

@@ -19,116 +19,33 @@ import net.minecraft.util.Tickable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HudElementContainer extends DrawableHelper implements Tickable, Element, Drawable {
+public interface HudElementContainer extends Drawable, Tickable  {
     public static final int DEFAULT_PADDING = 2;
 
     public static final String FORE_COLOR = "fore-color";
     public static final String BACK_COLOR = "back-color";
 
-    private Map<String, Object> options = new HashMap<>();
-    private HudElement hudElement;
-    private ScriptContainer scriptContainer;
+    void setAnchor(HudHorizontalAnchor horizontalAnchor, HudVerticalAnchor verticalAnchor);
+    HudVerticalAnchor getVerticalAnchor();
+    HudHorizontalAnchor getHorizontalAnchor();
 
-    private double xDifference = 0;
-    private double yDifference = 0;
+    void setRealPosition(Point position);
+    Point getRealPosition();
 
-    private int width = 0;
-    private int height = 0;
+    void setRelativePosition(Point position);
+    Point getRelativePosition();
 
-    private HudHorizontalAnchor horizontalAnchor = HudHorizontalAnchor.LEFT;
-    private HudVerticalAnchor verticalAnchor = HudVerticalAnchor.TOP;
+    int getHeight();
+    int getWidth();
 
+    void setOption(String key, Object value);
+    Object getOption(String key);
+    Map<String, Object> getOptions();
 
-    public HudElementContainer(HudElement hudElement, double xPosition, double yPosition) {
-        scriptContainer = new ScriptContainer(new ContinuousTrigger());
+    HudElement getHudElement();
+    ScriptContainer getScriptContainer();
 
-        this.hudElement = hudElement;
-
-        hudElement.setDefaults(this);
-        setRealPosition(new Point(xPosition, yPosition));
-    }
-
-    public void setAnchor(HudHorizontalAnchor horizontalAnchor, HudVerticalAnchor verticalAnchor) {
-        this.horizontalAnchor = horizontalAnchor;
-        this.verticalAnchor = verticalAnchor;
-    }
-
-    public HudVerticalAnchor getVerticalAnchor() {
-        return verticalAnchor;
-    }
-
-    public HudHorizontalAnchor getHorizontalAnchor() {
-        return horizontalAnchor;
-    }
-
-    public void setRealPosition(Point position) {
-        xDifference = position.getX() - horizontalAnchor.getBaseValue();
-        yDifference = position.getY() - verticalAnchor.getBaseValue();
-
-        ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
-    }
-
-    public Point getRealPosition() {
-        return new Point(
-                horizontalAnchor.getBaseValue() + xDifference,
-                verticalAnchor.getBaseValue() + yDifference
-        );
-    }
-
-    public void setRelativePosition(Point position) {
-        xDifference = position.getX();
-        yDifference = position.getY();
-
-        ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
-    }
-
-    public Point getRelativePosition() {
-        return new Point(xDifference, yDifference);
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setOption(String key, Object value) {
-        options.put(key, value);
-        ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
-    }
-
-    public Object getOption(String key) {
-        return options.getOrDefault(key, null);
-    }
-
-    public Map<String, Object> getOptions() {
-        return options;
-    }
-
-    public HudElement getHudElement() {
-        return hudElement;
-    }
-
-    @Override
-    public void render(int var1, int var2, float var3) {
-        Rectangle rectangle = hudElement.render(getRealPosition(), this);
-        width = rectangle.getWidth();
-        height = rectangle.getHeight();
-    }
-
-    @Override
-    public void tick() {
-        MinecraftClient minecraft = MinecraftClient.getInstance();
-
-        if (minecraft.player == null || minecraft.world == null)
-            return;
-
-        scriptContainer.checkTrigger();
-    }
-
-    public static Color parseAndRun(String value) {
+    static Color parseAndRun(String value) {
         Color color = Color.parse(value);
 
         if (color != null)
@@ -143,9 +60,5 @@ public class HudElementContainer extends DrawableHelper implements Tickable, Ele
         }
 
         return null;
-    }
-
-    public ScriptContainer getScriptContainer() {
-        return scriptContainer;
     }
 }

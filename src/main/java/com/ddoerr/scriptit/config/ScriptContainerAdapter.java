@@ -2,6 +2,7 @@ package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
 import com.ddoerr.scriptit.triggers.Trigger;
 import com.google.gson.*;
 
@@ -27,7 +28,7 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
         LifeCycle lifeCycle = context.deserialize(jsonObject.get("lifeCycle"), LifeCycle.class);
         Trigger trigger = context.deserialize(jsonObject.get("trigger"), Trigger.class);
 
-        ScriptContainer scriptContainer = new ScriptContainer(trigger, lifeCycle, content);
+        ScriptContainer scriptContainer = new ScriptContainerImpl(trigger, lifeCycle, content);
 
         return scriptContainer;
     }

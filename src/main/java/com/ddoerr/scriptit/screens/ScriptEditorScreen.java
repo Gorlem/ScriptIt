@@ -10,6 +10,7 @@ import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import com.ddoerr.scriptit.triggers.Trigger;
@@ -222,7 +223,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
     private void updateScriptContainer() {
         if (scriptContainer == null) {
-            scriptContainer = new ScriptContainer();
+            scriptContainer = new ScriptContainerImpl();
             scriptManager.add(scriptContainer);
         }
 

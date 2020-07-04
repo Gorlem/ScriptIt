@@ -10,134 +10,24 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 
-public class ScriptContainer {
-    private LifeCycle lifeCycle = LifeCycle.Instant;
-    private Trigger trigger;
-    private String content = StringUtils.EMPTY;
-    private Object lastResult;
-    private Pair<String, Model> library;
+public interface ScriptContainer {
+    Trigger getTrigger();
+    void setTrigger(Trigger trigger);
 
-    private boolean isDisabled = false;
+    String getContent();
+    void setContent(String content);
 
-    public ScriptContainer() {
-    }
+    Object getLastResult();
 
-    public ScriptContainer(Trigger trigger) {
-        setTrigger(trigger);
-    }
+    void setLibrary(String name, Model library);
 
-    public ScriptContainer(Trigger trigger, LifeCycle lifeCycle) {
-        setTrigger(trigger);
-        setLifeCycle(lifeCycle);
-    }
+    LifeCycle getLifeCycle();
+    void setLifeCycle(LifeCycle lifeCycle);
 
-    public ScriptContainer(Trigger trigger, LifeCycle lifeCycle, String content) {
-        setTrigger(trigger);
-        setLifeCycle(lifeCycle);
-        setContent(content);
-    }
+    void run();
+    void checkTrigger();
 
-    public Trigger getTrigger() {
-        return trigger;
-    }
-
-    public void setTrigger(Trigger trigger) {
-        if (this.trigger != null) {
-            this.trigger.close();
-        }
-
-        this.trigger = trigger;
-        trigger.setCallback(this::triggerCallback);
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Object getLastResult() {
-        return lastResult;
-    }
-
-    public void setLibrary(String name, Model library) {
-        this.library = new Pair<>(name, library);
-    }
-
-    public LifeCycle getLifeCycle() {
-        return lifeCycle;
-    }
-
-    public void setLifeCycle(LifeCycle lifeCycle) {
-        this.lifeCycle = lifeCycle;
-    }
-
-    public void run() {
-        MinecraftClient minecraft = MinecraftClient.getInstance();
-        if (isDisabled) {
-            return;
-        }
-
-        try {
-            lastResult = new ScriptBuilder()
-                    .fromString(content)
-                    .withLibrary(library.getLeft(), library.getRight())
-                    .lifeCycle(lifeCycle)
-                    .run();
-        } catch (Exception e) {
-            disable();
-            e.printStackTrace();
-            minecraft.inGameHud.getChatHud().addMessage(new LiteralText(e.getMessage()));
-            minecraft.inGameHud.getChatHud().addMessage(
-                    new LiteralText("An error occurred while running this script. Script will be disabled until the script is saved again."));
-        }
-    }
-
-    private void triggerCallback(Model library) {
-        setLibrary("event", library);
-        run();
-    }
-
-    public void checkTrigger() {
-        trigger.check();
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        if (trigger != null) {
-            stringBuilder
-                    .append("triggers ")
-                    .append(Formatting.YELLOW)
-                    .append(trigger.toString());
-        } else {
-            stringBuilder.append("no activation trigger");
-        }
-
-        stringBuilder
-                .append(Formatting.RESET)
-                .append("; is ")
-                .append(Formatting.YELLOW)
-                .append(lifeCycle.toString())
-                .append(Formatting.RESET)
-                .append("; ")
-                .append(StringUtils.abbreviate(content, 50));
-
-        return stringBuilder.toString();
-    }
-
-    public boolean isDisabled() {
-        return isDisabled;
-    }
-
-    public void disable() {
-        isDisabled = true;
-    }
-
-    public void enable() {
-        isDisabled = false;
-    }
+    boolean isDisabled();
+    void disable();
+    void enable();
 }
