@@ -8,6 +8,8 @@
   "scriptit:scripts.remove": "Remove Script",
   "scriptit:scripts.add": "Add new Script",
 
+  "scriptit:scripts.exception": "An error occurred while running script %s. Script will be disabled until it is saved again.",
+
   "scriptit:scripts.triggers.keybinding": "Key Binding",
 
   "scriptit:scripts.triggers.event": "Event",

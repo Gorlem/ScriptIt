@@ -4,6 +4,7 @@ import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.registry.*;
+import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.elements.IconHudElement;
 import com.ddoerr.scriptit.elements.TextHudElement;
 import com.ddoerr.scriptit.events.GameConnectEvent;
@@ -14,6 +15,7 @@ import com.ddoerr.scriptit.languages.lua.LuaLanguage;
 import com.ddoerr.scriptit.libraries.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.SimpleRegistry;
 
 public class ScriptItExtension implements ExtensionInitializer {
 
@@ -24,6 +26,7 @@ public class ScriptItExtension implements ExtensionInitializer {
         this.resolver = resolver;
         add(registry.languages, "lua", LuaLanguage.class);
 
+        add(registry.libraries, "scripts", ScriptsLibrary.class);
         add(registry.libraries, "json", JsonLibrary.class);
 
         add(registry.libraries, "chat", ChatLibrary.class);

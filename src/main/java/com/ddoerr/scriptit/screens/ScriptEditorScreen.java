@@ -212,8 +212,6 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             scriptContainerManager.add(scriptContainer);
         }
 
-        scriptContainer.setScript(new ScriptBuilder().fromString(script));
-
         if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
             scriptContainer.setTrigger(new BusTrigger(keyCode.getName()));
         } else if (eventsTab.getToggle().getToggleState() && event != null) {
@@ -221,6 +219,12 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         } else if (durationTab.getToggle().getToggleState() && unit != null) {
             scriptContainer.setTrigger(new ContinuousTrigger(Duration.of(time, unit)));
         }
+
+        ScriptBuilder scriptBuilder = new ScriptBuilder()
+                .fromString(script)
+                .name(scriptContainer.getTrigger().toString());
+
+        scriptContainer.setScript(scriptBuilder);
 
         scriptContainer.enable();
 
