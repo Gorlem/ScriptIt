@@ -20,6 +20,6 @@ public class ScriptItRegistry extends SimpleRegistry<Registry<?>> {
         add(new Identifier(ScriptItMod.MOD_NAME, "libraries"), libraries);
         add(new Identifier(ScriptItMod.MOD_NAME, "languages"), languages);
         add(new Identifier(ScriptItMod.MOD_NAME, "events"), events);
-        add(new Identifier(ScriptItMod.MOD_NAME, "hudElements"), hudElements);
+        add(new Identifier(ScriptItMod.MOD_NAME, "hud_elements"), hudElements);
     }
 }

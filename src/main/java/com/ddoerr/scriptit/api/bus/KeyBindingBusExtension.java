@@ -2,6 +2,7 @@ package com.ddoerr.scriptit.api.bus;
 
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.util.KeyBindingHelper;
+import com.ddoerr.scriptit.triggers.TriggerMessageImpl;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
@@ -51,7 +52,7 @@ public class KeyBindingBusExtension implements Tickable{
             KeyBinding keyBinding = entry.getValue();
 
             if (keyBinding.wasPressed()) {
-                eventBus.publish(entry.getKey(), null);
+                eventBus.publish(entry.getKey(), new TriggerMessageImpl());
             }
         }
     }
