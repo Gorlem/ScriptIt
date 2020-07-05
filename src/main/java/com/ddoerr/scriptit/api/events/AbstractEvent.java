@@ -1,26 +1,27 @@
 package com.ddoerr.scriptit.api.events;
 
-import com.ddoerr.scriptit.api.libraries.Model;
+import com.ddoerr.scriptit.api.triggers.TriggerMessage;
+import com.ddoerr.scriptit.triggers.TriggerMessageImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class AbstractEvent implements Event {
-    protected List<Consumer<Model>> listeners = new ArrayList<>();
+    protected List<Consumer<TriggerMessage>> listeners = new ArrayList<>();
 
     @Override
-    public void registerListener(Consumer<Model> modelSupplier) {
-        listeners.add(modelSupplier);
+    public void registerListener(Consumer<TriggerMessage> messageConsumer) {
+        listeners.add(messageConsumer);
     }
 
     protected void dispatch() {
-        dispatch(null);
+        dispatch(new TriggerMessageImpl());
     }
 
-    protected void dispatch(Model model) {
-        for (Consumer<Model> listener : listeners) {
-            listener.accept(model);
+    protected void dispatch(TriggerMessage message) {
+        for (Consumer<TriggerMessage> listener : listeners) {
+            listener.accept(message);
         }
     }
 }

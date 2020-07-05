@@ -1,9 +1,10 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.api.scripts.LifeCycle;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.scripts.Script;
+import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
-import com.ddoerr.scriptit.triggers.Trigger;
+import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
@@ -13,8 +14,7 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
     public JsonElement serialize(ScriptContainer scriptContainer, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject obj = new JsonObject();
 
-        obj.addProperty("content", scriptContainer.getContent());
-        obj.add("lifeCycle", context.serialize(scriptContainer.getLifeCycle()));
+        obj.addProperty("content", scriptContainer.getScript().getScriptSource().getContent());
         obj.add("trigger", context.serialize(scriptContainer.getTrigger()));
 
         return obj;
@@ -25,11 +25,11 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
         JsonObject jsonObject = json.getAsJsonObject();
 
         String content = jsonObject.getAsJsonPrimitive("content").getAsString();
-        LifeCycle lifeCycle = context.deserialize(jsonObject.get("lifeCycle"), LifeCycle.class);
         Trigger trigger = context.deserialize(jsonObject.get("trigger"), Trigger.class);
 
-        ScriptContainer scriptContainer = new ScriptContainerImpl(trigger, lifeCycle, content);
+        Script script = new ScriptBuilder()
+                .fromString(content);
 
-        return scriptContainer;
+        return new ScriptContainerImpl(trigger, script);
     }
 }

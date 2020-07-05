@@ -1,14 +1,13 @@
 package com.ddoerr.scriptit.languages.lua;
 
+import com.ddoerr.scriptit.api.languages.ContainedValue;
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Model;
 import com.ddoerr.scriptit.api.scripts.FileScriptSource;
 import com.ddoerr.scriptit.api.scripts.Script;
 import com.ddoerr.scriptit.api.scripts.ScriptSource;
-import com.ddoerr.scriptit.api.scripts.ScriptThread;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
-import org.luaj.vm2.LuaThread;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.*;
@@ -18,6 +17,7 @@ import org.luaj.vm2.lib.jse.JseMathLib;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class LuaLanguage implements Language {
     private static final int MAX_INSTRUCTIONS_PER_TICK = 100;
@@ -53,36 +53,23 @@ public class LuaLanguage implements Language {
     }
 
     @Override
-    public LuaContainedValue runScriptInstantly(Script script) {
-        Map<String, Model> libraries = script.getLibraries();
+    public CompletableFuture<ContainedValue> runScript(Script script) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, Model> libraries = script.getLibraries();
 
-        for (Map.Entry<String, Model> library : libraries.entrySet()) {
-            globals.set(library.getKey(), factory.fromModel(library.getValue()));
-        }
+            for (Map.Entry<String, Model> library : libraries.entrySet()) {
+                globals.set(library.getKey(), factory.fromModel(library.getValue()));
+            }
 
-        LuaValue chunk = loadChunk(script);
-        LuaValue result = chunk.call();
+            LuaValue chunk = loadChunk(script);
+            LuaValue result = chunk.call();
 
-        for (String libraryName : libraries.keySet()) {
-            globals.set(libraryName, LuaValue.NIL);
-        }
+            for (String libraryName : libraries.keySet()) {
+                globals.set(libraryName, LuaValue.NIL);
+            }
 
-        return new LuaContainedValue(result);
-    }
-
-    @Override
-    public ScriptThread runScriptThreaded(Script script) {
-        LuaValue chunk = loadChunk(script);
-        LuaThread thread = new LuaThread(globals, chunk);
-
-        luaSetHookFunction.invoke(LuaValue.varargsOf(new LuaValue[]{
-                thread,
-                luaYieldFunction,
-                LuaValue.EMPTYSTRING,
-                LuaValue.valueOf(MAX_INSTRUCTIONS_PER_TICK)
-        }));
-
-        return new LuaThreadAdapter(thread);
+            return new LuaContainedValue(result);
+        });
     }
 
     private LuaValue loadChunk(Script script) {

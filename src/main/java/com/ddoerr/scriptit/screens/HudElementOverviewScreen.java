@@ -7,7 +7,7 @@ import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.elements.HudElementContainer;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
 import com.ddoerr.scriptit.elements.HudElementContainerImpl;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import net.minecraft.client.util.InputUtil;

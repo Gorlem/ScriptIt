@@ -5,10 +5,14 @@ import com.ddoerr.scriptit.api.annotations.Getter;
 import com.ddoerr.scriptit.api.events.AbstractEvent;
 import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
 import com.ddoerr.scriptit.callbacks.IncomingChatMessageCallback;
+import com.ddoerr.scriptit.api.triggers.TriggerMessage;
+import com.ddoerr.scriptit.triggers.TriggerMessageImpl;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypedActionResult;
+
+import java.time.Duration;
 
 public class ChatIncomingEvent extends AbstractEvent implements IncomingChatMessageCallback {
     public ChatIncomingEvent() {
@@ -17,7 +21,8 @@ public class ChatIncomingEvent extends AbstractEvent implements IncomingChatMess
 
     public TypedActionResult<Text> onIncomingChatMessage(Text text) {
         MessageModel messageModel = new MessageModel(text);
-        dispatch(messageModel);
+        TriggerMessage message = new TriggerMessageImpl(messageModel, Duration.ofMillis(10));
+        dispatch(message);
         return messageModel.getActionResult();
     }
 

@@ -1,6 +1,8 @@
 package com.ddoerr.scriptit.elements;
 
 import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
+import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
@@ -19,13 +21,13 @@ public class IconHudElement implements HudElement {
     public Rectangle render(Point origin, HudElementContainer hudElement) {
         Rectangle rectangle = new Rectangle((int) origin.getX(), (int) origin.getY(), ELEMENT_SIZE, ELEMENT_SIZE);
 
-        Color backColor = HudElementContainer.parseAndRun(hudElement.getOption(HudElementContainer.BACK_COLOR).toString());
+        Color backColor = Color.runAndParse(hudElement.getOption(HudElementContainer.BACK_COLOR).toString());
         if (backColor != null) {
             fill(rectangle.getMinX(), rectangle.getMinY(), rectangle.getMaxX(), rectangle.getMaxY(), backColor.getValue());
         }
 
         try {
-            String lastResult = hudElement.getScriptContainer().getLastResult().toString();
+            String lastResult = hudElement.getScriptContainer().getLastResult().toStr();
             Item item = Registry.ITEM.get(new Identifier(lastResult));
             DiffuseLighting.enableGuiDepthLighting();
             MinecraftClient.getInstance()
@@ -39,7 +41,7 @@ public class IconHudElement implements HudElement {
 
     @Override
     public void setDefaults(HudElementContainer hudElement) {
-        hudElement.getScriptContainer().setContent("return \"grass_block\"");
+        hudElement.getScriptContainer().setScript(new ScriptBuilder().fromString("return \"grass_block\""));
         hudElement.setOption(HudElementContainer.BACK_COLOR, "BLACK 50%");
     }
 }

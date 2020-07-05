@@ -2,7 +2,7 @@ package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
-import com.ddoerr.scriptit.triggers.Trigger;
+import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;

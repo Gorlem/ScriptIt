@@ -2,15 +2,10 @@ package com.ddoerr.scriptit.libraries.types;
 
 import com.ddoerr.scriptit.api.annotations.Callable;
 import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
-import com.ddoerr.scriptit.api.scripts.LifeCycle;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 
 public class ScriptBuilderModel extends AnnotationBasedModel {
     private ScriptBuilder scriptBuilder = new ScriptBuilder();
-
-    public ScriptBuilderModel() {
-        scriptBuilder.lifeCycle(LifeCycle.Threaded);
-    }
 
     @Callable
     public ScriptBuilderModel language(String language) {
@@ -31,13 +26,7 @@ public class ScriptBuilderModel extends AnnotationBasedModel {
     }
 
     @Callable
-    public ScriptBuilderModel instant() {
-        scriptBuilder.lifeCycle(LifeCycle.Instant);
-        return this;
-    }
-
-    @Callable
     public String run() {
-        return scriptBuilder.run();
+        return null;
     }
 }

@@ -3,23 +3,22 @@ package com.ddoerr.scriptit.screens;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
-import com.ddoerr.scriptit.api.scripts.LifeCycle;
-import com.ddoerr.scriptit.api.scripts.ScriptManager;
+import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
+import com.ddoerr.scriptit.api.scripts.ScriptContainerManager;
 import com.ddoerr.scriptit.api.util.DurationHelper;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
 import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
-import com.ddoerr.scriptit.triggers.Trigger;
+import com.ddoerr.scriptit.api.triggers.Trigger;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import org.apache.commons.lang3.StringUtils;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
@@ -30,10 +29,8 @@ import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
-    private LifeCycle lifeCycle = LifeCycle.Instant;
     private InputUtil.KeyCode keyCode;
     private Identifier event;
     private int time;
@@ -47,26 +44,25 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private WTabHolder.WTab durationTab;
 
     private ScriptItRegistry registry;
-    private ScriptManager scriptManager;
+    private ScriptContainerManager scriptContainerManager;
 
-    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptManager scriptManager) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager) {
         super(history);
 
         this.registry = registry;
-        this.scriptManager = scriptManager;
+        this.scriptContainerManager = scriptContainerManager;
 
         setupWidgets();
     }
 
-    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptManager scriptManager, ScriptContainer scriptContainer) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, ScriptContainer scriptContainer) {
         super(history);
 
         this.registry = registry;
-        this.scriptManager = scriptManager;
+        this.scriptContainerManager = scriptContainerManager;
         this.scriptContainer = scriptContainer;
 
-        lifeCycle = scriptContainer.getLifeCycle();
-        script = scriptContainer.getContent();
+        script = scriptContainer.getScript().getScriptSource().getContent();
 
         Trigger trigger = scriptContainer.getTrigger();
 
@@ -97,22 +93,11 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private void setupWidgets() {
         WInterface mainInterface = getInterface();
 
-        setupLifeCycleWidget(mainInterface);
         setupTriggerWidget(mainInterface);
         setupScriptWidget(mainInterface);
         setupButtonBar(mainInterface);
 
         mainInterface.onAlign();
-    }
-
-    private void setupLifeCycleWidget(WInterface mainInterface) {
-        ValuesDropdownWidget<LifeCycle> dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
-                .setTranslationPrefix("scripts.lifecycle.values")
-                .setOnAlign(w -> w.setPosition(Position.ofTopRight(mainInterface).add(-150, 20, 0)))
-                .setSize(Size.of(100, 20));
-        dropdown.selectValue(lifeCycle);
-        dropdown.addValues(LifeCycle.Instant, LifeCycle.Threaded);
-        dropdown.setOnChange(lifeCycle -> this.lifeCycle = lifeCycle);
     }
 
     private void setupTriggerWidget(WInterface mainInterface) {
@@ -224,11 +209,10 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private void updateScriptContainer() {
         if (scriptContainer == null) {
             scriptContainer = new ScriptContainerImpl();
-            scriptManager.add(scriptContainer);
+            scriptContainerManager.add(scriptContainer);
         }
 
-        scriptContainer.setLifeCycle(lifeCycle);
-        scriptContainer.setContent(script);
+        scriptContainer.setScript(new ScriptBuilder().fromString(script));
 
         if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
             scriptContainer.setTrigger(new BusTrigger(keyCode.getName()));

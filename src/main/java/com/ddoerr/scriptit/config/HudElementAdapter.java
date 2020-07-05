@@ -7,9 +7,9 @@ import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.util.geometry.Point;
-import com.ddoerr.scriptit.elements.HudElementContainer;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
 import com.ddoerr.scriptit.elements.HudElementContainerImpl;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.google.gson.*;
 import net.minecraft.util.Identifier;
 
@@ -39,8 +39,8 @@ public class HudElementAdapter implements JsonSerializer<HudElementContainer>, J
         json.addProperty("type", registry.hudElements.getId(src.getHudElement()).toString());
         json.add("relative", context.serialize(src.getRelativePosition()));
         json.add("anchor", anchor);
-        json.add("options",  context.serialize(src.getOptions()));
-        json.add("script", context.serialize(src.getScriptContainer()));
+        json.add("options", context.serialize(src.getOptions()));
+        json.add("script", context.serialize(src.getScriptContainer(), ScriptContainer.class));
 
         return json;
     }
@@ -72,7 +72,7 @@ public class HudElementAdapter implements JsonSerializer<HudElementContainer>, J
             hudElementContainer.setOption(entry.getKey(), entry.getValue());
         }
 
-        hudElementContainer.getScriptContainer().setContent(scriptContainer.getContent());
+        hudElementContainer.getScriptContainer().setScript(scriptContainer.getScript());
         hudElementContainer.setAnchor(horizontalAnchor, verticalAnchor);
 
         return hudElementContainer;

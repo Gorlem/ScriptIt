@@ -4,7 +4,7 @@ import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.util.geometry.Point;
-import com.ddoerr.scriptit.elements.HudElementContainer;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import com.google.common.collect.Maps;
 import net.minecraft.text.TranslatableText;

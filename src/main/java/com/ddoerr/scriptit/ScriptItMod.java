@@ -6,6 +6,7 @@ import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
+import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.callbacks.LateInitCallback;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
@@ -14,8 +15,9 @@ import com.ddoerr.scriptit.extensions.ExtensionLoader;
 import com.ddoerr.scriptit.languages.LanguageManagerImpl;
 import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptOverviewScreen;
+import com.ddoerr.scriptit.scripts.ScriptContainerManagerImpl;
+import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.scripts.ScriptManagerImpl;
-import com.ddoerr.scriptit.scripts.ThreadLifetimeManagerImpl;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
@@ -43,15 +45,15 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 			resolver.add(MinecraftClient.getInstance());
 
 			resolver.add(ScreenHistory.class);
-			resolver.add(new EventBus());
+			resolver.add(EventBus.class);
 			resolver.add(KeyBindingBusExtension.class);
-			resolver.add(new ThreadLifetimeManagerImpl());
 			resolver.add(ScriptItRegistry.class);
 			resolver.add(ExtensionLoader.class);
+			resolver.add(ScriptManagerImpl.class);
+			resolver.add(ScriptContainerManagerImpl.class);
 			resolver.add(EventManagerImpl.class);
 			resolver.add(LanguageManagerImpl.class);
-			resolver.add(new HudElementManagerImpl());
-			resolver.add(new ScriptManagerImpl());
+			resolver.add(HudElementManagerImpl.class);
 
 			resolver.add(ConfigHandler.class);
 		} catch (DependencyException e) {
@@ -68,6 +70,8 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 		KeyBindingRegistry.INSTANCE.register(openGuiKeyBinding);
 
 		try {
+			Color.setScriptManager(Resolver.getInstance().resolve(ScriptManager.class));
+
 			Collection<Tickable> tickables = resolver.resolveAll(Tickable.class);
 			ScreenHistory history = resolver.resolve(ScreenHistory.class);
 

@@ -1,18 +1,19 @@
 package com.ddoerr.scriptit.elements;
 
 import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
+import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
 import com.ddoerr.scriptit.triggers.ContinuousTrigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
-import net.minecraft.util.Tickable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class HudElementContainerImpl extends DrawableHelper implements Element, 
 
 
     public HudElementContainerImpl(HudElement hudElement, double xPosition, double yPosition) {
-        scriptContainer = new ScriptContainerImpl(new ContinuousTrigger());
+        scriptContainer = new ScriptContainerImpl(new ContinuousTrigger(), new ScriptBuilder());
 
         this.hudElement = hudElement;
 
@@ -132,7 +133,7 @@ public class HudElementContainerImpl extends DrawableHelper implements Element, 
         if (minecraft.player == null || minecraft.world == null)
             return;
 
-        scriptContainer.checkTrigger();
+        scriptContainer.getTrigger().check();
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.ddoerr.scriptit.api.annotations.Getter;
 import com.ddoerr.scriptit.api.events.AbstractEvent;
 import com.ddoerr.scriptit.api.libraries.AnnotationBasedModel;
 import com.ddoerr.scriptit.libraries.types.PositionModel;
+import com.ddoerr.scriptit.api.triggers.TriggerMessage;
+import com.ddoerr.scriptit.triggers.TriggerMessageImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.ListenerSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
@@ -18,7 +20,8 @@ public class SoundEvent extends AbstractEvent implements ListenerSoundInstance {
     @Override
     public void onSoundPlayed(SoundInstance sound, WeightedSoundSet soundSet) {
         SoundModel soundModel = new SoundModel(sound);
-        dispatch(soundModel);
+        TriggerMessage message = new TriggerMessageImpl(soundModel);
+        dispatch(message);
     }
 
     public static class SoundModel extends AnnotationBasedModel {

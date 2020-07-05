@@ -1,9 +1,15 @@
 package com.ddoerr.scriptit.api.util;
 
+import com.ddoerr.scriptit.api.languages.ContainedValue;
+import com.ddoerr.scriptit.api.scripts.Script;
+import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
+import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.google.common.base.Splitter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -18,6 +24,8 @@ public class Color {
     private static Splitter commaSplitter = Splitter.on(",");
 
     private static int MAX_VALUE = 255;
+
+    private static ScriptManager scriptManager;
 
     private static List<Color> colors = new ArrayList<>();
     // clrs.cc
@@ -101,6 +109,32 @@ public class Color {
         }
 
         return null;
+    }
+
+    public static void setScriptManager(ScriptManager scriptManager) {
+        Color.scriptManager = scriptManager;
+    }
+
+    public static Color runAndParse(String value) {
+        Color color = Color.parse(value);
+
+        if (color != null)
+            return color;
+
+        try {
+            Script script = new ScriptBuilder().fromString(value);
+            CompletableFuture<ContainedValue> future = scriptManager.runScript(script);
+
+            ContainedValue containedValue = future.get(5, TimeUnit.MILLISECONDS);
+            String result = containedValue.toStr();
+
+            return Color.parse(result);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Color.BLACK;
     }
 
     private static List<Integer> splitToInts(String hex, Splitter splitter, int radix) {

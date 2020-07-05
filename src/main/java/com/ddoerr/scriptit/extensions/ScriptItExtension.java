@@ -24,7 +24,6 @@ public class ScriptItExtension implements ExtensionInitializer {
         this.resolver = resolver;
         add(registry.languages, "lua", LuaLanguage.class);
 
-        add(registry.libraries, "scripts", ScriptsLibrary.class);
         add(registry.libraries, "json", JsonLibrary.class);
 
         add(registry.libraries, "chat", ChatLibrary.class);
