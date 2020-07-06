@@ -13,8 +13,10 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
     @Override
     public JsonElement serialize(ScriptContainer scriptContainer, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject obj = new JsonObject();
-
-        obj.addProperty("content", scriptContainer.getScript().getScriptSource().getContent());
+        Script script = scriptContainer.getScript();
+        obj.addProperty("name", script.getName());
+//        obj.addProperty("language", script.getLanguage().toString());
+        obj.addProperty("content", script.getScriptSource().getContent());
         obj.add("trigger", context.serialize(scriptContainer.getTrigger()));
 
         return obj;
@@ -24,10 +26,12 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
     public ScriptContainer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
+        String name = jsonObject.getAsJsonPrimitive("name").getAsString();
         String content = jsonObject.getAsJsonPrimitive("content").getAsString();
         Trigger trigger = context.deserialize(jsonObject.get("trigger"), Trigger.class);
 
         Script script = new ScriptBuilder()
+                .name(name)
                 .fromString(content);
 
         return new ScriptContainerImpl(trigger, script);
