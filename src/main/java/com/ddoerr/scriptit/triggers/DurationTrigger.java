@@ -1,16 +1,26 @@
 package com.ddoerr.scriptit.triggers;
 
+import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.Identifiable;
 import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.api.triggers.TriggerMessage;
 import com.ddoerr.scriptit.api.util.DurationHelper;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class ContinuousTrigger implements Trigger {
+    public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "duration");
+
+    private int time;
+    private ChronoUnit unit;
+
     private Duration duration;
     private Instant lastActivation = Instant.now();
 
@@ -24,8 +34,22 @@ public class ContinuousTrigger implements Trigger {
         this.duration = durationBetweenActivations;
     }
 
+    public ContinuousTrigger(int time, ChronoUnit unit) {
+        this.time = time;
+        this.unit = unit;
+        this.duration = Duration.of(time, unit);
+    }
+
     @Override
     public void close() {
+    }
+
+    @Override
+    public Map<String, String> getData() {
+        Map<String, String> data = new HashMap<>();
+        data.put("time", Integer.toString(time));
+        data.put("unit", unit.toString());
+        return data;
     }
 
     @Override
@@ -51,5 +75,10 @@ public class ContinuousTrigger implements Trigger {
     public String toString() {
         Pair<ChronoUnit, Long> unitAndAmount = DurationHelper.getUnitAndAmount(duration);
         return "every " + unitAndAmount.getRight().toString() + " " + unitAndAmount.getLeft().toString();
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return null;
     }
 }
