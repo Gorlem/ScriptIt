@@ -10,7 +10,7 @@ import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
-import com.ddoerr.scriptit.triggers.ContinuousTrigger;
+import com.ddoerr.scriptit.triggers.DurationTrigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
@@ -35,7 +35,7 @@ public class HudElementContainerImpl extends DrawableHelper implements Element, 
 
 
     public HudElementContainerImpl(HudElement hudElement, double xPosition, double yPosition) {
-        scriptContainer = new ScriptContainerImpl(new ContinuousTrigger(), new ScriptBuilder());
+        scriptContainer = new ScriptContainerImpl(new DurationTrigger(), new ScriptBuilder());
 
         this.hudElement = hudElement;
 

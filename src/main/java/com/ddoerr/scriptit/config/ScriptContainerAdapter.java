@@ -17,7 +17,7 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
         obj.addProperty("name", script.getName());
 //        obj.addProperty("language", script.getLanguage().toString());
         obj.addProperty("content", script.getScriptSource().getContent());
-        obj.add("trigger", context.serialize(scriptContainer.getTrigger()));
+        obj.add("trigger", context.serialize(scriptContainer.getTrigger(), Trigger.class));
 
         return obj;
     }

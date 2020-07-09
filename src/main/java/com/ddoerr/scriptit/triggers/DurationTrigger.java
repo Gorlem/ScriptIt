@@ -15,41 +15,42 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ContinuousTrigger implements Trigger {
+public class DurationTrigger implements Trigger {
     public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "duration");
 
-    private int time;
-    private ChronoUnit unit;
+    private int time = 0;
+    private ChronoUnit unit = ChronoUnit.MILLIS;
 
-    private Duration duration;
+    private Duration duration = Duration.ZERO;
     private Instant lastActivation = Instant.now();
 
     private Consumer<TriggerMessage> callback = message -> {};
 
-    public ContinuousTrigger() {
-        this.duration = Duration.ZERO;
-    }
-
-    public ContinuousTrigger(Duration durationBetweenActivations) {
-        this.duration = durationBetweenActivations;
-    }
-
-    public ContinuousTrigger(int time, ChronoUnit unit) {
-        this.time = time;
-        this.unit = unit;
-        this.duration = Duration.of(time, unit);
-    }
-
     @Override
-    public void close() {
-    }
+    public void close() { }
 
     @Override
     public Map<String, String> getData() {
         Map<String, String> data = new HashMap<>();
         data.put("time", Integer.toString(time));
-        data.put("unit", unit.toString());
+        data.put("unit", unit.name());
         return data;
+    }
+
+    @Override
+    public void setData(Map<String, String> data) {
+        setTime(Integer.parseInt(data.get("time")));
+        setUnit(ChronoUnit.valueOf(data.get("unit")));
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+        this.duration = Duration.of(time, unit);
+    }
+
+    public void setUnit(ChronoUnit unit) {
+        this.unit = unit;
+        this.duration = Duration.of(time, unit);
     }
 
     @Override
@@ -79,6 +80,6 @@ public class ContinuousTrigger implements Trigger {
 
     @Override
     public Identifier getIdentifier() {
-        return null;
+        return IDENTIFIER;
     }
 }

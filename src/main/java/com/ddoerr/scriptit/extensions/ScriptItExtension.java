@@ -4,7 +4,6 @@ import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.registry.*;
-import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.elements.IconHudElement;
 import com.ddoerr.scriptit.elements.TextHudElement;
 import com.ddoerr.scriptit.events.GameConnectEvent;
@@ -13,9 +12,10 @@ import com.ddoerr.scriptit.events.ChatOutgoingEvent;
 import com.ddoerr.scriptit.events.SoundEvent;
 import com.ddoerr.scriptit.languages.lua.LuaLanguage;
 import com.ddoerr.scriptit.libraries.*;
+import com.ddoerr.scriptit.triggers.BusTrigger;
+import com.ddoerr.scriptit.triggers.DurationTrigger;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
-import net.minecraft.util.registry.SimpleRegistry;
 
 public class ScriptItExtension implements ExtensionInitializer {
 
@@ -46,11 +46,18 @@ public class ScriptItExtension implements ExtensionInitializer {
         add(registry.events, "chat/incoming", ChatIncomingEvent.class);
         add(registry.events, "chat/outgoing", ChatOutgoingEvent.class);
         add(registry.events, "sound", SoundEvent.class);
+
+        registry.triggers.add(DurationTrigger.IDENTIFIER, resolver.supplier(DurationTrigger.class));
+        registry.triggers.add(BusTrigger.IDENTIFIER, resolver.supplier(BusTrigger.class));
     }
 
     private <T> void add(MutableRegistry<T> registry, String identifierPath, Class<? extends T> type) {
+        add(registry, new Identifier(ScriptItMod.MOD_NAME, identifierPath), type);
+    }
+
+    private <T> void add(MutableRegistry<T> registry, Identifier identifier, Class<? extends T> type) {
         try {
-            registry.add(new Identifier(ScriptItMod.MOD_NAME, identifierPath), resolver.create(type));
+            registry.add(identifier, resolver.create(type));
         } catch (DependencyException e) {
             e.printStackTrace();
         }

@@ -11,13 +11,14 @@ import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import java.time.Duration;
 
 public class ConfigHandler implements ConfigCallback, Loadable {
-    private Config config = new Config();
+    private Config config;
     private Debouncer debouncer = new Debouncer(Duration.ofMillis(500), this::save);
 
     private ScriptContainerManager scriptContainerManager;
     private HudElementManager hudElementManager;
 
-    public ConfigHandler(ScriptContainerManager scriptContainerManager, HudElementManager hudElementManager) {
+    public ConfigHandler(Config config, ScriptContainerManager scriptContainerManager, HudElementManager hudElementManager) {
+        this.config = config;
         this.scriptContainerManager = scriptContainerManager;
         this.hudElementManager = hudElementManager;
     }

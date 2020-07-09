@@ -12,8 +12,9 @@ import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
 import com.ddoerr.scriptit.triggers.BusTrigger;
-import com.ddoerr.scriptit.triggers.ContinuousTrigger;
+import com.ddoerr.scriptit.triggers.DurationTrigger;
 import com.ddoerr.scriptit.api.triggers.Trigger;
+import com.ddoerr.scriptit.triggers.TriggerFactory;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
 import net.minecraft.text.TranslatableText;
@@ -26,15 +27,13 @@ import spinnery.widget.api.Size;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
     private InputUtil.KeyCode keyCode;
     private Identifier event;
     private int time;
-    private TemporalUnit unit;
+    private ChronoUnit unit;
     private String script;
 
     private ScriptContainer scriptContainer;
@@ -45,21 +44,24 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
     private ScriptItRegistry registry;
     private ScriptContainerManager scriptContainerManager;
+    private TriggerFactory triggerFactory;
 
-    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, TriggerFactory triggerFactory) {
         super(history);
 
         this.registry = registry;
         this.scriptContainerManager = scriptContainerManager;
+        this.triggerFactory = triggerFactory;
 
         setupWidgets();
     }
 
-    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, ScriptContainer scriptContainer) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager,TriggerFactory triggerFactory, ScriptContainer scriptContainer) {
         super(history);
 
         this.registry = registry;
         this.scriptContainerManager = scriptContainerManager;
+        this.triggerFactory = triggerFactory;
         this.scriptContainer = scriptContainer;
 
         script = scriptContainer.getScript().getScriptSource().getContent();
@@ -78,9 +80,9 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             }
         }
 
-        if (trigger instanceof ContinuousTrigger) {
-            ContinuousTrigger continuousTrigger = (ContinuousTrigger) trigger;
-            Duration duration = continuousTrigger.getDuration();
+        if (trigger instanceof DurationTrigger) {
+            DurationTrigger durationTrigger = (DurationTrigger) trigger;
+            Duration duration = durationTrigger.getDuration();
 
             Pair<ChronoUnit, Long> unitAndAmount = DurationHelper.getUnitAndAmount(duration);
             unit = unitAndAmount.getLeft();
@@ -212,18 +214,28 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             scriptContainerManager.add(scriptContainer);
         }
 
+        Identifier triggerIdentifier = null;
+        Map<String, String> data = new HashMap<>();
+
         if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
-            scriptContainer.setTrigger(new BusTrigger(keyCode.getName()));
+            triggerIdentifier = BusTrigger.IDENTIFIER;
+            data.put("id", keyCode.getName());
         } else if (eventsTab.getToggle().getToggleState() && event != null) {
-            scriptContainer.setTrigger(new BusTrigger(event.toString()));
+            triggerIdentifier = BusTrigger.IDENTIFIER;
+            data.put("id", event.toString());
         } else if (durationTab.getToggle().getToggleState() && unit != null) {
-            scriptContainer.setTrigger(new ContinuousTrigger(Duration.of(time, unit)));
+            triggerIdentifier = DurationTrigger.IDENTIFIER;
+            data.put("time", Integer.toString(time));
+            data.put("unit", unit.name());
         }
+
+        Trigger trigger = triggerFactory.createTrigger(triggerIdentifier, data);
+
+        scriptContainer.setTrigger(trigger);
 
         ScriptBuilder scriptBuilder = new ScriptBuilder()
                 .fromString(script)
-                .name(scriptContainer.getTrigger().toString());
-
+                .name(trigger.toString());
         scriptContainer.setScript(scriptBuilder);
 
         scriptContainer.enable();
