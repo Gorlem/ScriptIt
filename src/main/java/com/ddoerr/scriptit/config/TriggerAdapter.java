@@ -1,8 +1,5 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
-import com.ddoerr.scriptit.triggers.BusTrigger;
-import com.ddoerr.scriptit.triggers.DurationTrigger;
 import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.triggers.TriggerFactory;
 import com.google.gson.*;

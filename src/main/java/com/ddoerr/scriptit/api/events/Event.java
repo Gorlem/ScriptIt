@@ -6,4 +6,5 @@ import java.util.function.Consumer;
 
 public interface Event {
     void registerListener(Consumer<TriggerMessage> messageConsumer);
+    void removeListener(Consumer<TriggerMessage> messageConsumer);
 }

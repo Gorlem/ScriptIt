@@ -15,6 +15,11 @@ public class AbstractEvent implements Event {
         listeners.add(messageConsumer);
     }
 
+    @Override
+    public void removeListener(Consumer<TriggerMessage> messageConsumer) {
+        listeners.remove(messageConsumer);
+    }
+
     protected void dispatch() {
         dispatch(new TriggerMessageImpl());
     }

@@ -68,14 +68,17 @@ public class DurationTrigger implements Trigger {
         }
     }
 
-    public Duration getDuration() {
-        return duration;
+    public ChronoUnit getUnit() {
+        return unit;
+    }
+
+    public int getTime() {
+        return time;
     }
 
     @Override
     public String toString() {
-        Pair<ChronoUnit, Long> unitAndAmount = DurationHelper.getUnitAndAmount(duration);
-        return "every " + unitAndAmount.getRight().toString() + " " + unitAndAmount.getLeft().toString();
+        return "every " + time + " " + unit;
     }
 
     @Override

@@ -3,17 +3,19 @@ package com.ddoerr.scriptit.extensions;
 import com.ddoerr.scriptit.ScriptItMod;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
-import com.ddoerr.scriptit.api.registry.*;
+import com.ddoerr.scriptit.api.registry.ExtensionInitializer;
+import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.elements.IconHudElement;
 import com.ddoerr.scriptit.elements.TextHudElement;
-import com.ddoerr.scriptit.events.GameConnectEvent;
 import com.ddoerr.scriptit.events.ChatIncomingEvent;
 import com.ddoerr.scriptit.events.ChatOutgoingEvent;
+import com.ddoerr.scriptit.events.GameConnectEvent;
 import com.ddoerr.scriptit.events.SoundEvent;
 import com.ddoerr.scriptit.languages.lua.LuaLanguage;
 import com.ddoerr.scriptit.libraries.*;
-import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.DurationTrigger;
+import com.ddoerr.scriptit.triggers.EventTrigger;
+import com.ddoerr.scriptit.triggers.KeyBindingTrigger;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
 
@@ -48,7 +50,8 @@ public class ScriptItExtension implements ExtensionInitializer {
         add(registry.events, "sound", SoundEvent.class);
 
         registry.triggers.add(DurationTrigger.IDENTIFIER, resolver.supplier(DurationTrigger.class));
-        registry.triggers.add(BusTrigger.IDENTIFIER, resolver.supplier(BusTrigger.class));
+        registry.triggers.add(EventTrigger.IDENTIFIER, resolver.supplier(EventTrigger.class));
+        registry.triggers.add(KeyBindingTrigger.IDENTIFIER, resolver.supplier(KeyBindingTrigger.class));
     }
 
     private <T> void add(MutableRegistry<T> registry, String identifierPath, Class<? extends T> type) {

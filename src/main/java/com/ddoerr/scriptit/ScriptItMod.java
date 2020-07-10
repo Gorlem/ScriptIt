@@ -1,24 +1,22 @@
 package com.ddoerr.scriptit;
 
-import com.ddoerr.scriptit.api.bus.EventBus;
-import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.dependencies.Resolver;
 import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
+import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.api.util.Color;
 import com.ddoerr.scriptit.callbacks.LateInitCallback;
 import com.ddoerr.scriptit.config.Config;
 import com.ddoerr.scriptit.config.ConfigHandler;
 import com.ddoerr.scriptit.elements.HudElementManagerImpl;
-import com.ddoerr.scriptit.events.EventManagerImpl;
 import com.ddoerr.scriptit.extensions.ExtensionLoader;
 import com.ddoerr.scriptit.languages.LanguageManagerImpl;
 import com.ddoerr.scriptit.screens.ScreenHistory;
 import com.ddoerr.scriptit.screens.ScriptOverviewScreen;
 import com.ddoerr.scriptit.scripts.ScriptContainerManagerImpl;
-import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.ddoerr.scriptit.scripts.ScriptManagerImpl;
+import com.ddoerr.scriptit.triggers.KeyBindingManagerImpl;
 import com.ddoerr.scriptit.triggers.TriggerFactoryImpl;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
@@ -47,13 +45,11 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 			resolver.add(MinecraftClient.getInstance());
 
 			resolver.add(ScreenHistory.class);
-			resolver.add(EventBus.class);
-			resolver.add(KeyBindingBusExtension.class);
+			resolver.add(KeyBindingManagerImpl.class);
 			resolver.add(ScriptItRegistry.class);
 			resolver.add(ExtensionLoader.class);
 			resolver.add(ScriptManagerImpl.class);
 			resolver.add(ScriptContainerManagerImpl.class);
-			resolver.add(EventManagerImpl.class);
 			resolver.add(LanguageManagerImpl.class);
 			resolver.add(HudElementManagerImpl.class);
 			resolver.add(TriggerFactoryImpl.class);

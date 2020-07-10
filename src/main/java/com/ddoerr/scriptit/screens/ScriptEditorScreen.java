@@ -1,32 +1,28 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.api.scripts.ScriptContainerManager;
-import com.ddoerr.scriptit.api.util.DurationHelper;
+import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
-import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
-import com.ddoerr.scriptit.triggers.BusTrigger;
 import com.ddoerr.scriptit.triggers.DurationTrigger;
-import com.ddoerr.scriptit.api.triggers.Trigger;
+import com.ddoerr.scriptit.triggers.EventTrigger;
+import com.ddoerr.scriptit.triggers.KeyBindingTrigger;
 import com.ddoerr.scriptit.triggers.TriggerFactory;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
@@ -68,25 +64,21 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
         Trigger trigger = scriptContainer.getTrigger();
 
-        if (trigger instanceof BusTrigger) {
-            BusTrigger busTrigger = (BusTrigger) trigger;
-            String id = busTrigger.getId();
+        // TODO: re-work to work with data
+        if (trigger instanceof KeyBindingTrigger) {
+            KeyBindingTrigger keyBindingTrigger = (KeyBindingTrigger)trigger;
+            keyCode = InputUtil.fromName(keyBindingTrigger.getKeyName());
+        }
 
-            if (KeyBindingBusExtension.isKeyEvent(id)) {
-                keyCode = InputUtil.fromName(id);
-            }
-            else {
-                event = new Identifier(id);
-            }
+        if (trigger instanceof EventTrigger) {
+            EventTrigger eventTrigger = (EventTrigger)trigger;
+            event = eventTrigger.getEventIdentifier();
         }
 
         if (trigger instanceof DurationTrigger) {
             DurationTrigger durationTrigger = (DurationTrigger) trigger;
-            Duration duration = durationTrigger.getDuration();
-
-            Pair<ChronoUnit, Long> unitAndAmount = DurationHelper.getUnitAndAmount(duration);
-            unit = unitAndAmount.getLeft();
-            time = unitAndAmount.getRight().intValue();
+            unit = durationTrigger.getUnit();
+            time = durationTrigger.getTime();
         }
 
         setupWidgets();
@@ -217,12 +209,14 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         Identifier triggerIdentifier = null;
         Map<String, String> data = new HashMap<>();
 
+        // TODO: re-work to work with data
+
         if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
-            triggerIdentifier = BusTrigger.IDENTIFIER;
-            data.put("id", keyCode.getName());
+            triggerIdentifier = KeyBindingTrigger.IDENTIFIER;
+            data.put("key", keyCode.getName());
         } else if (eventsTab.getToggle().getToggleState() && event != null) {
-            triggerIdentifier = BusTrigger.IDENTIFIER;
-            data.put("id", event.toString());
+            triggerIdentifier = EventTrigger.IDENTIFIER;
+            data.put("event", event.toString());
         } else if (durationTab.getToggle().getToggleState() && unit != null) {
             triggerIdentifier = DurationTrigger.IDENTIFIER;
             data.put("time", Integer.toString(time));
