@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 public class KeyBindingTrigger implements Trigger {
     public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "keybinding");
+    public static final String KEYNAME = "key";
 
     private String keyName;
     private Consumer<TriggerMessage> callback = triggerMessage -> {};
@@ -45,13 +46,13 @@ public class KeyBindingTrigger implements Trigger {
 
     @Override
     public Map<String, String> getData() {
-        return Collections.singletonMap("key", keyName);
+        return Collections.singletonMap(KEYNAME, keyName);
     }
 
     @Override
     public void setData(Map<String, String> data) {
         close();
-        keyName = data.get("key");
+        keyName = data.get(KEYNAME);
         if (keyName != null) {
             keyBindingManager.registerListener(keyName, callback);
         }

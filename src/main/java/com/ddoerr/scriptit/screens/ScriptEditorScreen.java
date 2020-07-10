@@ -6,41 +6,32 @@ import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.api.scripts.ScriptContainerManager;
 import com.ddoerr.scriptit.api.triggers.Trigger;
-import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
-import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
-import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
-import com.ddoerr.scriptit.triggers.DurationTrigger;
-import com.ddoerr.scriptit.triggers.EventTrigger;
-import com.ddoerr.scriptit.triggers.KeyBindingTrigger;
 import com.ddoerr.scriptit.api.triggers.TriggerFactory;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.item.Items;
+import com.ddoerr.scriptit.callbacks.ConfigCallback;
+import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
+import com.ddoerr.scriptit.triggers.KeyBindingTrigger;
+import com.ddoerr.scriptit.api.triggers.tabs.TriggerTabFactory;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
-    private InputUtil.KeyCode keyCode;
-    private Identifier event;
-    private int time;
-    private ChronoUnit unit;
-    private String script;
-
-    private ScriptContainer scriptContainer;
-
-    private WTabHolder.WTab keyBindingsTab;
-    private WTabHolder.WTab eventsTab;
-    private WTabHolder.WTab durationTab;
-
     private ScriptItRegistry registry;
     private ScriptContainerManager scriptContainerManager;
     private TriggerFactory triggerFactory;
+
+    private Map<Identifier, Map<String, String>> triggersData = new HashMap<>();
+    private Identifier selectedTrigger;
+    private String script;
+    private ScriptContainer scriptContainer;
 
     public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, TriggerFactory triggerFactory) {
         super(history);
@@ -63,23 +54,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         script = scriptContainer.getScript().getScriptSource().getContent();
 
         Trigger trigger = scriptContainer.getTrigger();
-
-        // TODO: re-work to work with data
-        if (trigger instanceof KeyBindingTrigger) {
-            KeyBindingTrigger keyBindingTrigger = (KeyBindingTrigger)trigger;
-            keyCode = InputUtil.fromName(keyBindingTrigger.getKeyName());
-        }
-
-        if (trigger instanceof EventTrigger) {
-            EventTrigger eventTrigger = (EventTrigger)trigger;
-            event = eventTrigger.getEventIdentifier();
-        }
-
-        if (trigger instanceof DurationTrigger) {
-            DurationTrigger durationTrigger = (DurationTrigger) trigger;
-            unit = durationTrigger.getUnit();
-            time = durationTrigger.getTime();
-        }
+        triggersData.put(trigger.getIdentifier(), trigger.getData());
+        selectedTrigger = trigger.getIdentifier();
 
         setupWidgets();
     }
@@ -97,75 +73,26 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private void setupTriggerWidget(WInterface mainInterface) {
         WTabHolder tabHolder = mainInterface.createChild(WTabHolder.class, Position.of(20, 20, 0), Size.of(300, 60));
 
-        addKeyTriggerTab(tabHolder);
-        addEventTriggerTab(tabHolder);
-        addDurationTriggerTab(tabHolder);
+        Registry<TriggerTabFactory> triggerTabs = (Registry<TriggerTabFactory>)registry.get(new Identifier(ScriptItMod.MOD_NAME, "trigger_tabs"));
 
-        int tabNumber = unit != null ? 3 : event != null ? 2 : 1;
-        WTabHolder.WTab tab = tabNumber == 1 ? keyBindingsTab : tabNumber == 2 ? eventsTab : durationTab;
+        if (selectedTrigger == null) {
+            selectedTrigger = KeyBindingTrigger.IDENTIFIER;
+        }
 
+        List<Identifier> ids = new ArrayList<>(triggerTabs.getIds());
+        for (Identifier identifier : ids) {
+            TriggerTabFactory triggerTabFactory = triggerTabs.get(identifier);
+            WTabHolder.WTab tab = triggerTabFactory.createTriggerTab(tabHolder, triggersData.computeIfAbsent(identifier, key -> new HashMap<>()));
+
+            if (selectedTrigger.equals(identifier)) {
+                tab.getToggle().setToggleState(true);
+            }
+
+            tab.getToggle().setOnMouseClicked((w, mx, my, mb) -> selectedTrigger = identifier);
+        }
+
+        int tabNumber = ids.indexOf(selectedTrigger) + 1;
         tabHolder.selectTab(tabNumber);
-        tab.getToggle().setToggleState(true);
-    }
-
-    private void addKeyTriggerTab(WTabHolder tabHolder) {
-        keyBindingsTab = tabHolder.addTab(Items.TRIPWIRE_HOOK, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.keybinding").toString()));
-
-        KeyBindingButtonWidget keyBindingButtonWidget = keyBindingsTab.createChild(KeyBindingButtonWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
-        keyBindingButtonWidget.setOnChange(keyCode -> this.keyCode = keyCode);
-
-        if (keyCode != null) {
-            keyBindingButtonWidget.setKeyCode(keyCode);
-        }
-    }
-
-    private void addEventTriggerTab(WTabHolder tabHolder) {
-        eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event").toString()));
-
-        ValuesDropdownWidget<Identifier> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
-        if (event == null) {
-            eventDropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event.select").toString()));
-        } else {
-            eventDropdown.selectValue(event);
-        }
-        eventDropdown.addValues(new ArrayList<>(registry.events.getIds()));
-        eventDropdown.setOnChange(event -> this.event = event);
-    }
-
-    private void addDurationTriggerTab(WTabHolder tabHolder) {
-        List<ChronoUnit> units = Arrays.asList(ChronoUnit.MILLIS, ChronoUnit.SECONDS, ChronoUnit.MINUTES, ChronoUnit.HOURS);
-
-        durationTab = tabHolder.addTab(Items.CLOCK, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.duration").toString()));
-
-        WTextField timeText = durationTab.createChild(WTextField.class, Position.of(tabHolder, 10, 30), Size.of(135, 20));
-
-        Runnable parseTime = () -> {
-            try {
-                time = Integer.parseInt(timeText.getText());
-            } catch (NumberFormatException ignored) { }
-        };
-
-        timeText.setOnKeyPressed((widget, keyPressed, character, keyModifier) -> parseTime.run());
-        timeText.setOnCharTyped((widget, character, keyCode) -> parseTime.run());
-
-        if (unit != null) {
-            timeText.setText(Integer.toString(time));
-        }
-
-        ValuesDropdownWidget<ChronoUnit> durationDropdown = durationTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 155, 30), Size.of(135, 20))
-                .setTranslationPrefix("scripts.triggers.duration.values");
-
-        durationDropdown.addValues(units);
-
-        if (unit == null) {
-            durationDropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.duration.select").toString()));
-        } else {
-            durationDropdown.selectValue((ChronoUnit)unit);
-        }
-
-        durationDropdown.setOnChange(unit -> this.unit = unit);
-
-        durationTab.add(durationDropdown, timeText);
     }
 
     private void setupScriptWidget(WInterface mainInterface) {
@@ -206,24 +133,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             scriptContainerManager.add(scriptContainer);
         }
 
-        Identifier triggerIdentifier = null;
-        Map<String, String> data = new HashMap<>();
-
-        // TODO: re-work to work with data
-
-        if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
-            triggerIdentifier = KeyBindingTrigger.IDENTIFIER;
-            data.put("key", keyCode.getName());
-        } else if (eventsTab.getToggle().getToggleState() && event != null) {
-            triggerIdentifier = EventTrigger.IDENTIFIER;
-            data.put("event", event.toString());
-        } else if (durationTab.getToggle().getToggleState() && unit != null) {
-            triggerIdentifier = DurationTrigger.IDENTIFIER;
-            data.put("time", Integer.toString(time));
-            data.put("unit", unit.name());
-        }
-
-        Trigger trigger = triggerFactory.createTrigger(triggerIdentifier, data);
+        Trigger trigger = triggerFactory.createTrigger(selectedTrigger, triggersData.get(selectedTrigger));
 
         scriptContainer.setTrigger(trigger);
 

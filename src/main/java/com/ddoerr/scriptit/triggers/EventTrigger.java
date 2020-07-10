@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 public class EventTrigger implements Trigger {
     public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "event");
+    public static final String EVENTNAME = "event";
 
     private Consumer<TriggerMessage> callback = triggerMessage -> {};
 
@@ -49,14 +50,14 @@ public class EventTrigger implements Trigger {
 
     @Override
     public Map<String, String> getData() {
-        return Collections.singletonMap("event", eventIdentifier.toString());
+        return Collections.singletonMap(EVENTNAME, eventIdentifier.toString());
     }
 
     @Override
     public void setData(Map<String, String> data) {
         close();
 
-        eventIdentifier = new Identifier(data.get("event"));
+        eventIdentifier = new Identifier(data.get(EVENTNAME));
         Event event = registry.events.get(eventIdentifier);
         if (event != null) {
             event.registerListener(callback);

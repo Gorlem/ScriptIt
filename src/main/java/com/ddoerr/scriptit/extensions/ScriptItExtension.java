@@ -16,8 +16,13 @@ import com.ddoerr.scriptit.libraries.*;
 import com.ddoerr.scriptit.triggers.DurationTrigger;
 import com.ddoerr.scriptit.triggers.EventTrigger;
 import com.ddoerr.scriptit.triggers.KeyBindingTrigger;
+import com.ddoerr.scriptit.triggers.tabs.DurationTriggerTabFactory;
+import com.ddoerr.scriptit.triggers.tabs.EventTriggerTabFactory;
+import com.ddoerr.scriptit.triggers.tabs.KeyBindingTriggerTabFactory;
+import com.ddoerr.scriptit.api.triggers.tabs.TriggerTabFactory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.SimpleRegistry;
 
 public class ScriptItExtension implements ExtensionInitializer {
 
@@ -49,9 +54,15 @@ public class ScriptItExtension implements ExtensionInitializer {
         add(registry.events, "chat/outgoing", ChatOutgoingEvent.class);
         add(registry.events, "sound", SoundEvent.class);
 
-        registry.triggers.add(DurationTrigger.IDENTIFIER, resolver.supplier(DurationTrigger.class));
-        registry.triggers.add(EventTrigger.IDENTIFIER, resolver.supplier(EventTrigger.class));
         registry.triggers.add(KeyBindingTrigger.IDENTIFIER, resolver.supplier(KeyBindingTrigger.class));
+        registry.triggers.add(EventTrigger.IDENTIFIER, resolver.supplier(EventTrigger.class));
+        registry.triggers.add(DurationTrigger.IDENTIFIER, resolver.supplier(DurationTrigger.class));
+
+        SimpleRegistry<TriggerTabFactory> triggerTabs = new SimpleRegistry<>();
+        registry.add(new Identifier(ScriptItMod.MOD_NAME, "trigger_tabs"), triggerTabs);
+        add(triggerTabs, KeyBindingTrigger.IDENTIFIER, KeyBindingTriggerTabFactory.class);
+        add(triggerTabs, EventTrigger.IDENTIFIER, EventTriggerTabFactory.class);
+        add(triggerTabs, DurationTrigger.IDENTIFIER, DurationTriggerTabFactory.class);
     }
 
     private <T> void add(MutableRegistry<T> registry, String identifierPath, Class<? extends T> type) {

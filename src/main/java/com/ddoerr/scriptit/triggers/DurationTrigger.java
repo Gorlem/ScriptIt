@@ -17,6 +17,8 @@ import java.util.function.Consumer;
 
 public class DurationTrigger implements Trigger {
     public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "duration");
+    public static final String TIMENAME = "time";
+    public static final String UNITNAME = "unit";
 
     private int time = 0;
     private ChronoUnit unit = ChronoUnit.MILLIS;
@@ -32,15 +34,15 @@ public class DurationTrigger implements Trigger {
     @Override
     public Map<String, String> getData() {
         Map<String, String> data = new HashMap<>();
-        data.put("time", Integer.toString(time));
-        data.put("unit", unit.name());
+        data.put(TIMENAME, Integer.toString(time));
+        data.put(UNITNAME, unit.name());
         return data;
     }
 
     @Override
     public void setData(Map<String, String> data) {
-        setTime(Integer.parseInt(data.get("time")));
-        setUnit(ChronoUnit.valueOf(data.get("unit")));
+        setTime(Integer.parseInt(data.get(TIMENAME)));
+        setUnit(ChronoUnit.valueOf(data.get(UNITNAME)));
     }
 
     public void setTime(int time) {
