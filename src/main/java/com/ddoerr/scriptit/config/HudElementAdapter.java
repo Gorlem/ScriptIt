@@ -1,15 +1,13 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.api.dependencies.Resolver;
-import com.ddoerr.scriptit.api.exceptions.DependencyException;
 import com.ddoerr.scriptit.api.hud.HudElement;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
-import com.ddoerr.scriptit.api.util.geometry.Point;
-import com.ddoerr.scriptit.api.hud.HudElementContainer;
-import com.ddoerr.scriptit.elements.HudElementContainerImpl;
 import com.ddoerr.scriptit.api.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.util.geometry.Point;
+import com.ddoerr.scriptit.elements.HudElementContainerImpl;
 import com.google.gson.*;
 import net.minecraft.util.Identifier;
 
@@ -20,12 +18,8 @@ import java.util.Map;
 public class HudElementAdapter implements JsonSerializer<HudElementContainer>, JsonDeserializer<HudElementContainer> {
     private ScriptItRegistry registry;
 
-    public HudElementAdapter() {
-        try {
-            registry = Resolver.getInstance().resolve(ScriptItRegistry.class);
-        } catch (DependencyException e) {
-            e.printStackTrace();
-        }
+    public HudElementAdapter(ScriptItRegistry registry) {
+        this.registry = registry;
     }
 
     @Override

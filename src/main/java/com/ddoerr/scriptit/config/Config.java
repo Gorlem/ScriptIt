@@ -24,9 +24,9 @@ public class Config {
     public Config(Resolver resolver) {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
-        gsonBuilder.registerTypeAdapter(ScriptContainer.class, new ScriptContainerAdapter());
-        gsonBuilder.registerTypeAdapter(HudElementContainer.class, new HudElementAdapter());
         try {
+            gsonBuilder.registerTypeAdapter(ScriptContainer.class, resolver.create(ScriptContainerAdapter.class));
+            gsonBuilder.registerTypeAdapter(HudElementContainer.class, resolver.create(HudElementAdapter.class));
             gsonBuilder.registerTypeAdapter(Trigger.class, resolver.create(TriggerAdapter.class));
         } catch (DependencyException e) {
             e.printStackTrace();

@@ -24,10 +24,13 @@ import static net.minecraft.command.arguments.IdentifierArgumentType.identifier;
 
 public class ScriptItCommand implements ClientCommandPlugin {
     private ScriptManager scriptManager;
+    private ScriptItRegistry registry;
 
     public ScriptItCommand() {
         try {
-            scriptManager = Resolver.getInstance().resolve(ScriptManager.class);
+            Resolver resolver = Resolver.getInstance();
+            scriptManager = resolver.resolve(ScriptManager.class);
+            registry = resolver.resolve(ScriptItRegistry.class);
         } catch (DependencyException e) {
             e.printStackTrace();
         }
@@ -35,31 +38,25 @@ public class ScriptItCommand implements ClientCommandPlugin {
 
     @Override
     public void registerCommands(CommandDispatcher<CottonClientCommandSource> dispatcher) {
-        try {
-            ScriptItRegistry registry = Resolver.getInstance().resolve(ScriptItRegistry.class);
+        List<String> languageNames = registry.languages.getIds().stream().map(Identifier::toString).collect(Collectors.toList());
 
-            List<String> languageNames = registry.languages.getIds().stream().map(Identifier::toString).collect(Collectors.toList());
-
-            dispatcher.register(literal("scriptit")
-                    .then(literal("run")
-                            .then(argument("language", identifier())
-                                    .suggests((ctx, builder) -> CommandSource.suggestMatching(languageNames, builder))
-                                    .then(argument("script", greedyString())
-                                            .executes(ctx -> execute(ctx.getSource(),
-                                                    ctx.getArgument("language", Identifier.class),
-                                                    getString(ctx, "script")))
-                                    )
-                            )
-                    )
-                    .then(literal("start")
-                            .then(argument("file", word())
-                                .executes(ctx -> execute(ctx.getSource(), getString(ctx, "file")))
-                            )
-                    )
-            );
-        } catch (DependencyException e) {
-            e.printStackTrace();
-        }
+        dispatcher.register(literal("scriptit")
+                .then(literal("run")
+                        .then(argument("language", identifier())
+                                .suggests((ctx, builder) -> CommandSource.suggestMatching(languageNames, builder))
+                                .then(argument("script", greedyString())
+                                        .executes(ctx -> execute(ctx.getSource(),
+                                                ctx.getArgument("language", Identifier.class),
+                                                getString(ctx, "script")))
+                                )
+                        )
+                )
+                .then(literal("start")
+                        .then(argument("file", word())
+                            .executes(ctx -> execute(ctx.getSource(), getString(ctx, "file")))
+                        )
+                )
+        );
     }
 
     private int execute(CottonClientCommandSource ctx, Identifier language, String content) {

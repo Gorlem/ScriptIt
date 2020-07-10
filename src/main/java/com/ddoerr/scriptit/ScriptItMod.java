@@ -70,7 +70,7 @@ public class ScriptItMod implements ClientModInitializer, LateInitCallback {
 		KeyBindingRegistry.INSTANCE.register(openGuiKeyBinding);
 
 		try {
-			Color.setScriptManager(Resolver.getInstance().resolve(ScriptManager.class));
+			Color.setScriptManager(resolver.resolve(ScriptManager.class));
 
 			Collection<Tickable> tickables = resolver.resolveAll(Tickable.class);
 			ScreenHistory history = resolver.resolve(ScreenHistory.class);
