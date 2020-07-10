@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.api.triggers.Trigger;
-import com.ddoerr.scriptit.triggers.TriggerFactory;
+import com.ddoerr.scriptit.api.triggers.TriggerFactory;
 import com.google.gson.*;
 import net.minecraft.util.Identifier;
 

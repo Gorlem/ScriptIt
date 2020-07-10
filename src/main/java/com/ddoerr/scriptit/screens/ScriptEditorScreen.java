@@ -13,7 +13,7 @@ import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
 import com.ddoerr.scriptit.triggers.DurationTrigger;
 import com.ddoerr.scriptit.triggers.EventTrigger;
 import com.ddoerr.scriptit.triggers.KeyBindingTrigger;
-import com.ddoerr.scriptit.triggers.TriggerFactory;
+import com.ddoerr.scriptit.api.triggers.TriggerFactory;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
 import net.minecraft.text.TranslatableText;

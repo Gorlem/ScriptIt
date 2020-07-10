@@ -2,6 +2,7 @@ package com.ddoerr.scriptit.triggers;
 
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.triggers.Trigger;
+import com.ddoerr.scriptit.api.triggers.TriggerFactory;
 import net.minecraft.util.Identifier;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.ddoerr.scriptit.triggers;
+package com.ddoerr.scriptit.api.triggers;
 
 import com.ddoerr.scriptit.api.triggers.Trigger;
 import net.minecraft.util.Identifier;

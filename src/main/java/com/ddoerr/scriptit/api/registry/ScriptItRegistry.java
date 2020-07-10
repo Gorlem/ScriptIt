@@ -6,7 +6,6 @@ import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.api.languages.Language;
 import com.ddoerr.scriptit.api.libraries.Model;
 import com.ddoerr.scriptit.api.triggers.Trigger;
-import com.ddoerr.scriptit.triggers.TriggerFactory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;

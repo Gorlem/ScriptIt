@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.triggers;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.triggers.KeyBindingManager;
 import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.api.triggers.TriggerMessage;
 import com.ddoerr.scriptit.api.util.KeyBindingHelper;
