@@ -10,25 +10,20 @@
 
   "scriptit:scripts.exception": "An error occurred while running script %s. Script will be disabled until it is saved again.",
 
-  "scriptit:scripts.triggers.keybinding": "Key Binding",
+  "scriptit:triggers.scriptit:keybinding": "Key Binding",
+  "scriptit:triggers.scriptit:keybinding.icon": "tripwire_hook",
 
-  "scriptit:scripts.triggers.event": "Event",
+  "scriptit:triggers.scriptit:event": "Event",
+  "scriptit:triggers.scriptit:event.icon": "firework_rocket",
   "scriptit:scripts.triggers.event.select": "Select an Event",
 
-  "scriptit:chat/incoming": "Incoming Chat",
-  "scriptit:chat/outgoing": "Outgoing Chat",
-  "scriptit:game/connect": "Connect",
-  "scriptit:sound": "Sound",
-
-  "scriptit:scripts.triggers.duration": "Duration",
+  "scriptit:triggers.scriptit:duration": "Duration",
+  "scriptit:triggers.scriptit:duration.icon": "clock",
   "scriptit:scripts.triggers.duration.select": "Select a Time Unit",
   "scriptit:scripts.triggers.duration.values.millis": "Milliseconds",
   "scriptit:scripts.triggers.duration.values.seconds": "Seconds",
   "scriptit:scripts.triggers.duration.values.minutes": "Minutes",
   "scriptit:scripts.triggers.duration.values.hours": "Hours",
-
-  "scriptit:scripts.lifecycle.values.instant": "Instant",
-  "scriptit:scripts.lifecycle.values.threaded": "Threaded",
 
   "scriptit:elements.open": "Open Hud Designer",
   "scriptit:elements.add": "Add a Hud Element",
@@ -43,5 +38,10 @@
   "scriptit:keybinding.unknown": "§4???",
 
   "scriptit:tooltip.button": "Button %s",
-  "scriptit:tooltip.slot": "Slot %s"
+  "scriptit:tooltip.slot": "Slot %s",
+
+  "scriptit:chat/incoming": "Incoming Chat",
+  "scriptit:chat/outgoing": "Outgoing Chat",
+  "scriptit:game/connect": "Connect",
+  "scriptit:sound": "Sound"
 }

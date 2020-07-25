@@ -36,7 +36,7 @@ public class ScriptContainerImpl implements ScriptContainer {
     @Override
     public void setTrigger(Trigger trigger) {
         if (this.trigger != null) {
-            this.trigger.close();
+            this.trigger.stop();
         }
 
         this.trigger = trigger;

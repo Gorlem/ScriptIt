@@ -1,37 +1,45 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
 import com.ddoerr.scriptit.api.util.geometry.Point;
-import com.ddoerr.scriptit.api.hud.HudElementContainer;
+import com.ddoerr.scriptit.fields.Field;
+import com.ddoerr.scriptit.fields.FieldAssembler;
+import com.ddoerr.scriptit.screens.widgets.PanelWidget;
 import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
-import com.google.common.collect.Maps;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import spinnery.widget.*;
+import spinnery.widget.WAbstractWidget;
+import spinnery.widget.WButton;
+import spinnery.widget.WInterface;
+import spinnery.widget.WPanel;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
 import java.util.Map;
 
 public class HudElementEditorScreen extends AbstractHistoryScreen {
-    HudElementContainer hudElement;
+    private final FieldAssembler fieldAssembler;
+    private HudElementContainer container;
 
-    Map<String, Object> options;
-    HudHorizontalAnchor horizontalAnchor;
-    HudVerticalAnchor verticalAnchor;
+    private HudHorizontalAnchor horizontalAnchor;
+    private HudVerticalAnchor verticalAnchor;
 
-    public HudElementEditorScreen(ScreenHistory history, HudElementContainer hudElement) {
+    private Map<String, Field<?>> fields;
+
+    public HudElementEditorScreen(ScreenHistory history, FieldAssembler fieldAssembler, HudElementContainer container) {
         super(history);
+        this.fieldAssembler = fieldAssembler;
 
-        this.hudElement = hudElement;
+        this.container = container;
+        fields = container.getHudElement().getFields();
 
-        options = Maps.newHashMap(hudElement.getOptions());
-        horizontalAnchor = hudElement.getHorizontalAnchor();
-        verticalAnchor = hudElement.getVerticalAnchor();
+        horizontalAnchor = container.getHorizontalAnchor();
+        verticalAnchor = container.getVerticalAnchor();
 
-        showSetup(hudElement);
+        showSetup(container);
     }
 
     private void showSetup(HudElementContainer hudElement) {
@@ -45,22 +53,10 @@ public class HudElementEditorScreen extends AbstractHistoryScreen {
                 })
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.edit.script").toString()));
 
-        int y = 35;
+        PanelWidget child = panel.createChild(PanelWidget.class, Position.of(panel, 10, 35), Size.of(180, 0));
+        fieldAssembler.assembleFields(child, fields);
 
-        for (Map.Entry<String, Object> entry : options.entrySet()) {
-            panel.createChild(WStaticText.class, Position.of(panel, 10, y))
-                    .setText(entry.getKey());
-
-            panel.createChild(WTextField.class, Position.of(panel, 10, y + 10), Size.of(180, 16))
-                    .setText(entry.getValue().toString())
-                    .setOnKeyPressed((widget, keyCode, character, keyModifier) -> {
-                        options.put(entry.getKey(), ((WTextField)widget).getText());
-                    })
-                    .setOnCharTyped((widget, character, keyCode) -> {
-                        options.put(entry.getKey(), ((WTextField)widget).getText());
-                    });
-            y += 35;
-        }
+        int y = 35 + child.getHeight();
 
         ValuesDropdownWidget<HudVerticalAnchor> vertical = panel.createChild(ValuesDropdownWidget.class, Position.of(panel, 10, y), Size.of(88, 20));
         vertical.addValues(HudVerticalAnchor.values());
@@ -84,12 +80,12 @@ public class HudElementEditorScreen extends AbstractHistoryScreen {
     }
 
     private void updateHudElement() {
-        Point point = hudElement.getRealPosition();
-        hudElement.setAnchor(horizontalAnchor, verticalAnchor);
-        hudElement.setRealPosition(point);
+        Point point = container.getRealPosition();
+        container.setAnchor(horizontalAnchor, verticalAnchor);
+        container.setRealPosition(point);
 
-        for (Map.Entry<String, Object> entry : options.entrySet()) {
-            hudElement.setOption(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, Field<?>> entry : fields.entrySet()) {
+            entry.getValue().applyTemporaryValue();
         }
 
         onClose();

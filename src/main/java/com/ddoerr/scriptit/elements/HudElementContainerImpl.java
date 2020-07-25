@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HudElementContainerImpl extends DrawableHelper implements Element, HudElementContainer {
-
-    private Map<String, Object> options = new HashMap<>();
     private HudElement hudElement;
     private ScriptContainer scriptContainer;
 
@@ -33,13 +31,9 @@ public class HudElementContainerImpl extends DrawableHelper implements Element, 
     private HudHorizontalAnchor horizontalAnchor = HudHorizontalAnchor.LEFT;
     private HudVerticalAnchor verticalAnchor = HudVerticalAnchor.TOP;
 
-
     public HudElementContainerImpl(HudElement hudElement, double xPosition, double yPosition) {
-        scriptContainer = new ScriptContainerImpl(new DurationTrigger(), new ScriptBuilder());
-
         this.hudElement = hudElement;
-
-        hudElement.setDefaults(this);
+        scriptContainer = new ScriptContainerImpl(new DurationTrigger(), hudElement.getDefaultScript());
         setRealPosition(new Point(xPosition, yPosition));
     }
 
@@ -96,22 +90,6 @@ public class HudElementContainerImpl extends DrawableHelper implements Element, 
     @Override
     public int getWidth() {
         return width;
-    }
-
-    @Override
-    public void setOption(String key, Object value) {
-        options.put(key, value);
-        ConfigCallback.EVENT.invoker().saveConfig(this.getClass());
-    }
-
-    @Override
-    public Object getOption(String key) {
-        return options.getOrDefault(key, null);
-    }
-
-    @Override
-    public Map<String, Object> getOptions() {
-        return options;
     }
 
     @Override

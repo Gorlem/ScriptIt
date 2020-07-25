@@ -21,7 +21,7 @@ public class ChatIncomingEvent extends AbstractEvent implements IncomingChatMess
 
     public TypedActionResult<Text> onIncomingChatMessage(Text text) {
         MessageModel messageModel = new MessageModel(text);
-        TriggerMessage message = new TriggerMessageImpl(messageModel, Duration.ofMillis(10));
+        TriggerMessage message = new TriggerMessageImpl(messageModel, Duration.ofMillis(20));
         dispatch(message);
         return messageModel.getActionResult();
     }

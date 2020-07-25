@@ -5,56 +5,49 @@ import com.ddoerr.scriptit.api.triggers.KeyBindingManager;
 import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.api.triggers.TriggerMessage;
 import com.ddoerr.scriptit.api.util.KeyBindingHelper;
+import com.ddoerr.scriptit.fields.Field;
+import com.ddoerr.scriptit.fields.KeyBindingField;
+import com.ddoerr.scriptit.fields.StringField;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class KeyBindingTrigger implements Trigger {
+public class KeyBindingTrigger extends AbstractTrigger {
     public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "keybinding");
-    public static final String KEYNAME = "key";
-
-    private String keyName;
-    private Consumer<TriggerMessage> callback = triggerMessage -> {};
+    public static final String KEY_FIELD = "key";
 
     private KeyBindingManager keyBindingManager;
 
+    private KeyBindingField keyField;
+
     public KeyBindingTrigger(KeyBindingManager keyBindingManager) {
         this.keyBindingManager = keyBindingManager;
+
+        keyField = new KeyBindingField();
+        keyField.setTitle(new LiteralText("Key"));
+        keyField.setDescription(new LiteralText("Key used to trigger"));
+        fields.put(KEY_FIELD, keyField);
     }
 
     @Override
-    public void setCallback(Consumer<TriggerMessage> callback) {
-        close();
-        this.callback = callback;
+    public void start() {
+        String keyName = keyField.serialize();
         if (keyName != null) {
             keyBindingManager.registerListener(keyName, callback);
         }
     }
 
     @Override
-    public void check() { }
-
-    @Override
-    public void close() {
+    public void stop() {
+        String keyName = keyField.serialize();
         if (keyName != null) {
             keyBindingManager.removeListener(keyName, callback);
-        }
-    }
-
-    @Override
-    public Map<String, String> getData() {
-        return Collections.singletonMap(KEYNAME, keyName);
-    }
-
-    @Override
-    public void setData(Map<String, String> data) {
-        close();
-        keyName = data.get(KEYNAME);
-        if (keyName != null) {
-            keyBindingManager.registerListener(keyName, callback);
         }
     }
 
@@ -63,12 +56,8 @@ public class KeyBindingTrigger implements Trigger {
         return IDENTIFIER;
     }
 
-    public String getKeyName() {
-        return keyName;
-    }
-
     @Override
     public String toString() {
-        return "on key " + KeyBindingHelper.getKeyCodeName(InputUtil.fromName(keyName));
+        return "on key " + KeyBindingHelper.getKeyCodeName(keyField.getValue());
     }
 }

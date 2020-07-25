@@ -55,6 +55,10 @@ public class Color {
     }
 
     public static Color parse(String string) {
+        if (string == null) {
+            return null;
+        }
+
         Matcher hexMatcher = hexPattern.matcher(string);
         if (hexMatcher.matches()) {
             String value = hexMatcher.group(1);
@@ -128,7 +132,8 @@ public class Color {
             ContainedValue containedValue = future.get(5, TimeUnit.MILLISECONDS);
             String result = containedValue.toStr();
 
-            return Color.parse(result);
+            color = Color.parse(result);
+            return color;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -179,28 +184,22 @@ public class Color {
     }
 
     public String toRgbString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("rgba(");
-        builder.append(red);
-        builder.append(",");
-        builder.append(green);
-        builder.append(",");
-        builder.append(blue);
-        builder.append(",");
-        builder.append(alpha);
-        builder.append(")");
-
-        return builder.toString();
+        return "rgba(" +
+                red +
+                "," +
+                green +
+                "," +
+                blue +
+                "," +
+                alpha +
+                ")";
     }
 
     public String toHexString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("#");
-        builder.append(Integer.toHexString(red));
-        builder.append(Integer.toHexString(green));
-        builder.append(Integer.toHexString(blue));
-        builder.append(Integer.toHexString(alpha));
-
-        return builder.toString();
+        return "#" +
+                Integer.toHexString(red) +
+                Integer.toHexString(green) +
+                Integer.toHexString(blue) +
+                Integer.toHexString(alpha);
     }
 }

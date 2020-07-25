@@ -1,63 +1,56 @@
 package com.ddoerr.scriptit.triggers;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.Identifiable;
-import com.ddoerr.scriptit.api.triggers.Trigger;
-import com.ddoerr.scriptit.api.triggers.TriggerMessage;
-import com.ddoerr.scriptit.api.util.DurationHelper;
+import com.ddoerr.scriptit.fields.Field;
+import com.ddoerr.scriptit.fields.IntegerField;
+import com.ddoerr.scriptit.fields.SelectionField;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class DurationTrigger implements Trigger {
+public class DurationTrigger extends AbstractTrigger {
     public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "duration");
-    public static final String TIMENAME = "time";
-    public static final String UNITNAME = "unit";
-
-    private int time = 0;
-    private ChronoUnit unit = ChronoUnit.MILLIS;
+    public static final String TIME_FIELD = "time";
+    public static final String UNIT_FIELD = "unit";
 
     private Duration duration = Duration.ZERO;
     private Instant lastActivation = Instant.now();
 
-    private Consumer<TriggerMessage> callback = message -> {};
+    private IntegerField timeField;
+    private SelectionField unitField;
 
-    @Override
-    public void close() { }
+    public DurationTrigger() {
+        timeField = new IntegerField();
+        timeField.setTitle(new LiteralText("Time"));
+        timeField.setDescription(new LiteralText("Amount of time"));
+        timeField.setValue(0);
+        fields.put(TIME_FIELD, timeField);
 
-    @Override
-    public Map<String, String> getData() {
-        Map<String, String> data = new HashMap<>();
-        data.put(TIMENAME, Integer.toString(time));
-        data.put(UNITNAME, unit.name());
-        return data;
+        unitField = new SelectionField();
+        unitField.setTitle(new LiteralText("Unit"));
+        unitField.setDescription(new LiteralText("Time unit"));
+        unitField.setValue(ChronoUnit.MILLIS.name());
+
+        List<String> units = Stream.of(ChronoUnit.MILLIS, ChronoUnit.SECONDS, ChronoUnit.MINUTES, ChronoUnit.HOURS)
+                .map(Enum::name).collect(Collectors.toList());
+        unitField.setValues(units);
+
+        fields.put(UNIT_FIELD, unitField);
     }
 
     @Override
-    public void setData(Map<String, String> data) {
-        setTime(Integer.parseInt(data.get(TIMENAME)));
-        setUnit(ChronoUnit.valueOf(data.get(UNITNAME)));
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-        this.duration = Duration.of(time, unit);
-    }
-
-    public void setUnit(ChronoUnit unit) {
-        this.unit = unit;
-        this.duration = Duration.of(time, unit);
-    }
-
-    @Override
-    public void setCallback(Consumer<TriggerMessage> callback) {
-        this.callback = callback;
+    public void start() {
+        int time = timeField.getValue();
+        ChronoUnit unit = ChronoUnit.valueOf(unitField.getValue());
+        duration = Duration.of(time, unit);
     }
 
     @Override
@@ -70,17 +63,9 @@ public class DurationTrigger implements Trigger {
         }
     }
 
-    public ChronoUnit getUnit() {
-        return unit;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
     @Override
     public String toString() {
-        return "every " + time + " " + unit;
+        return "every " + timeField.getValue() + " " + unitField.getValue();
     }
 
     @Override

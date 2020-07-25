@@ -8,9 +8,13 @@ import com.ddoerr.scriptit.api.scripts.ScriptContainerManager;
 import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.api.triggers.TriggerFactory;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
+import com.ddoerr.scriptit.fields.Field;
+import com.ddoerr.scriptit.fields.FieldAssembler;
+import com.ddoerr.scriptit.screens.widgets.PanelWidget;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
 import com.ddoerr.scriptit.triggers.KeyBindingTrigger;
-import com.ddoerr.scriptit.api.triggers.tabs.TriggerTabFactory;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.item.Item;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -26,36 +30,34 @@ import java.util.Map;
 public class ScriptEditorScreen extends AbstractHistoryScreen {
     private ScriptItRegistry registry;
     private ScriptContainerManager scriptContainerManager;
-    private TriggerFactory triggerFactory;
+    private FieldAssembler fieldAssembler;
 
-    private Map<Identifier, Map<String, String>> triggersData = new HashMap<>();
+    private Map<Identifier, Trigger> triggers = new HashMap<>();
     private Identifier selectedTrigger;
     private String script;
     private ScriptContainer scriptContainer;
 
-    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, TriggerFactory triggerFactory) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, FieldAssembler fieldAssembler) {
         super(history);
 
         this.registry = registry;
         this.scriptContainerManager = scriptContainerManager;
-        this.triggerFactory = triggerFactory;
+        this.fieldAssembler = fieldAssembler;
 
         setupWidgets();
     }
 
-    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager,TriggerFactory triggerFactory, ScriptContainer scriptContainer) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, FieldAssembler fieldAssembler, ScriptContainer scriptContainer) {
         super(history);
 
         this.registry = registry;
         this.scriptContainerManager = scriptContainerManager;
-        this.triggerFactory = triggerFactory;
         this.scriptContainer = scriptContainer;
+        this.fieldAssembler = fieldAssembler;
 
         script = scriptContainer.getScript().getScriptSource().getContent();
 
-        Trigger trigger = scriptContainer.getTrigger();
-        triggersData.put(trigger.getIdentifier(), trigger.getData());
-        selectedTrigger = trigger.getIdentifier();
+        selectedTrigger = scriptContainer.getTrigger().getIdentifier();
 
         setupWidgets();
     }
@@ -71,18 +73,33 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     }
 
     private void setupTriggerWidget(WInterface mainInterface) {
-        WTabHolder tabHolder = mainInterface.createChild(WTabHolder.class, Position.of(20, 20, 0), Size.of(300, 60));
-
-        Registry<TriggerTabFactory> triggerTabs = (Registry<TriggerTabFactory>)registry.get(new Identifier(ScriptItMod.MOD_NAME, "trigger_tabs"));
+        WTabHolder tabHolder = mainInterface.createChild(WTabHolder.class, Position.of(20, 20, 0), Size.of(300, 120));
 
         if (selectedTrigger == null) {
             selectedTrigger = KeyBindingTrigger.IDENTIFIER;
         }
 
-        List<Identifier> ids = new ArrayList<>(triggerTabs.getIds());
+
+        List<Identifier> ids = new ArrayList<>(registry.triggers.getIds());
         for (Identifier identifier : ids) {
-            TriggerTabFactory triggerTabFactory = triggerTabs.get(identifier);
-            WTabHolder.WTab tab = triggerTabFactory.createTriggerTab(tabHolder, triggersData.computeIfAbsent(identifier, key -> new HashMap<>()));
+            String tabTitle = "scriptit:triggers." + identifier.toString();
+            Item item = Registry.ITEM.get(new Identifier(I18n.translate(tabTitle + ".icon")));
+            WTabHolder.WTab tab = tabHolder.addTab(item, new TranslatableText(tabTitle));
+
+            Trigger trigger;
+
+            if (scriptContainer != null && scriptContainer.getTrigger().getIdentifier().equals(identifier)) {
+                trigger = scriptContainer.getTrigger();
+            } else {
+                TriggerFactory triggerFactory = registry.triggers.get(identifier);
+                trigger = triggerFactory.createTrigger();
+            }
+
+            triggers.put(identifier, trigger);
+
+            PanelWidget panelWidget = tab.createChild(PanelWidget.class, Position.of(tabHolder, 10, 30), Size.of(180, 0));
+
+            fieldAssembler.assembleFields(panelWidget, trigger.getFields());
 
             if (selectedTrigger.equals(identifier)) {
                 tab.getToggle().setToggleState(true);
@@ -96,8 +113,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     }
 
     private void setupScriptWidget(WInterface mainInterface) {
-        WTextArea scriptContent = mainInterface.createChild(WTextArea.class, Position.of(20, 100, 0))
-                .setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -150)));
+        WTextArea scriptContent = mainInterface.createChild(WTextArea.class, Position.of(20, 160, 0))
+                .setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -210)));
 
         if (script != null) {
             scriptContent.setText(script);
@@ -133,7 +150,11 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             scriptContainerManager.add(scriptContainer);
         }
 
-        Trigger trigger = triggerFactory.createTrigger(selectedTrigger, triggersData.get(selectedTrigger));
+        Trigger trigger = triggers.get(selectedTrigger);
+
+        for (Map.Entry<String, Field<?>> entry : trigger.getFields().entrySet()) {
+            entry.getValue().applyTemporaryValue();
+        }
 
         scriptContainer.setTrigger(trigger);
 
@@ -143,6 +164,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         scriptContainer.setScript(scriptBuilder);
 
         scriptContainer.enable();
+        trigger.start();
 
         ConfigCallback.EVENT.invoker().saveConfig(ScriptEditorScreen.class);
 

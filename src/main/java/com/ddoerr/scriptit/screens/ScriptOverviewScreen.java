@@ -77,7 +77,7 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
                     scriptContainerManager.remove(scriptContainer);
                     Trigger trigger = scriptContainer.getTrigger();
                     if (trigger != null) {
-                        trigger.close();
+                        trigger.stop();
                     }
                     list.remove(row);
                     ConfigCallback.EVENT.invoker().saveConfig(ScriptOverviewScreen.class);

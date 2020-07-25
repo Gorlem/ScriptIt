@@ -93,7 +93,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
         dropdown.addValues(registry.hudElements.getIds().stream().map(Identifier::toString).collect(Collectors.toList()));
         dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
         dropdown.setOnChange(key -> {
-            HudElement hudElement = registry.hudElements.get(new Identifier(key));
+            HudElement hudElement = registry.hudElements.get(new Identifier(key)).createHudElement(new HashMap<>());
             currentlyAdding = new HudElementContainerImpl(hudElement, MouseUtilities.mouseX, MouseUtilities.mouseY);
             currentlyAdding.tick();
         });
@@ -104,8 +104,10 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
         if (currentlyAdding != null) {
             hudElementManager.add(currentlyAdding);
 
+            focusedHudElement = currentlyAdding;
             currentlyAdding = null;
             dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
+            openScreen(HudElementEditorScreen.class, focusedHudElement);
             return true;
         }
 

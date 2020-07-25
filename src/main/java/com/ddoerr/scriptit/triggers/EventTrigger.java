@@ -5,62 +5,52 @@ import com.ddoerr.scriptit.api.events.Event;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.triggers.Trigger;
 import com.ddoerr.scriptit.api.triggers.TriggerMessage;
+import com.ddoerr.scriptit.fields.Field;
+import com.ddoerr.scriptit.fields.SelectionField;
+import com.ddoerr.scriptit.fields.StringField;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-public class EventTrigger implements Trigger {
+public class EventTrigger extends AbstractTrigger {
     public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "event");
-    public static final String EVENTNAME = "event";
-
-    private Consumer<TriggerMessage> callback = triggerMessage -> {};
-
-    private Identifier eventIdentifier;
+    public static final String EVENT_FIELD = "event";
 
     private ScriptItRegistry registry;
 
+    private SelectionField eventField;
+
     public EventTrigger(ScriptItRegistry registry) {
         this.registry = registry;
+
+        eventField = new SelectionField();
+        eventField.setTitle(new LiteralText("Event ID"));
+        eventField.setDescription(new LiteralText("Event which should trigger this script"));
+
+        List<String> eventIds = registry.events.getIds().stream()
+                .map(Identifier::toString)
+                .collect(Collectors.toList());
+
+        eventField.setValues(eventIds);
+        fields.put(EVENT_FIELD, eventField);
     }
 
     @Override
-    public void setCallback(Consumer<TriggerMessage> callback) {
-        close();
-
-        this.callback = callback;
-        Event event = registry.events.get(eventIdentifier);
+    public void start() {
+        Event event = registry.events.get(new Identifier(eventField.getValue()));
         if (event != null) {
             event.registerListener(callback);
         }
     }
 
     @Override
-    public void check() { }
-
-    @Override
-    public void close() {
-        Event event = registry.events.get(eventIdentifier);
-
+    public void stop() {
+        Event event = registry.events.get(new Identifier(eventField.getValue()));
         if (event != null) {
             event.removeListener(callback);
-        }
-    }
-
-    @Override
-    public Map<String, String> getData() {
-        return Collections.singletonMap(EVENTNAME, eventIdentifier.toString());
-    }
-
-    @Override
-    public void setData(Map<String, String> data) {
-        close();
-
-        eventIdentifier = new Identifier(data.get(EVENTNAME));
-        Event event = registry.events.get(eventIdentifier);
-        if (event != null) {
-            event.registerListener(callback);
         }
     }
 
@@ -69,12 +59,8 @@ public class EventTrigger implements Trigger {
         return IDENTIFIER;
     }
 
-    public Identifier getEventIdentifier() {
-        return eventIdentifier;
-    }
-
     @Override
     public String toString() {
-        return "on event " + eventIdentifier.toString();
+        return "on event " + eventField.getValue();
     }
 }
