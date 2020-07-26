@@ -20,7 +20,7 @@
       "com.ddoerr.scriptit.ScriptItMod"
     ],
     "scriptit:extensions": [
-      "com.ddoerr.scriptit.extensions.ScriptItExtension"
+      "com.ddoerr.scriptit.extension.ScriptItExtension"
     ],
     "cotton-client-commands": [
       "com.ddoerr.scriptit.commands.ScriptItCommand"

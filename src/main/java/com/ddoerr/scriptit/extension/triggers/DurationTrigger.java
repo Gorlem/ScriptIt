@@ -40,6 +40,7 @@ public class DurationTrigger extends AbstractTrigger {
         unitField.setTitle(new LiteralText("Unit"));
         unitField.setDescription(new LiteralText("Time unit"));
         unitField.setValue(ChronoUnit.MILLIS.name());
+        unitField.setTranslationPrefix("scripts.triggers.duration.values");
 
         List<String> units = Stream.of(ChronoUnit.MILLIS, ChronoUnit.SECONDS, ChronoUnit.MINUTES, ChronoUnit.HOURS)
                 .map(Enum::name).collect(Collectors.toList());

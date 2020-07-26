@@ -30,7 +30,7 @@
   "scriptit:elements.edit.script": "Edit Script",
 
   "scriptit:text": "Any Text",
-  "scriptit:icon": "Display any Item",
+  "scriptit:item": "Display any Item",
 
   "scriptit:keybinding.default": "§f%s",
   "scriptit:keybinding.conflict": "§c%s",
