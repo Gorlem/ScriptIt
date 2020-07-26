@@ -33,7 +33,9 @@ public class HudElementContainerImpl extends DrawableHelper implements Element, 
 
     public HudElementContainerImpl(HudElement hudElement, double xPosition, double yPosition) {
         this.hudElement = hudElement;
-        scriptContainer = new ScriptContainerImpl(new DurationTrigger(), hudElement.getDefaultScript());
+        scriptContainer = new ScriptContainerImpl();
+        scriptContainer.setScript(hudElement.getDefaultScript());
+        scriptContainer.setTrigger(new DurationTrigger());
         setRealPosition(new Point(xPosition, yPosition));
     }
 

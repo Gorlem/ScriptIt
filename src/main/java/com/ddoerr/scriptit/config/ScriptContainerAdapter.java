@@ -34,6 +34,9 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
                 .name(name)
                 .fromString(content);
 
-        return new ScriptContainerImpl(trigger, script);
+        ScriptContainerImpl scriptContainer = new ScriptContainerImpl();
+        scriptContainer.setTrigger(trigger);
+        scriptContainer.setScript(script);
+        return scriptContainer;
     }
 }

@@ -18,15 +18,6 @@ public class ScriptContainerImpl implements ScriptContainer {
 
     private ContainedValue lastResult;
     private boolean isDisabled = false;
-    private boolean isHidden = false;
-
-    public ScriptContainerImpl() {
-    }
-
-    public ScriptContainerImpl(Trigger trigger, Script script) {
-        setTrigger(trigger);
-        setScript(script);
-    }
 
     @Override
     public Trigger getTrigger() {
