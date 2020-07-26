@@ -79,7 +79,6 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
             selectedTrigger = KeyBindingTrigger.IDENTIFIER;
         }
 
-
         List<Identifier> ids = new ArrayList<>(registry.triggers.getIds());
         for (Identifier identifier : ids) {
             String tabTitle = "scriptit:triggers." + identifier.toString();

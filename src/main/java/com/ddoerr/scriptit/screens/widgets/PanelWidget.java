@@ -64,4 +64,13 @@ public class PanelWidget extends WAbstractWidget implements WModifiableCollectio
     public Collection<? extends WEventListener> getEventDelegates() {
         return widgets;
     }
+
+    @Override
+    public <W extends WAbstractWidget> W setHidden(boolean isHidden) {
+        for (WAbstractWidget widget : widgets) {
+            widget.setHidden(isHidden);
+        }
+
+        return super.setHidden(isHidden);
+    }
 }
