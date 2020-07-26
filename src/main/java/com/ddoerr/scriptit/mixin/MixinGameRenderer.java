@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.mixin;
 
-import com.ddoerr.scriptit.libraries.clickables.buttons.ButtonHelper;
-import com.ddoerr.scriptit.libraries.types.inventory.InventoryModel;
+import com.ddoerr.scriptit.extension.libraries.clickables.buttons.ButtonHelper;
+import com.ddoerr.scriptit.models.inventory.InventoryModel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;

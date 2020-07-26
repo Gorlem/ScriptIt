@@ -4,19 +4,15 @@ import com.ddoerr.scriptit.api.hud.HudElement;
 import com.ddoerr.scriptit.api.hud.HudElementContainer;
 import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.hud.HudVerticalAnchor;
-import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.util.geometry.Point;
 import com.ddoerr.scriptit.api.util.geometry.Rectangle;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
-import com.ddoerr.scriptit.triggers.DurationTrigger;
+import com.ddoerr.scriptit.extension.triggers.DurationTrigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class HudElementContainerImpl extends DrawableHelper implements Element, HudElementContainer {
     private HudElement hudElement;

@@ -12,7 +12,7 @@ import com.ddoerr.scriptit.fields.Field;
 import com.ddoerr.scriptit.fields.FieldAssembler;
 import com.ddoerr.scriptit.screens.widgets.PanelWidget;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
-import com.ddoerr.scriptit.triggers.KeyBindingTrigger;
+import com.ddoerr.scriptit.extension.triggers.KeyBindingTrigger;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.text.TranslatableText;
