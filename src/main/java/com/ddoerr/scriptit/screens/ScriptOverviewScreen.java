@@ -1,12 +1,11 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.dependencies.Resolver;
-import com.ddoerr.scriptit.api.scripts.ScriptManager;
+import com.ddoerr.scriptit.api.scripts.ScriptContainerManager;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.screens.widgets.PanelWidget;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
-import com.ddoerr.scriptit.triggers.Trigger;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.triggers.Trigger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -15,12 +14,12 @@ import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
 public class ScriptOverviewScreen extends AbstractHistoryScreen {
-    private ScriptManager scriptManager;
+    private ScriptContainerManager scriptContainerManager;
 
-    public ScriptOverviewScreen(ScreenHistory history, ScriptManager scriptManager, MinecraftClient minecraft) {
+    public ScriptOverviewScreen(ScreenHistory history, ScriptContainerManager scriptContainerManager, MinecraftClient minecraft) {
         super(history);
 
-        this.scriptManager = scriptManager;
+        this.scriptContainerManager = scriptContainerManager;
         this.minecraft = minecraft;
 
         setupWidgets();
@@ -47,7 +46,7 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
 
         WAbstractWidget lastRow = null;
 
-        for (ScriptContainer scriptContainer : scriptManager.getAll()) {
+        for (ScriptContainer scriptContainer : scriptContainerManager.getAll()) {
             lastRow = setupListRow(list, scriptContainer, lastRow);
         }
 
@@ -75,10 +74,10 @@ public class ScriptOverviewScreen extends AbstractHistoryScreen {
                 .setSize(Size.of(80, 20))
                 .setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.remove").toString()))
                 .setOnMouseClicked((widget, mouseX, mouseY, delta) -> {
-                    scriptManager.remove(scriptContainer);
+                    scriptContainerManager.remove(scriptContainer);
                     Trigger trigger = scriptContainer.getTrigger();
                     if (trigger != null) {
-                        trigger.close();
+                        trigger.stop();
                     }
                     list.remove(row);
                     ConfigCallback.EVENT.invoker().saveConfig(ScriptOverviewScreen.class);

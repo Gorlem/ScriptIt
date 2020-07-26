@@ -1,7 +1,5 @@
 package com.ddoerr.scriptit.api.hud;
 
-import com.ddoerr.scriptit.elements.HudElementContainer;
-
 import java.util.List;
 
 public interface HudElementManager {

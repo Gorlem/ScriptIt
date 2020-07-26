@@ -1,9 +1,10 @@
 package com.ddoerr.scriptit.api.events;
 
-import com.ddoerr.scriptit.api.libraries.Model;
+import com.ddoerr.scriptit.api.triggers.TriggerMessage;
 
 import java.util.function.Consumer;
 
 public interface Event {
-    void registerListener(Consumer<Model> modelSupplier);
+    void registerListener(Consumer<TriggerMessage> messageConsumer);
+    void removeListener(Consumer<TriggerMessage> messageConsumer);
 }

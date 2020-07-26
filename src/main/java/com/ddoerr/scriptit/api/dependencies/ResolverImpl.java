@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ResolverImpl implements Resolver {
@@ -98,5 +99,18 @@ public class ResolverImpl implements Resolver {
         }
 
         throw new DependencyException("Could not create constructor for " + type.getCanonicalName());
+    }
+
+    @Override
+    public <T> Supplier<T> supplier(Class<? extends T> derivedType, Object... parameters) {
+        return () -> {
+            try {
+                return create(derivedType, parameters);
+            } catch (DependencyException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        };
     }
 }

@@ -1,7 +1,7 @@
 package com.ddoerr.scriptit.config;
 
-import com.ddoerr.scriptit.elements.HudElementContainer;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 
 import java.util.ArrayList;
 import java.util.Collection;

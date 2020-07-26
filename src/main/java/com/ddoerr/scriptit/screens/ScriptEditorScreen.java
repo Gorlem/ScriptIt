@@ -1,94 +1,63 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
-import com.ddoerr.scriptit.api.bus.KeyBindingBusExtension;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
-import com.ddoerr.scriptit.api.scripts.LifeCycle;
-import com.ddoerr.scriptit.api.scripts.ScriptManager;
-import com.ddoerr.scriptit.api.util.DurationHelper;
+import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.scripts.ScriptContainerManager;
+import com.ddoerr.scriptit.api.triggers.Trigger;
+import com.ddoerr.scriptit.api.triggers.TriggerFactory;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.screens.widgets.KeyBindingButtonWidget;
-import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
-import com.ddoerr.scriptit.triggers.BusTrigger;
-import com.ddoerr.scriptit.triggers.ContinuousTrigger;
-import com.ddoerr.scriptit.triggers.Trigger;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.item.Items;
+import com.ddoerr.scriptit.fields.Field;
+import com.ddoerr.scriptit.fields.FieldAssembler;
+import com.ddoerr.scriptit.screens.widgets.PanelWidget;
+import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
+import com.ddoerr.scriptit.extension.triggers.KeyBindingTrigger;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.item.Item;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import org.apache.commons.lang3.StringUtils;
+import net.minecraft.util.registry.Registry;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
-    private LifeCycle lifeCycle = LifeCycle.Instant;
-    private InputUtil.KeyCode keyCode;
-    private Identifier event;
-    private int time;
-    private TemporalUnit unit;
-    private String script;
+    private ScriptItRegistry registry;
+    private ScriptContainerManager scriptContainerManager;
+    private FieldAssembler fieldAssembler;
 
+    private Map<Identifier, Trigger> triggers = new HashMap<>();
+    private Identifier selectedTrigger;
+    private String script;
     private ScriptContainer scriptContainer;
 
-    private WTabHolder.WTab keyBindingsTab;
-    private WTabHolder.WTab eventsTab;
-    private WTabHolder.WTab durationTab;
-
-    private ScriptItRegistry registry;
-    private ScriptManager scriptManager;
-
-    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptManager scriptManager) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, FieldAssembler fieldAssembler) {
         super(history);
 
         this.registry = registry;
-        this.scriptManager = scriptManager;
+        this.scriptContainerManager = scriptContainerManager;
+        this.fieldAssembler = fieldAssembler;
 
         setupWidgets();
     }
 
-    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptManager scriptManager, ScriptContainer scriptContainer) {
+    public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, FieldAssembler fieldAssembler, ScriptContainer scriptContainer) {
         super(history);
 
         this.registry = registry;
-        this.scriptManager = scriptManager;
+        this.scriptContainerManager = scriptContainerManager;
         this.scriptContainer = scriptContainer;
+        this.fieldAssembler = fieldAssembler;
 
-        lifeCycle = scriptContainer.getLifeCycle();
-        script = scriptContainer.getContent();
+        script = scriptContainer.getScript().getScriptSource().getContent();
 
-        Trigger trigger = scriptContainer.getTrigger();
-
-        if (trigger instanceof BusTrigger) {
-            BusTrigger busTrigger = (BusTrigger) trigger;
-            String id = busTrigger.getId();
-
-            if (KeyBindingBusExtension.isKeyEvent(id)) {
-                keyCode = InputUtil.fromName(id);
-            }
-            else {
-                event = new Identifier(id);
-            }
-        }
-
-        if (trigger instanceof ContinuousTrigger) {
-            ContinuousTrigger continuousTrigger = (ContinuousTrigger) trigger;
-            Duration duration = continuousTrigger.getDuration();
-
-            Pair<ChronoUnit, Long> unitAndAmount = DurationHelper.getUnitAndAmount(duration);
-            unit = unitAndAmount.getLeft();
-            time = unitAndAmount.getRight().intValue();
-        }
+        selectedTrigger = scriptContainer.getTrigger().getIdentifier();
 
         setupWidgets();
     }
@@ -96,7 +65,6 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private void setupWidgets() {
         WInterface mainInterface = getInterface();
 
-        setupLifeCycleWidget(mainInterface);
         setupTriggerWidget(mainInterface);
         setupScriptWidget(mainInterface);
         setupButtonBar(mainInterface);
@@ -104,93 +72,48 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         mainInterface.onAlign();
     }
 
-    private void setupLifeCycleWidget(WInterface mainInterface) {
-        ValuesDropdownWidget<LifeCycle> dropdown = mainInterface.createChild(ValuesDropdownWidget.class)
-                .setTranslationPrefix("scripts.lifecycle.values")
-                .setOnAlign(w -> w.setPosition(Position.ofTopRight(mainInterface).add(-150, 20, 0)))
-                .setSize(Size.of(100, 20));
-        dropdown.selectValue(lifeCycle);
-        dropdown.addValues(LifeCycle.Instant, LifeCycle.Threaded);
-        dropdown.setOnChange(lifeCycle -> this.lifeCycle = lifeCycle);
-    }
-
     private void setupTriggerWidget(WInterface mainInterface) {
-        WTabHolder tabHolder = mainInterface.createChild(WTabHolder.class, Position.of(20, 20, 0), Size.of(300, 60));
+        WTabHolder tabHolder = mainInterface.createChild(WTabHolder.class, Position.of(20, 20, 0), Size.of(300, 120));
 
-        addKeyTriggerTab(tabHolder);
-        addEventTriggerTab(tabHolder);
-        addDurationTriggerTab(tabHolder);
+        if (selectedTrigger == null) {
+            selectedTrigger = KeyBindingTrigger.IDENTIFIER;
+        }
 
-        int tabNumber = unit != null ? 3 : event != null ? 2 : 1;
-        WTabHolder.WTab tab = tabNumber == 1 ? keyBindingsTab : tabNumber == 2 ? eventsTab : durationTab;
+        List<Identifier> ids = new ArrayList<>(registry.triggers.getIds());
+        for (Identifier identifier : ids) {
+            String tabTitle = "scriptit:triggers." + identifier.toString();
+            Item item = Registry.ITEM.get(new Identifier(I18n.translate(tabTitle + ".icon")));
+            WTabHolder.WTab tab = tabHolder.addTab(item, new TranslatableText(tabTitle));
 
+            Trigger trigger;
+
+            if (scriptContainer != null && scriptContainer.getTrigger().getIdentifier().equals(identifier)) {
+                trigger = scriptContainer.getTrigger();
+            } else {
+                TriggerFactory triggerFactory = registry.triggers.get(identifier);
+                trigger = triggerFactory.createTrigger();
+            }
+
+            triggers.put(identifier, trigger);
+
+            PanelWidget panelWidget = tab.createChild(PanelWidget.class, Position.of(tabHolder, 10, 30), Size.of(180, 0));
+
+            fieldAssembler.assembleFields(panelWidget, trigger.getFields());
+
+            if (selectedTrigger.equals(identifier)) {
+                tab.getToggle().setToggleState(true);
+            }
+
+            tab.getToggle().setOnMouseClicked((w, mx, my, mb) -> selectedTrigger = identifier);
+        }
+
+        int tabNumber = ids.indexOf(selectedTrigger) + 1;
         tabHolder.selectTab(tabNumber);
-        tab.getToggle().setToggleState(true);
-    }
-
-    private void addKeyTriggerTab(WTabHolder tabHolder) {
-        keyBindingsTab = tabHolder.addTab(Items.TRIPWIRE_HOOK, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.keybinding").toString()));
-
-        KeyBindingButtonWidget keyBindingButtonWidget = keyBindingsTab.createChild(KeyBindingButtonWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
-        keyBindingButtonWidget.setOnChange(keyCode -> this.keyCode = keyCode);
-
-        if (keyCode != null) {
-            keyBindingButtonWidget.setKeyCode(keyCode);
-        }
-    }
-
-    private void addEventTriggerTab(WTabHolder tabHolder) {
-        eventsTab = tabHolder.addTab(Items.FIREWORK_ROCKET, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event").toString()));
-
-        ValuesDropdownWidget<Identifier> eventDropdown = eventsTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 10, 30), Size.of(100, 20));
-        if (event == null) {
-            eventDropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.event.select").toString()));
-        } else {
-            eventDropdown.selectValue(event);
-        }
-        eventDropdown.addValues(new ArrayList<>(registry.events.getIds()));
-        eventDropdown.setOnChange(event -> this.event = event);
-    }
-
-    private void addDurationTriggerTab(WTabHolder tabHolder) {
-        List<ChronoUnit> units = Arrays.asList(ChronoUnit.MILLIS, ChronoUnit.SECONDS, ChronoUnit.MINUTES, ChronoUnit.HOURS);
-
-        durationTab = tabHolder.addTab(Items.CLOCK, new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.duration").toString()));
-
-        WTextField timeText = durationTab.createChild(WTextField.class, Position.of(tabHolder, 10, 30), Size.of(135, 20));
-
-        Runnable parseTime = () -> {
-            try {
-                time = Integer.parseInt(timeText.getText());
-            } catch (NumberFormatException ignored) { }
-        };
-
-        timeText.setOnKeyPressed((widget, keyPressed, character, keyModifier) -> parseTime.run());
-        timeText.setOnCharTyped((widget, character, keyCode) -> parseTime.run());
-
-        if (unit != null) {
-            timeText.setText(Integer.toString(time));
-        }
-
-        ValuesDropdownWidget<ChronoUnit> durationDropdown = durationTab.createChild(ValuesDropdownWidget.class, Position.of(tabHolder, 155, 30), Size.of(135, 20))
-                .setTranslationPrefix("scripts.triggers.duration.values");
-
-        durationDropdown.addValues(units);
-
-        if (unit == null) {
-            durationDropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "scripts.triggers.duration.select").toString()));
-        } else {
-            durationDropdown.selectValue((ChronoUnit)unit);
-        }
-
-        durationDropdown.setOnChange(unit -> this.unit = unit);
-
-        durationTab.add(durationDropdown, timeText);
     }
 
     private void setupScriptWidget(WInterface mainInterface) {
-        WTextArea scriptContent = mainInterface.createChild(WTextArea.class, Position.of(20, 100, 0))
-                .setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -150)));
+        WTextArea scriptContent = mainInterface.createChild(WTextArea.class, Position.of(20, 160, 0))
+                .setOnAlign(w -> w.setSize(Size.of(mainInterface).add(-40, -210)));
 
         if (script != null) {
             scriptContent.setText(script);
@@ -222,22 +145,25 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
     private void updateScriptContainer() {
         if (scriptContainer == null) {
-            scriptContainer = new ScriptContainer();
-            scriptManager.add(scriptContainer);
+            scriptContainer = new ScriptContainerImpl();
+            scriptContainerManager.add(scriptContainer);
         }
 
-        scriptContainer.setLifeCycle(lifeCycle);
-        scriptContainer.setContent(script);
+        Trigger trigger = triggers.get(selectedTrigger);
 
-        if (keyBindingsTab.getToggle().getToggleState() && keyCode != null && keyCode != InputUtil.UNKNOWN_KEYCODE) {
-            scriptContainer.setTrigger(new BusTrigger(keyCode.getName()));
-        } else if (eventsTab.getToggle().getToggleState() && event != null) {
-            scriptContainer.setTrigger(new BusTrigger(event.toString()));
-        } else if (durationTab.getToggle().getToggleState() && unit != null) {
-            scriptContainer.setTrigger(new ContinuousTrigger(Duration.of(time, unit)));
+        for (Map.Entry<String, Field<?>> entry : trigger.getFields().entrySet()) {
+            entry.getValue().applyTemporaryValue();
         }
+
+        scriptContainer.setTrigger(trigger);
+
+        ScriptBuilder scriptBuilder = new ScriptBuilder()
+                .fromString(script)
+                .name(trigger.toString());
+        scriptContainer.setScript(scriptBuilder);
 
         scriptContainer.enable();
+        trigger.start();
 
         ConfigCallback.EVENT.invoker().saveConfig(ScriptEditorScreen.class);
 

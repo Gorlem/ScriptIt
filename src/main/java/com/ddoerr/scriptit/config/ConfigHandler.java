@@ -2,30 +2,31 @@ package com.ddoerr.scriptit.config;
 
 import com.ddoerr.scriptit.api.dependencies.Loadable;
 import com.ddoerr.scriptit.api.hud.HudElementManager;
-import com.ddoerr.scriptit.api.scripts.ScriptManager;
+import com.ddoerr.scriptit.api.scripts.ScriptContainerManager;
 import com.ddoerr.scriptit.api.util.Debouncer;
 import com.ddoerr.scriptit.callbacks.ConfigCallback;
-import com.ddoerr.scriptit.elements.HudElementContainer;
-import com.ddoerr.scriptit.scripts.ScriptContainer;
+import com.ddoerr.scriptit.api.hud.HudElementContainer;
+import com.ddoerr.scriptit.api.scripts.ScriptContainer;
 
 import java.time.Duration;
 
 public class ConfigHandler implements ConfigCallback, Loadable {
-    private Config config = new Config();
+    private Config config;
     private Debouncer debouncer = new Debouncer(Duration.ofMillis(500), this::save);
 
-    private ScriptManager scriptManager;
+    private ScriptContainerManager scriptContainerManager;
     private HudElementManager hudElementManager;
 
-    public ConfigHandler(ScriptManager scriptManager, HudElementManager hudElementManager) {
-        this.scriptManager = scriptManager;
+    public ConfigHandler(Config config, ScriptContainerManager scriptContainerManager, HudElementManager hudElementManager) {
+        this.config = config;
+        this.scriptContainerManager = scriptContainerManager;
         this.hudElementManager = hudElementManager;
     }
 
     public void save() {
         ConfigContainer configContainer = new ConfigContainer();
 
-        configContainer.bindings = scriptManager.getAll();
+        configContainer.bindings = scriptContainerManager.getAll();
         configContainer.elements = hudElementManager.getAll();
 
         config.write(configContainer);
@@ -36,7 +37,7 @@ public class ConfigHandler implements ConfigCallback, Loadable {
         ConfigContainer configContainer = config.read();
 
         for (ScriptContainer binding : configContainer.bindings) {
-            scriptManager.add(binding);
+            scriptContainerManager.add(binding);
         }
 
         for (HudElementContainer element : configContainer.elements) {

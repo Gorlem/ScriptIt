@@ -1,9 +1,15 @@
 package com.ddoerr.scriptit.api.util;
 
+import com.ddoerr.scriptit.api.languages.ContainedValue;
+import com.ddoerr.scriptit.api.scripts.Script;
+import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
+import com.ddoerr.scriptit.api.scripts.ScriptManager;
 import com.google.common.base.Splitter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -18,6 +24,8 @@ public class Color {
     private static Splitter commaSplitter = Splitter.on(",");
 
     private static int MAX_VALUE = 255;
+
+    private static ScriptManager scriptManager;
 
     private static List<Color> colors = new ArrayList<>();
     // clrs.cc
@@ -47,6 +55,10 @@ public class Color {
     }
 
     public static Color parse(String string) {
+        if (string == null) {
+            return null;
+        }
+
         Matcher hexMatcher = hexPattern.matcher(string);
         if (hexMatcher.matches()) {
             String value = hexMatcher.group(1);
@@ -103,6 +115,33 @@ public class Color {
         return null;
     }
 
+    public static void setScriptManager(ScriptManager scriptManager) {
+        Color.scriptManager = scriptManager;
+    }
+
+    public static Color runAndParse(String value) {
+        Color color = Color.parse(value);
+
+        if (color != null)
+            return color;
+
+        try {
+            Script script = new ScriptBuilder().fromString(value);
+            CompletableFuture<ContainedValue> future = scriptManager.runScript(script);
+
+            ContainedValue containedValue = future.get(5, TimeUnit.MILLISECONDS);
+            String result = containedValue.toStr();
+
+            color = Color.parse(result);
+            return color;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Color.BLACK;
+    }
+
     private static List<Integer> splitToInts(String hex, Splitter splitter, int radix) {
         Iterable<String> pieces = splitter.split(hex);
         return StreamSupport
@@ -145,28 +184,22 @@ public class Color {
     }
 
     public String toRgbString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("rgba(");
-        builder.append(red);
-        builder.append(",");
-        builder.append(green);
-        builder.append(",");
-        builder.append(blue);
-        builder.append(",");
-        builder.append(alpha);
-        builder.append(")");
-
-        return builder.toString();
+        return "rgba(" +
+                red +
+                "," +
+                green +
+                "," +
+                blue +
+                "," +
+                alpha +
+                ")";
     }
 
     public String toHexString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("#");
-        builder.append(Integer.toHexString(red));
-        builder.append(Integer.toHexString(green));
-        builder.append(Integer.toHexString(blue));
-        builder.append(Integer.toHexString(alpha));
-
-        return builder.toString();
+        return "#" +
+                Integer.toHexString(red) +
+                Integer.toHexString(green) +
+                Integer.toHexString(blue) +
+                Integer.toHexString(alpha);
     }
 }
