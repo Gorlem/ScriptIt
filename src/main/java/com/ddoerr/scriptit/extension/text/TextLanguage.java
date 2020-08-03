@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class TextLanguage implements Language, StringLookup {
+    public static final String SEPARATOR_REGEX = "\\.";
+
     private Map<String, Model> libraries = new HashMap<>();
     private TextContainedResultFactory factory = new TextContainedResultFactory();
     private StringSubstitutor substitutor = new StringSubstitutor(this, "{{", "}}", '{');
@@ -45,7 +47,7 @@ public class TextLanguage implements Language, StringLookup {
 
     @Override
     public String lookup(String key) {
-        String[] parts = key.split("\\.");
+        String[] parts = key.split(SEPARATOR_REGEX);
 
         Model model = libraries.get(parts[0]);
         if (model == null) {
@@ -53,17 +55,22 @@ public class TextLanguage implements Language, StringLookup {
         }
 
         for (int i = 1; i < parts.length; i++) {
-            if (model.hasGetter(parts[i])) {
-                Object object = model.runGetter(parts[i], factory);
-                if (object instanceof Model) {
-                    model = (Model)object;
-                } else if (object == null) {
-                    return null;
-                } else {
-                    return object.toString();
+            Object object = null;
+
+            try {
+                if (model.hasGetter(parts[i])) {
+                    object = model.runGetter(parts[i], factory);
+                } else if (model.hasFunction(parts[i])) {
+                    object = model.runFunction(parts[i], new ContainedValue[0], factory);
                 }
-            } else {
+            } catch (Exception ignored) { }
+
+            if (object == null) {
                 return null;
+            } else if (object instanceof Model) {
+                model = (Model) object;
+            } else {
+                return object.toString();
             }
         }
 
