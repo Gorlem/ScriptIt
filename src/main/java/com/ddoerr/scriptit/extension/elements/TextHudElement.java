@@ -85,6 +85,6 @@ public class TextHudElement extends AbstractHudElement {
 
     @Override
     public Script getDefaultScript() {
-        return new ScriptBuilder().fromString("return \"Text Hud Element\"");
+        return new ScriptBuilder().fromString("Text Hud Element");
     }
 }
