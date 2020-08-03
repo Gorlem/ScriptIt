@@ -30,7 +30,16 @@ public class TextLanguage implements Language, StringLookup {
 
     @Override
     public CompletableFuture<ContainedValue> runScript(Script script) {
+        for (Map.Entry<String, Model> entry : script.getLibraries().entrySet()) {
+            libraries.put(entry.getKey(), entry.getValue());
+        }
+
         String result = substitutor.replace(script.getScriptSource().getContent());
+
+        for (Map.Entry<String, Model> entry : script.getLibraries().entrySet()) {
+            libraries.put(entry.getKey(), null);
+        }
+
         return CompletableFuture.completedFuture(new TextContainedValue(result));
     }
 

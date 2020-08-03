@@ -36,7 +36,7 @@ public class ValuesDropdownWidget<T> extends WDropdown {
     private Text getDisplayText(T value) {
         return translationPrefix == null
                 ? new TranslatableText(value.toString())
-                : new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, translationPrefix  + "." + value.toString().toLowerCase()).toString());
+                : new TranslatableText(ScriptItMod.MOD_NAME  + ":" + translationPrefix  + "." + value.toString().toLowerCase());
     }
 
     public void addValues(T... values) {

@@ -69,6 +69,7 @@ public class HudElementAdapter implements JsonSerializer<HudElementContainer>, J
         HudElementContainer hudElementContainer = new HudElementContainerImpl(hudElement, 0, 0);
         hudElementContainer.setRelativePosition(point);
 
+        hudElementContainer.getScriptContainer().setTrigger(scriptContainer.getTrigger());
         hudElementContainer.getScriptContainer().setScript(scriptContainer.getScript());
         hudElementContainer.setAnchor(horizontalAnchor, verticalAnchor);
 

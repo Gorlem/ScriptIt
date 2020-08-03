@@ -92,6 +92,7 @@ public class HudElementOverviewScreen extends AbstractHistoryScreen {
         dropdown.setDirection(ValuesDropdownWidget.DropdownDirection.Up);
         dropdown.addValues(registry.hudElements.getIds().stream().map(Identifier::toString).collect(Collectors.toList()));
         dropdown.setLabel(new TranslatableText(new Identifier(ScriptItMod.MOD_NAME, "elements.add").toString()));
+        dropdown.setTranslationPrefix("hud_element");
         dropdown.setOnChange(key -> {
             HudElement hudElement = registry.hudElements.get(new Identifier(key)).createHudElement(new HashMap<>());
             currentlyAdding = new HudElementContainerImpl(hudElement, MouseUtilities.mouseX, MouseUtilities.mouseY);

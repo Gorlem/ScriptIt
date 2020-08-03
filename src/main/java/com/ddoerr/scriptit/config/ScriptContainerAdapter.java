@@ -15,7 +15,7 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
         JsonObject obj = new JsonObject();
         Script script = scriptContainer.getScript();
         obj.addProperty("name", script.getName());
-//        obj.addProperty("language", script.getLanguage().toString());
+        obj.addProperty("language", script.getLanguage().toString());
         obj.addProperty("content", script.getScriptSource().getContent());
         obj.add("trigger", context.serialize(scriptContainer.getTrigger(), Trigger.class));
 
@@ -29,9 +29,11 @@ public class ScriptContainerAdapter implements JsonSerializer<ScriptContainer>, 
         String name = jsonObject.getAsJsonPrimitive("name").getAsString();
         String content = jsonObject.getAsJsonPrimitive("content").getAsString();
         Trigger trigger = context.deserialize(jsonObject.get("trigger"), Trigger.class);
+        String language = jsonObject.getAsJsonPrimitive("language").getAsString();
 
         Script script = new ScriptBuilder()
                 .name(name)
+                .language(language)
                 .fromString(content);
 
         ScriptContainerImpl scriptContainer = new ScriptContainerImpl();

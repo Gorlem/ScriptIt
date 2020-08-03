@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 public class ScriptItRegistry extends SimpleRegistry<Registry<?>> {
     public final SimpleRegistry<Model> libraries = new SimpleRegistry<>();
-    public final DefaultedRegistry<Language> languages = new DefaultedRegistry<>(ScriptItMod.MOD_NAME + ":lua");
+    public final DefaultedRegistry<Language> languages = new DefaultedRegistry<>(ScriptItMod.MOD_NAME + ":text");
     public final SimpleRegistry<Event> events = new SimpleRegistry<>();
     public final SimpleRegistry<HudElementFactory> hudElements = new SimpleRegistry<>();
     public final SimpleRegistry<TriggerFactory> triggers = new SimpleRegistry<>();
