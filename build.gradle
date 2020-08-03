@@ -42,6 +42,8 @@ dependencies {
 
 	modImplementation "io.github.cottonmc:cotton-client-commands:1.0.0+1.15.2"
 	include "io.github.cottonmc:cotton-client-commands:1.0.0+1.15.2"
+
+	implementation "org.apache.commons:commons-text:1.9"
 }
 
 processResources {
