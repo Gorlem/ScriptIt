@@ -21,7 +21,7 @@ public class TextContainedValue implements ContainedValue {
 
     @Override
     public String format() {
-        return value.toString();
+        return value;
     }
 
     @Override
@@ -31,36 +31,52 @@ public class TextContainedValue implements ContainedValue {
 
     @Override
     public boolean toBoolean() throws ConversionException {
-        throw new ConversionException();
+        return Boolean.parseBoolean(value);
     }
 
     @Override
     public float toFloat() throws ConversionException {
-        throw new ConversionException();
+        try {
+            return Float.parseFloat(value);
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Float");
+        }
     }
 
     @Override
     public double toDouble() throws ConversionException {
-        throw new ConversionException();
+        try {
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Double");
+        }
     }
 
     @Override
     public int toInteger() throws ConversionException {
-        throw new ConversionException();
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Integer");
+        }
     }
 
     @Override
     public <T extends Enum<T>> T toEnum(Class<T> enumType) throws ConversionException {
-        throw new ConversionException();
+        try {
+            return Enum.valueOf(enumType, value);
+        } catch (Exception e) {
+            throw new ConversionException("Cannot convert to Enum");
+        }
     }
 
     @Override
     public <K, V> Map<K, V> toMap(Type keyType, Type valueType) throws ConversionException {
-        throw new ConversionException();
+        throw new ConversionException("Cannot convert to Map");
     }
 
     @Override
     public <T> List<T> toList(Type entryType) throws ConversionException {
-        throw new ConversionException();
+        throw new ConversionException("Cannot convert to List");
     }
 }
