@@ -1,6 +1,7 @@
 package com.ddoerr.scriptit.screens;
 
 import com.ddoerr.scriptit.ScriptItMod;
+import com.ddoerr.scriptit.api.hud.HudHorizontalAnchor;
 import com.ddoerr.scriptit.api.registry.ScriptItRegistry;
 import com.ddoerr.scriptit.api.scripts.ScriptBuilder;
 import com.ddoerr.scriptit.api.scripts.ScriptContainer;
@@ -11,6 +12,7 @@ import com.ddoerr.scriptit.callbacks.ConfigCallback;
 import com.ddoerr.scriptit.fields.Field;
 import com.ddoerr.scriptit.fields.FieldAssembler;
 import com.ddoerr.scriptit.screens.widgets.PanelWidget;
+import com.ddoerr.scriptit.screens.widgets.ValuesDropdownWidget;
 import com.ddoerr.scriptit.scripts.ScriptContainerImpl;
 import com.ddoerr.scriptit.extension.triggers.KeyBindingTrigger;
 import net.minecraft.client.resource.language.I18n;
@@ -22,10 +24,7 @@ import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ScriptEditorScreen extends AbstractHistoryScreen {
     private ScriptItRegistry registry;
@@ -36,6 +35,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
     private Identifier selectedTrigger;
     private String script;
     private ScriptContainer scriptContainer;
+    private Identifier language;
 
     public ScriptEditorScreen(ScreenHistory history, ScriptItRegistry registry, ScriptContainerManager scriptContainerManager, FieldAssembler fieldAssembler) {
         super(history);
@@ -43,6 +43,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         this.registry = registry;
         this.scriptContainerManager = scriptContainerManager;
         this.fieldAssembler = fieldAssembler;
+
+        language = registry.languages.getDefaultId();
 
         setupWidgets();
     }
@@ -58,6 +60,11 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         script = scriptContainer.getScript().getScriptSource().getContent();
 
         selectedTrigger = scriptContainer.getTrigger().getIdentifier();
+        language = scriptContainer.getScript().getLanguage();
+
+        if (language == null) {
+            language = registry.languages.getDefaultId();
+        }
 
         setupWidgets();
     }
@@ -66,6 +73,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
         WInterface mainInterface = getInterface();
 
         setupTriggerWidget(mainInterface);
+        setupLanguageSelection(mainInterface);
         setupScriptWidget(mainInterface);
         setupButtonBar(mainInterface);
 
@@ -81,7 +89,7 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
         List<Identifier> ids = new ArrayList<>(registry.triggers.getIds());
         for (Identifier identifier : ids) {
-            String tabTitle = "scriptit:triggers." + identifier.toString();
+            String tabTitle = "scriptit:trigger." + identifier.toString();
             Item item = Registry.ITEM.get(new Identifier(I18n.translate(tabTitle + ".icon")));
             WTabHolder.WTab tab = tabHolder.addTab(item, new TranslatableText(tabTitle));
 
@@ -109,6 +117,18 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
         int tabNumber = ids.indexOf(selectedTrigger) + 1;
         tabHolder.selectTab(tabNumber);
+    }
+
+    private void setupLanguageSelection(WInterface mainInterface) {
+        Set<Identifier> languageIds = registry.languages.getIds();
+
+        ValuesDropdownWidget<Identifier> languages = mainInterface.createChild(ValuesDropdownWidget.class)
+                .setTranslationPrefix("language")
+                .setSize(Size.of(100, 20))
+                .setOnAlign(w -> w.setPosition(Position.ofTopRight(mainInterface).add(-150, 20, 0)));
+        languages.addValues(languageIds);
+        languages.selectValue(language);
+        languages.setOnChange(id -> language = id);
     }
 
     private void setupScriptWidget(WInterface mainInterface) {
@@ -159,7 +179,8 @@ public class ScriptEditorScreen extends AbstractHistoryScreen {
 
         ScriptBuilder scriptBuilder = new ScriptBuilder()
                 .fromString(script)
-                .name(trigger.toString());
+                .name(trigger.toString())
+                .language(language.toString());
         scriptContainer.setScript(scriptBuilder);
 
         scriptContainer.enable();

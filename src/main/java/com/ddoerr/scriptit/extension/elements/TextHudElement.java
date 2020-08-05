@@ -23,9 +23,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class TextHudElement extends AbstractHudElement {
     public static final Identifier IDENTIFIER = new Identifier(ScriptItMod.MOD_NAME, "text");
+    public static final String NEWLINE_REGEX = "\\R";
 
     public static final String BACK_COLOR_FIELD = "back-color";
     public static final String FORE_COLOR_FIELD = "fore-color";
@@ -33,7 +35,11 @@ public class TextHudElement extends AbstractHudElement {
     private ColorField backColorField;
     private ColorField foreColorField;
 
-    public TextHudElement() {
+    private MinecraftClient minecraft;
+
+    public TextHudElement(MinecraftClient minecraft) {
+        this.minecraft = minecraft;
+
         foreColorField = new ColorField();
         foreColorField.setTitle(new LiteralText("Fore Color"));
         foreColorField.setDescription(new LiteralText("Color used for the font"));
@@ -49,20 +55,26 @@ public class TextHudElement extends AbstractHudElement {
 
     @Override
     public Rectangle render(Point origin, HudElementContainer hudElement) {
-        String lastResult = null;
+        String lastResult = StringUtils.EMPTY;
         try {
             ContainedValue containedValue = hudElement.getScriptContainer().getLastResult();
             if (containedValue != null) {
-                lastResult = containedValue.toStr();
+                lastResult = containedValue.toStr().trim();
             }
         } catch (ConversionException e) {
             e.printStackTrace();
         }
 
+        String[] lines = lastResult.split(NEWLINE_REGEX, -1);
+
+        int fontHeight = minecraft.textRenderer.fontHeight;
+        int stringHeight = fontHeight * lines.length;
+        int stringWidth = Stream.of(lines).map(line -> minecraft.textRenderer.getStringWidth(line)).max(Integer::compareTo).orElse(0);
+
         Rectangle rectangle = new Rectangle(
                 (int) origin.getX(), (int) origin.getY(),
-                MinecraftClient.getInstance().textRenderer.getStringWidth(lastResult == null ? StringUtils.EMPTY : lastResult) + 2 * HudElementContainer.DEFAULT_PADDING,
-                MinecraftClient.getInstance().textRenderer.fontHeight + 2 * HudElementContainer.DEFAULT_PADDING);
+                stringWidth + 2 * HudElementContainer.DEFAULT_PADDING,
+                stringHeight + 2 * HudElementContainer.DEFAULT_PADDING);
 
         Color backColor = Color.runAndParse(backColorField.getValue());
         if (backColor != null) {
@@ -71,10 +83,13 @@ public class TextHudElement extends AbstractHudElement {
 
         Color foreColor = Color.runAndParse(foreColorField.getValue());
         if (foreColor != null) {
-            MinecraftClient.getInstance().textRenderer
-                    .drawWithShadow(lastResult == null ? StringUtils.EMPTY : lastResult, rectangle.getMinX() + HudElementContainer.DEFAULT_PADDING, rectangle.getMinY() + HudElementContainer.DEFAULT_PADDING, foreColor.getValue());
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                int x = rectangle.getMinX() + HudElementContainer.DEFAULT_PADDING;
+                int y = rectangle.getMinY() + HudElementContainer.DEFAULT_PADDING + (i * fontHeight);
+                minecraft.textRenderer.drawWithShadow(line, x, y, foreColor.getValue());
+            }
         }
-
         return rectangle;
     }
 
@@ -85,6 +100,6 @@ public class TextHudElement extends AbstractHudElement {
 
     @Override
     public Script getDefaultScript() {
-        return new ScriptBuilder().fromString("return \"Text Hud Element\"");
+        return new ScriptBuilder().fromString("Text Hud Element");
     }
 }

@@ -69,6 +69,6 @@ public class ItemHudElement extends AbstractHudElement {
 
     @Override
     public Script getDefaultScript() {
-        return new ScriptBuilder().fromString("return \"grass_block\"");
+        return new ScriptBuilder().fromString("grass_block");
     }
 }

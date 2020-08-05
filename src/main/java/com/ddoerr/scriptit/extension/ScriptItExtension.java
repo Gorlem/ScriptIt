@@ -15,6 +15,7 @@ import com.ddoerr.scriptit.extension.events.GameConnectEvent;
 import com.ddoerr.scriptit.extension.events.SoundEvent;
 import com.ddoerr.scriptit.extension.lua.LuaLanguage;
 import com.ddoerr.scriptit.extension.libraries.*;
+import com.ddoerr.scriptit.extension.text.TextLanguage;
 import com.ddoerr.scriptit.extension.triggers.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
@@ -26,6 +27,7 @@ public class ScriptItExtension implements ExtensionInitializer {
     @Override
     public void onInitialize(ScriptItRegistry registry, Resolver resolver) {
         this.resolver = resolver;
+        add(registry.languages, "text", TextLanguage.class);
         add(registry.languages, "lua", LuaLanguage.class);
 
         add(registry.libraries, "scripts", ScriptsLibrary.class);

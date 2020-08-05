@@ -10,15 +10,15 @@
 
   "scriptit:scripts.exception": "An error occurred while running script %s. Script will be disabled until it is saved again.",
 
-  "scriptit:triggers.scriptit:keybinding": "Key Binding",
-  "scriptit:triggers.scriptit:keybinding.icon": "tripwire_hook",
+  "scriptit:trigger.scriptit:keybinding": "Key Binding",
+  "scriptit:trigger.scriptit:keybinding.icon": "tripwire_hook",
 
-  "scriptit:triggers.scriptit:event": "Event",
-  "scriptit:triggers.scriptit:event.icon": "firework_rocket",
+  "scriptit:trigger.scriptit:event": "Event",
+  "scriptit:trigger.scriptit:event.icon": "firework_rocket",
   "scriptit:scripts.triggers.event.select": "Select an Event",
 
-  "scriptit:triggers.scriptit:duration": "Duration",
-  "scriptit:triggers.scriptit:duration.icon": "clock",
+  "scriptit:trigger.scriptit:duration": "Duration",
+  "scriptit:trigger.scriptit:duration.icon": "clock",
   "scriptit:scripts.triggers.duration.select": "Select a Time Unit",
   "scriptit:scripts.triggers.duration.values.millis": "Milliseconds",
   "scriptit:scripts.triggers.duration.values.seconds": "Seconds",
@@ -29,8 +29,8 @@
   "scriptit:elements.add": "Add a Hud Element",
   "scriptit:elements.edit.script": "Edit Script",
 
-  "scriptit:text": "Any Text",
-  "scriptit:item": "Display any Item",
+  "scriptit:hud_element.scriptit:text": "Any Text",
+  "scriptit:hud_element.scriptit:item": "Display any Item",
 
   "scriptit:keybinding.default": "§f%s",
   "scriptit:keybinding.conflict": "§c%s",
@@ -40,8 +40,11 @@
   "scriptit:tooltip.button": "Button %s",
   "scriptit:tooltip.slot": "Slot %s",
 
-  "scriptit:chat/incoming": "Incoming Chat",
-  "scriptit:chat/outgoing": "Outgoing Chat",
-  "scriptit:game/connect": "Connect",
-  "scriptit:sound": "Sound"
+  "scriptit:event.scriptit:chat/incoming": "Incoming Chat",
+  "scriptit:event.scriptit:chat/outgoing": "Outgoing Chat",
+  "scriptit:event.scriptit:game/connect": "Connect",
+  "scriptit:event.scriptit:sound": "Sound",
+
+  "scriptit:language.scriptit:text": "Simple text",
+  "scriptit:language.scriptit:lua": "Lua"
 }

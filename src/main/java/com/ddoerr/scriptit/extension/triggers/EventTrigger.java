@@ -30,6 +30,7 @@ public class EventTrigger extends AbstractTrigger {
         eventField = new SelectionField();
         eventField.setTitle(new LiteralText("Event ID"));
         eventField.setDescription(new LiteralText("Event which should trigger this script"));
+        eventField.setTranslationPrefix("event");
 
         List<String> eventIds = registry.events.getIds().stream()
                 .map(Identifier::toString)
